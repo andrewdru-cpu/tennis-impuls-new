@@ -1,0 +1,46 @@
+import { SectionHeading } from "@/components/section-heading";
+import { Reveal } from "@/components/reveal";
+import { MediaImage } from "@/components/media/media-image";
+import { media } from "@/lib/media";
+import { cn } from "@/lib/utils";
+
+/**
+ * 👉 ГАЛЕРЕЯ: список фото берётся из media.gallery (массив).
+ *    Добавляйте/меняйте кадры в media.ts — сетка подстроится автоматически.
+ *    Раскладка masonry-стиля: первый кадр крупный.
+ */
+export function Gallery() {
+  return (
+    <section className="bg-white py-24 lg:py-32">
+      <div className="container-wide">
+        <SectionHeading
+          align="center"
+          eyebrow="Галерея"
+          title="Атмосфера клуба «Импульс»"
+          description="Корты, природа и эмоции игры — загляните внутрь."
+        />
+
+        <div className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-4">
+          {media.gallery.map((img, i) => (
+            <Reveal
+              key={img.src}
+              delay={i * 0.06}
+              className={cn(
+                "group",
+                i === 0 && "col-span-2 row-span-2"
+              )}
+            >
+              <MediaImage
+                media={img}
+                ratio={i === 0 ? "square" : "photo"}
+                imageClassName="group-hover:scale-105"
+                className="h-full"
+                sizes="(max-width: 768px) 50vw, 25vw"
+              />
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
