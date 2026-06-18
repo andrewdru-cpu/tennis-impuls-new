@@ -1,4 +1,5 @@
 import { SectionHeading } from "@/components/section-heading";
+import { Section } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { MediaImage } from "@/components/media/media-image";
 import { media } from "@/lib/media";
@@ -11,8 +12,7 @@ import { cn } from "@/lib/utils";
  */
 export function Gallery() {
   return (
-    <section className="bg-white py-24 lg:py-32">
-      <div className="container-wide">
+    <Section id="gallery">
         <SectionHeading
           align="center"
           eyebrow="Галерея"
@@ -20,7 +20,7 @@ export function Gallery() {
           description="Корты, природа и эмоции игры — загляните внутрь."
         />
 
-        <div className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="section-inner grid grid-cols-2 gap-4 md:grid-cols-4">
           {media.gallery.map((img, i) => (
             <Reveal
               key={img.src}
@@ -40,7 +40,6 @@ export function Gallery() {
             </Reveal>
           ))}
         </div>
-      </div>
-    </section>
+    </Section>
   );
 }

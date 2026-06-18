@@ -53,6 +53,28 @@
     text-wrap: balance;
   }
 
+  /* Единые отступы секций */
+  .section {
+    @apply py-20 sm:py-24 lg:py-28;
+  }
+
+  .section-inner {
+    @apply mt-12 sm:mt-14 lg:mt-16;
+  }
+
+  /* Типографика */
+  .text-lead {
+    @apply max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg sm:leading-7;
+  }
+
+  .text-card-title {
+    @apply font-display text-lg font-semibold leading-snug text-forest-900 sm:text-xl;
+  }
+
+  .text-card-body {
+    @apply text-sm leading-relaxed text-muted-foreground sm:text-[0.9375rem] sm:leading-6;
+  }
+
   .container-wide {
     @apply mx-auto w-full max-w-[1280px] px-5 lg:px-8;
   }
@@ -86,5 +108,14 @@
   .mask-fade-b {
     -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+  }
+
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }

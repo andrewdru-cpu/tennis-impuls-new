@@ -1,6 +1,7 @@
-import { Check, Star } from "lucide-react";
+import { Check, Star } from "@/lib/icons";
 
 import { SectionHeading } from "@/components/section-heading";
+import { Section } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -53,8 +54,7 @@ const plans = [
 
 export function Pricing() {
   return (
-    <section id="pricing" className="bg-secondary py-24 lg:py-32">
-      <div className="container-wide">
+    <Section id="pricing" tone="muted">
         <SectionHeading
           align="center"
           eyebrow="Цены и абонементы"
@@ -62,12 +62,12 @@ export function Pricing() {
           description="Выберите подходящий формат. Ракетки и инвентарь предоставляются в аренду отдельно."
         />
 
-        <div className="mx-auto mt-14 grid max-w-5xl grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="section-inner mx-auto grid max-w-5xl grid-cols-1 gap-6 lg:grid-cols-3">
           {plans.map((plan, i) => (
             <Reveal key={plan.name} delay={i * 0.08}>
               <div
                 className={cn(
-                  "relative flex h-full flex-col rounded-[2rem] border p-8 transition-all duration-500",
+                  "relative flex h-full flex-col rounded-3xl border p-8 transition-all duration-500",
                   plan.featured
                     ? "border-transparent bg-forest-950 text-white shadow-card lg:-translate-y-4"
                     : "border-forest-900/10 bg-white text-forest-900 hover:-translate-y-1 hover:shadow-soft"
@@ -80,7 +80,7 @@ export function Pricing() {
                   </span>
                 )}
 
-                <h3 className="font-display text-lg font-semibold">
+                <h3 className={cn("text-card-title", plan.featured && "text-white")}>
                   {plan.name}
                 </h3>
                 <p
@@ -142,7 +142,6 @@ export function Pricing() {
             </Reveal>
           ))}
         </div>
-      </div>
-    </section>
+    </Section>
   );
 }

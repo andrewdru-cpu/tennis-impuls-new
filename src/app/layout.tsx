@@ -1,20 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Sora } from "next/font/google";
 import "./globals.css";
+import { fontSans, fontVariables } from "@/lib/fonts";
 import { siteConfig } from "@/lib/site";
-
-const inter = Inter({
-  subsets: ["latin", "cyrillic"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
-const sora = Sora({
-  subsets: ["latin"],
-  variable: "--font-display",
-  display: "swap",
-  weight: ["500", "600", "700", "800"],
-});
 
 export const metadata: Metadata = {
   title: {
@@ -49,8 +36,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={`${inter.variable} ${sora.variable}`}>
-      <body className="font-sans">{children}</body>
+    <html lang="ru" className={fontVariables}>
+      <body className={`${fontSans.className} antialiased`}>{children}</body>
     </html>
   );
 }

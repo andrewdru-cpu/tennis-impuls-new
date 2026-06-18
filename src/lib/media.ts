@@ -35,9 +35,13 @@ export type MediaImageSource = {
 export type MediaVideoSource = {
   /** Список источников видео (mp4 обязателен, webm — опционально) */
   sources: { src: string; type: string }[];
-  /** Постер-кадр, показывается до загрузки видео */
+  /** Постер-кадр на десктопе до загрузки видео */
   poster: string;
   alt: string;
+  /** Статичный фон на мобильных (<768px) — WebP */
+  mobile: MediaImageSource;
+  /** JPEG fallback для мобильных (опционально) */
+  mobileFallback?: string;
 };
 
 /**
@@ -57,6 +61,10 @@ export const media = {
     sources: [{ src: "/videos/hero.mp4", type: "video/mp4" }],
     poster: "/images/hero/poster.webp",
     alt: "Видеопрезентация теннисного центра ЦТТ Импульс у Лосиного Острова",
+    mobile: {
+      src: "/images/hero/poster.webp",
+      alt: "Теннисный комплекс ЦТТ Импульс у Лосиного Острова",
+    },
     // Запасной режим — статичное фото:
     // kind: "image",
     // src: "/images/hero/hero.webp",
@@ -89,6 +97,18 @@ export const media = {
       src: "/images/services/padel.webp",
       alt: "Падел — ракетка и мячи на корте клуба",
     },
+    ofp: {
+      src: "/images/facilities/hall.webp",
+      alt: "Зал общей физической подготовки в клубе",
+    },
+    karate: {
+      src: "/images/team/coach-5.webp",
+      alt: "Тренировка по каратэ в секции клуба",
+    },
+    activities: {
+      src: "/images/gallery/02.webp",
+      alt: "Дополнительные направления на территории комплекса",
+    },
   } satisfies Record<string, MediaImageSource>,
 
   /* -------------------------------------------------------- FACILITIES --- */
@@ -113,6 +133,39 @@ export const media = {
 
   /* ------------------------------------------------------------- TEAM --- */
   team: {
+    paraskeva: {
+      src: "/images/team/paraskeva.webp",
+      alt: "Параскева Оксана — тренер по теннису ЦТТ Импульс",
+    },
+    rakhmanina: {
+      src: "/images/team/rakhmanina.webp",
+      alt: "Мария Рахманина — тренер по теннису ЦТТ Импульс",
+    },
+    baldin: {
+      src: "/images/team/baldin.webp",
+      alt: "Александр Балдин — тренер по теннису ЦТТ Импульс",
+    },
+    averin: {
+      src: "/images/team/averin.webp",
+      alt: "Андрей Аверин — тренер по теннису ЦТТ Импульс",
+    },
+    kovgan: {
+      src: "/images/team/kovgan.webp",
+      alt: "Евгений Ковган — тренер групповых фитнес-программ",
+    },
+    stoletnyaya: {
+      src: "/images/team/stoletnyaya.webp",
+      alt: "Столетняя Юлия — тренер групповых программ",
+    },
+    kostanyan: {
+      src: "/images/team/kostanyan.webp",
+      alt: "Костанян Аркадий — тренер каратэ киокушинкай",
+    },
+    privalov: {
+      src: "/images/team/privalov.webp",
+      alt: "Привалов Роман — массажист-реабилитолог",
+    },
+    // Устаревшие ключи (совместимость)
     coach1: {
       src: "/images/team/coach-1.webp",
       alt: "Тренер клуба ЦТТ Импульс на корте",
@@ -132,6 +185,34 @@ export const media = {
     coach5: {
       src: "/images/team/coach-5.webp",
       alt: "Тренер по карате Киокушинкай",
+    },
+  } satisfies Record<string, MediaImageSource>,
+
+  /* ------------------------------------------------------------- NEWS --- */
+  news: {
+    padel: {
+      src: "/images/news/padel.webp",
+      alt: "Падел-корт в ЦТТ Импульс",
+    },
+    podkopaeva: {
+      src: "/images/news/podkopaeva.webp",
+      alt: "Победа Подкопаевой Веры на турнире клуба",
+    },
+    kostanyan: {
+      src: "/images/news/kostanyan.webp",
+      alt: "Костанян Аркадий — чемпион мира среди мастеров",
+    },
+    family: {
+      src: "/images/gallery/05.webp",
+      alt: "Семейные занятия теннисом в клубе",
+    },
+    junior: {
+      src: "/images/services/junior.webp",
+      alt: "Детская группа тенниса в ЦТТ Импульс",
+    },
+    tournament: {
+      src: "/images/gallery/02.webp",
+      alt: "Турнир выходного дня на кортах клуба",
     },
   } satisfies Record<string, MediaImageSource>,
 

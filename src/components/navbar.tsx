@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X, Phone } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { navItems, siteConfig } from "@/lib/site";
@@ -107,7 +107,7 @@ export function Navbar() {
                       <a
                         href={item.href}
                         onClick={() => setOpen(false)}
-                        className="block rounded-2xl px-4 py-3 text-base font-medium text-forest-800 transition-colors hover:bg-forest-900/5"
+                        className="flex min-h-11 items-center rounded-2xl px-4 py-3 text-base font-medium text-forest-800 transition-colors hover:bg-forest-900/5"
                       >
                         {item.label}
                       </a>

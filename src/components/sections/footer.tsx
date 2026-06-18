@@ -1,4 +1,4 @@
-import { Phone, Mail, Send } from "lucide-react";
+import { Phone, Mail, Send } from "@/lib/icons";
 
 import { Logo } from "@/components/logo";
 import { navItems, siteConfig } from "@/lib/site";
@@ -6,7 +6,7 @@ import { navItems, siteConfig } from "@/lib/site";
 export function Footer() {
   return (
     <footer className="bg-forest-950 text-white">
-      <div className="container-wide py-16">
+      <div className="container-wide py-16 sm:py-20">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <Logo variant="light" />
@@ -20,21 +20,21 @@ export function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Telegram"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-lime hover:text-forest-900"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-lime hover:text-forest-900"
               >
                 <Send className="h-4 w-4" />
               </a>
               <a
                 href={siteConfig.phoneHref}
                 aria-label="Позвонить"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-lime hover:text-forest-900"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-lime hover:text-forest-900"
               >
                 <Phone className="h-4 w-4" />
               </a>
               <a
                 href={`mailto:${siteConfig.email}`}
                 aria-label="Написать"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-lime hover:text-forest-900"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-lime hover:text-forest-900"
               >
                 <Mail className="h-4 w-4" />
               </a>

@@ -1,34 +1,56 @@
+"use client";
+
 import Image from "next/image";
 
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { media as siteMedia, type HeroMedia as HeroMediaType } from "@/lib/media";
 
 /**
- * Полноэкранный фон Hero. Заполняет родителя (родитель должен быть relative).
- * Переключение фото/видео управляется полем `kind` в media.ts → media.hero.
- *
- * 👉 Никакой вёрстки менять не нужно: задаёшь медиа в media.ts, остальное
- *    подхватится автоматически.
+ * Полноэкранный фон Hero.
+ * Десктоп (≥768px): видео с poster.
+ * Мобильные (<768px): только статичное изображение — видео не загружается.
  */
 
 const HERO_OVERLAY =
-  "linear-gradient(90deg, rgba(8,35,26,0.88) 0%, rgba(8,35,26,0.55) 45%, rgba(8,35,26,0.25) 100%), linear-gradient(180deg, rgba(8,35,26,0.25) 0%, rgba(8,35,26,0) 30%, rgba(8,35,26,0.7) 100%)";
+  "linear-gradient(105deg, rgba(8,35,26,0.94) 0%, rgba(8,35,26,0.82) 32%, rgba(8,35,26,0.52) 58%, rgba(8,35,26,0.38) 100%), linear-gradient(180deg, rgba(8,35,26,0.55) 0%, rgba(8,35,26,0.12) 28%, rgba(8,35,26,0.08) 50%, rgba(8,35,26,0.88) 100%), radial-gradient(ellipse 80% 60% at 20% 50%, rgba(8,35,26,0.5) 0%, transparent 70%)";
+
+const DESKTOP_QUERY = "(min-width: 768px)";
 
 function HeroImage({
   src,
   alt,
+  fallback,
+  priority = false,
   className,
 }: {
   src: string;
   alt: string;
+  fallback?: string;
+  priority?: boolean;
   className?: string;
 }) {
+  if (fallback) {
+    return (
+      <picture className={cn("absolute inset-0", className)}>
+        <source srcSet={src} type="image/webp" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={fallback}
+          alt={alt}
+          className="h-full w-full object-cover object-center"
+          fetchPriority={priority ? "high" : "auto"}
+        />
+      </picture>
+    );
+  }
+
   return (
     <Image
       src={src}
       alt={alt}
       fill
-      priority
+      priority={priority}
       sizes="100vw"
       className={cn("object-cover object-center", className)}
     />
@@ -61,6 +83,27 @@ function HeroVideo({
   );
 }
 
+function HeroOverlays() {
+  return (
+    <>
+      <div
+        className="absolute inset-0"
+        style={{ background: HERO_OVERLAY }}
+        aria-hidden
+      />
+      <div className="absolute inset-0 bg-grid opacity-[0.12]" aria-hidden />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, transparent 40%, rgba(8,35,26,0.45) 100%)",
+        }}
+        aria-hidden
+      />
+    </>
+  );
+}
+
 export function HeroMedia({
   media = siteMedia.hero,
   className,
@@ -68,21 +111,48 @@ export function HeroMedia({
   media?: HeroMediaType;
   className?: string;
 }) {
+  const isDesktop = useMediaQuery(DESKTOP_QUERY);
+
+  const showVideo = isDesktop === true && media.kind === "video";
+  const showMobileImage =
+    isDesktop !== true &&
+    (media.kind === "image" ||
+      (media.kind === "video" && media.mobile !== undefined));
+  const showDesktopImage = isDesktop === true && media.kind === "image";
+
+  const mobileSrc =
+    media.kind === "video" ? media.mobile.src : media.src;
+  const mobileAlt =
+    media.kind === "video" ? media.mobile.alt : media.alt;
+  const mobileFallback =
+    media.kind === "video" ? media.mobileFallback : undefined;
+
   return (
     <div className={cn("absolute inset-0 -z-10 overflow-hidden", className)}>
-      {media.kind === "video" ? (
-        <HeroVideo sources={media.sources} poster={media.poster} />
-      ) : (
-        <HeroImage src={media.src} alt={media.alt} />
+      {/* Мобильный / SSR: только изображение */}
+      {showMobileImage && (
+        <div className="absolute inset-0">
+          <HeroImage
+            src={mobileSrc}
+            alt={mobileAlt}
+            fallback={mobileFallback}
+            priority
+          />
+        </div>
       )}
-      {/* Затемняющий градиент для читаемости текста поверх медиа */}
-      <div
-        className="absolute inset-0"
-        style={{ background: HERO_OVERLAY }}
-        aria-hidden
-      />
-      {/* Лёгкая сетка для премиального ощущения глубины */}
-      <div className="absolute inset-0 bg-grid opacity-[0.15]" aria-hidden />
+
+      {showVideo && (
+        <div className="absolute inset-0">
+          <HeroVideo sources={media.sources} poster={media.poster} />
+        </div>
+      )}
+
+      {/* Десктоп: статичный режим */}
+      {showDesktopImage && (
+        <HeroImage src={media.src} alt={media.alt} priority />
+      )}
+
+      <HeroOverlays />
     </div>
   );
 }

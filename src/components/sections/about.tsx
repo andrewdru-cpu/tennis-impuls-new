@@ -1,41 +1,59 @@
-import { Trees, ParkingCircle, Layers, Coffee } from "lucide-react";
+import {
+  Trees,
+  ParkingCircle,
+  Building2,
+  Dumbbell,
+  Layers,
+  Sparkles,
+  Coffee,
+} from "@/lib/icons";
 
 import { SectionHeading } from "@/components/section-heading";
+import { Section } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { MediaImage } from "@/components/media/media-image";
 import { media } from "@/lib/media";
+import { cn } from "@/lib/utils";
 
 const features = [
   {
-    icon: Trees,
-    title: "У Лосиного Острова",
-    text: "Спорт и природа национального парка — 20 минут от Москвы.",
+    icon: Building2,
+    title: "Капитальное здание",
+    text: "Крытые корты и инфраструктура в стационарном комплексе — комфорт и безопасность круглый год, в том числе для детей.",
   },
   {
     icon: Layers,
-    title: "Крытые и грунтовые корты",
-    text: "Крытый hard круглый год и открытый грунт в сезон.",
+    title: "Корты всех форматов",
+    text: "Крытый Hard, открытый грунт и падел на одной территории. Профессиональное покрытие и освещение для игры в любое время.",
+  },
+  {
+    icon: Dumbbell,
+    title: "Фитнес и ОФП",
+    text: "Тренажёрный зал, залы групповых программ и общей физической подготовки — всё для комплексной спортивной подготовки.",
+  },
+  {
+    icon: Sparkles,
+    title: "Разнообразие услуг",
+    text: "Теннис, падел, каратэ, танцы, йога и настольный теннис — выберите направление под себя и всю семью.",
+  },
+  {
+    icon: Trees,
+    title: "У Лосиного Острова",
+    text: "Закрытая территория более 1 га в экологически чистом районе — спорт на свежем воздухе в 20 минутах от Москвы.",
   },
   {
     icon: ParkingCircle,
-    title: "Бесплатная парковка",
-    text: "Собственная парковка для всех гостей и клиентов клуба.",
-  },
-  {
-    icon: Coffee,
-    title: "Клубный дом и кафе",
-    text: "Раздевалки, душ и зона отдыха после игры.",
+    title: "Парковка и комфорт",
+    text: "Бесплатная парковка, раздевалки с душем, VIP-зона с сауной, кафе и зона отдыха между тренировками.",
   },
 ];
 
 export function About() {
   return (
-    <section id="about" className="bg-secondary py-24 lg:py-32">
-      <div className="container-wide">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+    <Section id="about" tone="muted">
+        <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
           <Reveal>
             <div className="space-y-4">
-              {/* Establishing — весь комплекс у леса */}
               <MediaImage
                 media={media.facilities.aerial}
                 ratio="wide"
@@ -43,11 +61,22 @@ export function About() {
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="shadow-card"
               />
-              {/* Мини-галерея: крытые корты · манеж · грунт */}
-              <div className="grid grid-cols-3 gap-4">
-                <MediaImage media={media.facilities.indoor} ratio="square" sizes="180px" />
-                <MediaImage media={media.facilities.hall} ratio="square" sizes="180px" />
-                <MediaImage media={media.facilities.outdoor} ratio="square" sizes="180px" />
+              <div className="grid grid-cols-3 gap-3 sm:gap-4">
+                <MediaImage
+                  media={media.facilities.indoor}
+                  ratio="square"
+                  sizes="180px"
+                />
+                <MediaImage
+                  media={media.facilities.hall}
+                  ratio="square"
+                  sizes="180px"
+                />
+                <MediaImage
+                  media={media.facilities.outdoor}
+                  ratio="square"
+                  sizes="180px"
+                />
               </div>
             </div>
           </Reveal>
@@ -55,22 +84,59 @@ export function About() {
           <div>
             <SectionHeading
               eyebrow="О клубе"
-              title="Весь теннис — на одной территории"
-              description="Крытые корты, открытый грунт, манеж, фитнес-зал и клубный дом в окружении леса."
+              title={
+                <>
+                  Теннис, фитнес и отдых{" "}
+                  <span className="text-lime-600">в одном месте</span>
+                </>
+              }
             />
 
-            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <Reveal delay={0.08}>
+              <p className="text-lead text-foreground/90">
+                <strong className="font-semibold text-forest-900">
+                  Центр теннисных технологий «Импульс»
+                </strong>{" "}
+                — это не только теннисный клуб. Это современный
+                многофункциональный комплекс, где на одной территории собраны
+                корты, тренажёрный зал, групповые программы и зоны отдыха.
+              </p>
+            </Reveal>
+
+            <Reveal delay={0.12}>
+              <blockquote className="mt-6 border-l-4 border-lime bg-white/70 px-5 py-4 text-[0.9375rem] italic leading-relaxed text-forest-800 sm:text-base sm:leading-7">
+                «Всё необходимое для спорта, восстановления и отдыха — без
+                лишних поездок по городу.»
+              </blockquote>
+            </Reveal>
+
+            <Reveal delay={0.16}>
+              <p className="mt-6 text-card-body sm:text-base sm:leading-7">
+                Капитальные крытые корты с системой вентиляции, открытые
+                грунтовые площадки, падел, фитнес-центр и дополнительные
+                направления — от детских групп до индивидуальных тренировок.
+                Профессиональные тренеры, продуманная инфраструктура и
+                внимательный сервис для каждого гостя.
+              </p>
+            </Reveal>
+
+            <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
               {features.map((f, i) => (
-                <Reveal key={f.title} delay={i * 0.07}>
-                  <div className="flex gap-4">
+                <Reveal key={f.title} delay={0.1 + i * 0.05}>
+                  <div
+                    className={cn(
+                      "flex h-full gap-4 rounded-2xl border border-forest-900/8 bg-white/60 p-4",
+                      "transition-colors duration-300 hover:border-lime/40 hover:bg-white"
+                    )}
+                  >
                     <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-forest-900 text-lime">
-                      <f.icon className="h-5 w-5" />
+                      <f.icon className="h-5 w-5" aria-hidden />
                     </span>
-                    <div>
-                      <h3 className="font-display text-base font-semibold text-forest-900">
+                    <div className="min-w-0">
+                      <h3 className="text-card-title text-base sm:text-[1.0625rem]">
                         {f.title}
                       </h3>
-                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground sm:text-[0.9375rem] sm:leading-6">
                         {f.text}
                       </p>
                     </div>
@@ -78,9 +144,19 @@ export function About() {
                 </Reveal>
               ))}
             </div>
+
+            <Reveal delay={0.2}>
+              <div className="mt-8 flex items-center gap-3 rounded-2xl bg-forest-900 px-5 py-4 text-white sm:px-6 sm:py-5">
+                <Coffee className="h-5 w-5 shrink-0 text-lime" aria-hidden />
+                <p className="text-sm leading-relaxed sm:text-[0.9375rem] sm:leading-6">
+                  <strong className="font-semibold text-lime">Клубный дом:</strong>{" "}
+                  кафе, спорт-бар и зона отдыха — удобно провести время до и
+                  после тренировки.
+                </p>
+              </div>
+            </Reveal>
           </div>
         </div>
-      </div>
-    </section>
+    </Section>
   );
 }
