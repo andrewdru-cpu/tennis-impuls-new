@@ -9,7 +9,7 @@ import { Reveal } from "@/components/reveal";
 import { MediaImage } from "@/components/media/media-image";
 import { NewsModal } from "@/components/news/news-modal";
 import { Card } from "@/components/ui/card";
-import { newsArticles, type NewsArticle } from "@/lib/news";
+import { newsArticles, isRecentNews, type NewsArticle } from "@/lib/news";
 import { cn } from "@/lib/utils";
 
 function NewsCard({
@@ -25,8 +25,8 @@ function NewsCard({
     <Reveal delay={index * 0.06}>
       <Card
         className={cn(
-          "group flex h-full cursor-pointer flex-col overflow-hidden border-forest-900/10 shadow-card",
-          "transition-all duration-500 hover:-translate-y-1 hover:border-lime/40 hover:shadow-soft"
+          "group relative flex h-full cursor-pointer flex-col overflow-hidden border-forest-900/10 shadow-card",
+          "transition-all duration-500 hover:-translate-y-1 hover:border-lime/45 hover:shadow-glow"
         )}
         onClick={() => onOpen(article)}
         onKeyDown={(e) => {
@@ -43,10 +43,15 @@ function NewsCard({
           media={article.image}
           ratio="photo"
           rounded={false}
-          imageClassName="group-hover:scale-105"
+          imageClassName="group-hover:scale-105 saturate-[1.06]"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
-        <div className="flex flex-1 flex-col p-5 sm:p-6">
+        {isRecentNews(article.dateISO) && (
+          <span className="absolute left-4 top-4 rounded-full bg-lime px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-forest-900 shadow-soft sm:text-xs">
+            Новое
+          </span>
+        )}
+        <div className="relative flex flex-1 flex-col p-5 sm:p-6">
           <time
             dateTime={article.dateISO}
             className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
@@ -74,19 +79,19 @@ export function News() {
   const [activeArticle, setActiveArticle] = useState<NewsArticle | null>(null);
 
   return (
-    <Section id="news">
+    <Section id="news" tone="muted">
         <SectionHeading
           eyebrow="Новости клуба"
           title={
             <>
-              Актуальное из жизни{" "}
-              <span className="text-lime-600">ЦТТ Импульс</span>
+              Свежие события{" "}
+              <span className="text-lime-600">ЦТТ «Импульс»</span>
             </>
           }
-          description="Турниры, открытия, акции и победы наших спортсменов — будьте в курсе событий комплекса."
+          description="Турниры, расписания и события комплекса — только актуальные материалы за последние дни."
         />
 
-        <div className="section-inner grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+        <div className="section-inner mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:gap-6">
           {newsArticles.map((article, i) => (
             <NewsCard
               key={article.id}

@@ -13,6 +13,7 @@
  *    public/images/team/        — портреты тренеров
  *    public/images/facilities/  — корты и инфраструктура
  *    public/images/gallery/     — галерея
+ *    public/images/kids/        — детские тренировки по теннису
  *    public/videos/             — видеофайлы (mp4 / webm) + постеры
  *
  *  👉 ЗАМЕНА ФОТО: положите новый файл в нужную папку и поменяйте путь здесь —
@@ -52,24 +53,28 @@ export type HeroMedia =
   | ({ kind: "image" } & MediaImageSource)
   | ({ kind: "video" } & MediaVideoSource);
 
+/** 👉 ДЕТСКИЙ ТЕННИС: замените файлы в public/images/kids/ и при необходимости alt здесь */
+const kidsMedia = {
+  training1: {
+    src: "/images/kids/kids-training-1.jpg",
+    alt: "Детская тренировка по теннису на корте ЦТТ Импульс",
+  },
+  training2: {
+    src: "/images/kids/kids-training-2.jpg",
+    alt: "Групповое занятие детской школы тенниса в клубе",
+  },
+} satisfies Record<string, MediaImageSource>;
+
 export const media = {
   /* -------------------------------------------------------------- HERO --- */
   hero: {
-    // ⚙️ Переключатель Hero: "image" ↔ "video".
-    // Сейчас — фирменное видео комплекса (аэросъёмка у леса + корты + игра).
-    kind: "video",
-    sources: [{ src: "/videos/hero.mp4", type: "video/mp4" }],
-    poster: "/images/hero/poster.webp",
-    alt: "Видеопрезентация теннисного центра ЦТТ Импульс у Лосиного Острова",
-    mobile: {
-      src: "/images/hero/poster.webp",
-      alt: "Теннисный комплекс ЦТТ Импульс у Лосиного Острова",
-    },
-    // Запасной режим — статичное фото:
-    // kind: "image",
-    // src: "/images/hero/hero.webp",
-    // alt: "Просторный крытый теннисный центр ЦТТ Импульс",
+    kind: "image",
+    src: "/images/hero/poster.webp",
+    alt: "Теннисный комплекс ЦТТ Импульс у Лосиного Острова — яркий вид на корты и инфраструктуру",
   } as HeroMedia,
+
+  /* ------------------------------------------------------------- KIDS --- */
+  kids: kidsMedia,
 
   /* ---------------------------------------------------------- SERVICES --- */
   services: {
@@ -77,10 +82,7 @@ export const media = {
       src: "/images/services/individual.webp",
       alt: "Индивидуальная тренировка взрослого игрока на корте",
     },
-    junior: {
-      src: "/images/services/junior.webp",
-      alt: "Юная теннисистка на тренировке в детской академии",
-    },
+    junior: kidsMedia.training1,
     group: {
       src: "/images/services/group.webp",
       alt: "Группа игроков с ракетками на корте",
@@ -94,7 +96,7 @@ export const media = {
       alt: "Общефизическая подготовка в зале клуба",
     },
     padel: {
-      src: "/images/services/padel.webp",
+      src: "/images/services/IMG_8857.jpg",
       alt: "Падел — ракетка и мячи на корте клуба",
     },
     ofp: {
@@ -206,10 +208,7 @@ export const media = {
       src: "/images/gallery/05.webp",
       alt: "Семейные занятия теннисом в клубе",
     },
-    junior: {
-      src: "/images/services/junior.webp",
-      alt: "Детская группа тенниса в ЦТТ Импульс",
-    },
+    junior: kidsMedia.training2,
     tournament: {
       src: "/images/gallery/02.webp",
       alt: "Турнир выходного дня на кортах клуба",
@@ -218,10 +217,10 @@ export const media = {
 
   /* ---------------------------------------------------------- GALLERY --- */
   gallery: [
-    { src: "/images/gallery/01.webp", alt: "Юная теннисистка отрабатывает удар" },
+    kidsMedia.training1,
     { src: "/images/gallery/02.webp", alt: "Игрок в динамике на корте" },
     { src: "/images/gallery/03.webp", alt: "Тренировка на грунтовом корте" },
-    { src: "/images/gallery/04.webp", alt: "Юный игрок в движении на корте" },
+    kidsMedia.training2,
     { src: "/images/gallery/05.webp", alt: "Участники клубного турнира" },
     {
       src: "/images/facilities/aerial.webp",

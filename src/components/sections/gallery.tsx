@@ -1,45 +1,126 @@
+"use client";
+
+import { useCallback, useState } from "react";
+import { ZoomIn } from "@/lib/icons";
+
 import { SectionHeading } from "@/components/section-heading";
 import { Section } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { MediaImage } from "@/components/media/media-image";
-import { media } from "@/lib/media";
+import { GalleryModal } from "@/components/gallery/gallery-modal";
+import { galleryItems, type GalleryItem } from "@/lib/gallery";
 import { cn } from "@/lib/utils";
 
-/**
- * 👉 ГАЛЕРЕЯ: список фото берётся из media.gallery (массив).
- *    Добавляйте/меняйте кадры в media.ts — сетка подстроится автоматически.
- *    Раскладка masonry-стиля: первый кадр крупный.
- */
-export function Gallery() {
+function GalleryTile({
+  item,
+  index,
+  onOpen,
+}: {
+  item: GalleryItem;
+  index: number;
+  onOpen: (item: GalleryItem) => void;
+}) {
   return (
-    <Section id="gallery">
-        <SectionHeading
-          align="center"
-          eyebrow="Галерея"
-          title="Атмосфера клуба «Импульс»"
-          description="Корты, природа и эмоции игры — загляните внутрь."
+    <Reveal delay={index * 0.05}>
+      <button
+        type="button"
+        onClick={() => onOpen(item)}
+        className={cn(
+          "group relative w-full overflow-hidden rounded-2xl text-left",
+          "ring-2 ring-forest-900/8 transition-all duration-300",
+          "hover:-translate-y-0.5 hover:ring-lime/70 hover:shadow-glow",
+          "focus-visible:outline-none focus-visible:ring-lime focus-visible:ring-offset-2"
+        )}
+        aria-label={`Открыть фото: ${item.caption}`}
+      >
+        <MediaImage
+          media={item}
+          ratio="square"
+          imageClassName="transition-transform duration-500 group-hover:scale-110 saturate-[1.08]"
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
         />
 
-        <div className="section-inner grid grid-cols-2 gap-4 md:grid-cols-4">
-          {media.gallery.map((img, i) => (
-            <Reveal
-              key={img.src}
-              delay={i * 0.06}
-              className={cn(
-                "group",
-                i === 0 && "col-span-2 row-span-2"
-              )}
-            >
-              <MediaImage
-                media={img}
-                ratio={i === 0 ? "square" : "photo"}
-                imageClassName="group-hover:scale-105"
-                className="h-full"
-                sizes="(max-width: 768px) 50vw, 25vw"
-              />
-            </Reveal>
+        {/* Hover overlay */}
+        <div
+          className={cn(
+            "absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-forest-950/85 via-forest-950/20 to-transparent p-3",
+            "opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 sm:p-4"
+          )}
+        >
+          <span className="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-lime/90 text-forest-900">
+            <ZoomIn className="h-4 w-4" aria-hidden />
+          </span>
+          <span className="text-sm font-semibold text-white">{item.caption}</span>
+        </div>
+      </button>
+    </Reveal>
+  );
+}
+
+export function Gallery() {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  const activeItem =
+    activeIndex !== null ? galleryItems[activeIndex] ?? null : null;
+
+  const open = useCallback((item: GalleryItem) => {
+    const index = galleryItems.findIndex((g) => g.id === item.id);
+    setActiveIndex(index >= 0 ? index : null);
+  }, []);
+
+  const close = useCallback(() => setActiveIndex(null), []);
+
+  const goPrev = useCallback(() => {
+    setActiveIndex((i) => (i !== null && i > 0 ? i - 1 : i));
+  }, []);
+
+  const goNext = useCallback(() => {
+    setActiveIndex((i) =>
+      i !== null && i < galleryItems.length - 1 ? i + 1 : i
+    );
+  }, []);
+
+  return (
+    <Section
+      id="gallery"
+      className="overflow-hidden bg-gradient-to-b from-white via-lime-50/40 to-white"
+    >
+      <SectionHeading
+        align="center"
+        eyebrow="Галерея"
+        title={
+          <>
+            Как выглядит{" "}
+            <span className="text-lime-600">ЦТТ «Импульс»</span>
+          </>
+        }
+        description="Корты, тренировки, инфраструктура и атмосфера комплекса — загляните внутрь клуба."
+      />
+
+      <div className="section-inner">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+          {galleryItems.map((item, i) => (
+            <GalleryTile key={item.id} item={item} index={i} onOpen={open} />
           ))}
         </div>
+
+        <Reveal delay={0.2}>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            Нажмите на фото, чтобы открыть в полном размере
+          </p>
+        </Reveal>
+      </div>
+
+      <GalleryModal
+        item={activeItem}
+        onClose={close}
+        onPrev={goPrev}
+        onNext={goNext}
+        hasPrev={activeIndex !== null && activeIndex > 0}
+        hasNext={
+          activeIndex !== null && activeIndex < galleryItems.length - 1
+        }
+      />
     </Section>
   );
 }

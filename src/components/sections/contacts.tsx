@@ -43,7 +43,7 @@ export function Contacts() {
         <SectionHeading
           eyebrow="Контакты"
           title="Приезжайте в гости"
-          description="Мы рядом с Лосиным Островом, в 20 минутах от Москвы. Удобная парковка для гостей клуба."
+          description="Мы рядом с Лосиным Островом — в 3 минутах от Москвы и МКАД. Удобная парковка для гостей клуба."
         />
 
         <div className="section-inner grid gap-6 lg:grid-cols-2">

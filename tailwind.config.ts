@@ -106,7 +106,7 @@ const config: Config = {
       },
       boxShadow: {
         soft: "0 10px 40px -12px rgba(15, 61, 46, 0.25)",
-        glow: "0 0 0 1px rgba(184, 224, 62, 0.4), 0 16px 50px -12px rgba(184, 224, 62, 0.45)",
+        glow: "0 0 0 1px rgba(184, 224, 62, 0.5), 0 20px 55px -12px rgba(184, 224, 62, 0.55)",
         card: "0 24px 60px -24px rgba(8, 35, 26, 0.45)",
       },
       keyframes: {
