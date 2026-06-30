@@ -69,7 +69,7 @@ export function MediaVideo({
             background:
               typeof overlay === "string"
                 ? overlay
-                : "linear-gradient(to top, rgba(8,35,26,0.7) 0%, rgba(8,35,26,0.2) 50%, rgba(8,35,26,0.45) 100%)",
+                : "linear-gradient(to top, rgba(10,47,36,0.72) 0%, rgba(10,47,36,0.18) 50%, rgba(10,47,36,0.48) 100%)",
           }}
         />
       )}

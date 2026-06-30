@@ -26,17 +26,16 @@ function GalleryTile({
         type="button"
         onClick={() => onOpen(item)}
         className={cn(
-          "group relative w-full overflow-hidden rounded-2xl text-left",
-          "ring-2 ring-forest-900/8 transition-all duration-300",
-          "hover:-translate-y-0.5 hover:ring-lime/70 hover:shadow-glow",
-          "focus-visible:outline-none focus-visible:ring-lime focus-visible:ring-offset-2"
+          "interactive-lift group relative w-full overflow-hidden rounded-2xl text-left ring-2 ring-forest-900/6",
+          "hover:ring-sand/50 hover:shadow-elevated",
+          "focus-visible:outline-none focus-visible:ring-terracotta focus-visible:ring-offset-2"
         )}
         aria-label={`Открыть фото: ${item.caption}`}
       >
         <MediaImage
           media={item}
           ratio="square"
-          imageClassName="transition-transform duration-500 group-hover:scale-110 saturate-[1.08]"
+          imageClassName="transition-transform duration-750 ease-out-expo saturate-[1.08] group-hover:scale-[1.06]"
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
         />
 
@@ -44,10 +43,10 @@ function GalleryTile({
         <div
           className={cn(
             "absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-forest-950/85 via-forest-950/20 to-transparent p-3",
-            "opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 sm:p-4"
+            "opacity-0 transition-opacity duration-500 ease-premium group-hover:opacity-100 group-focus-visible:opacity-100 sm:p-4"
           )}
         >
-          <span className="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-lime/90 text-forest-900">
+          <span className="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-terracotta/90 text-white shadow-terracotta">
             <ZoomIn className="h-4 w-4" aria-hidden />
           </span>
           <span className="text-sm font-semibold text-white">{item.caption}</span>

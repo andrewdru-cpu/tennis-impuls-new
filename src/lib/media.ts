@@ -56,11 +56,11 @@ export type HeroMedia =
 /** 👉 ДЕТСКИЙ ТЕННИС: замените файлы в public/images/kids/ и при необходимости alt здесь */
 const kidsMedia = {
   training1: {
-    src: "/images/kids/kids-training-1.jpg",
+    src: "/images/kids/kids-training-1.webp",
     alt: "Детская тренировка по теннису на корте ЦТТ Импульс",
   },
   training2: {
-    src: "/images/kids/kids-training-2.jpg",
+    src: "/images/kids/kids-training-2.webp",
     alt: "Групповое занятие детской школы тенниса в клубе",
   },
 } satisfies Record<string, MediaImageSource>;
@@ -96,7 +96,7 @@ export const media = {
       alt: "Общефизическая подготовка в зале клуба",
     },
     padel: {
-      src: "/images/services/IMG_8857.jpg",
+      src: "/images/services/IMG_8857.webp",
       alt: "Падел — ракетка и мячи на корте клуба",
     },
     ofp: {

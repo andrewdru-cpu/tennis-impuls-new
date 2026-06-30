@@ -25,8 +25,8 @@ function NewsCard({
     <Reveal delay={index * 0.06}>
       <Card
         className={cn(
-          "group relative flex h-full cursor-pointer flex-col overflow-hidden border-forest-900/10 shadow-card",
-          "transition-all duration-500 hover:-translate-y-1 hover:border-lime/45 hover:shadow-glow"
+          "group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl p-0",
+          "hover:border-sand/40 hover:shadow-glow"
         )}
         onClick={() => onOpen(article)}
         onKeyDown={(e) => {
@@ -43,31 +43,31 @@ function NewsCard({
           media={article.image}
           ratio="photo"
           rounded={false}
-          imageClassName="group-hover:scale-105 saturate-[1.06]"
+          imageClassName="transition-transform duration-750 ease-out-expo saturate-[1.06] group-hover:scale-[1.05]"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
         {isRecentNews(article.dateISO) && (
-          <span className="absolute left-4 top-4 rounded-full bg-lime px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-forest-900 shadow-soft sm:text-xs">
+          <span className="absolute left-4 top-4 rounded-full bg-terracotta px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow-terracotta sm:text-xs">
             Новое
           </span>
         )}
         <div className="relative flex flex-1 flex-col p-5 sm:p-6">
           <time
             dateTime={article.dateISO}
-            className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+            className="text-meta flex items-center gap-1.5"
           >
-            <CalendarDays className="h-3.5 w-3.5 text-lime-600" aria-hidden />
+            <CalendarDays className="h-3.5 w-3.5 text-terracotta" aria-hidden />
             {article.date}
           </time>
-          <h3 className="mt-3 text-card-title transition-colors group-hover:text-lime-600">
+          <h3 className="mt-3 text-card-title transition-colors duration-500 ease-premium group-hover:text-terracotta">
             {article.title}
           </h3>
           <p className="mt-2 line-clamp-3 flex-1 text-card-body">
             {article.excerpt}
           </p>
-          <span className="mt-5 inline-flex min-h-[44px] items-center gap-1.5 text-sm font-semibold text-forest-900 transition-colors group-hover:text-lime-600">
+          <span className="mt-5 inline-flex min-h-[44px] items-center gap-1.5 text-sm font-semibold text-forest-900 transition-colors duration-500 ease-premium group-hover:text-terracotta">
             Читать полностью
-            <ArrowUpRight className="h-4 w-4 shrink-0" />
+            <ArrowUpRight className="link-arrow h-4 w-4 shrink-0" />
           </span>
         </div>
       </Card>

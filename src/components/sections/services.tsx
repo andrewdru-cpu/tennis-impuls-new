@@ -60,7 +60,6 @@ const courtTypes: {
   icon: LucideIcon;
   title: string;
   text: string;
-  image?: MediaImageSource;
 }[] = [
   {
     icon: Layers,
@@ -71,7 +70,6 @@ const courtTypes: {
     icon: Baby,
     title: "Детские корты",
     text: "Адаптированные корты для юных спортсменов — безопасно и удобно",
-    image: media.kids.training1,
   },
   {
     icon: Target,
@@ -85,6 +83,7 @@ const gameZoneItems: {
   title: string;
   text: string;
   image?: MediaImageSource;
+  imagePlaceholder?: boolean;
   highlight?: string;
 }[] = [
   {
@@ -110,7 +109,7 @@ const gameZoneItems: {
     icon: Table2,
     title: "Настольный теннис",
     text: "4 профессиональных стола, разделённых на 4 игровых сектора — играйте парами или компанией",
-    image: media.services.activities,
+    imagePlaceholder: true,
   },
   {
     icon: ShowerHead,
@@ -151,36 +150,41 @@ const fitnessTraining = [
   },
 ];
 
-const fitnessDirections = [
+const fitnessDirections: {
+  icon: LucideIcon;
+  title: string;
+  text: string;
+  imagePlaceholder: true;
+}[] = [
   {
     icon: Music,
     title: "Танцевальная студия",
     text: "Групповые и индивидуальные занятия — пластика, координация и драйв",
-    image: media.services.activities,
+    imagePlaceholder: true,
   },
   {
     icon: Flower2,
     title: "Студия йоги",
     text: "Восстановление, гибкость и баланс — практики для тела и дыхания",
-    image: media.gallery[3],
+    imagePlaceholder: true,
   },
   {
     icon: Dumbbell,
     title: "Тренажёрный зал",
     text: "Силовая и функциональная подготовка на профессиональном оборудовании",
-    image: media.services.fitness,
+    imagePlaceholder: true,
   },
   {
     icon: Activity,
     title: "Залы ОФП",
     text: "Общая физическая подготовка — станки, зеркала, инвентарь для любого уровня",
-    image: media.services.ofp,
+    imagePlaceholder: true,
   },
   {
     icon: Shield,
     title: "Секция каратэ",
     text: "Тренировки для детей и взрослых — дисциплина, техника и уверенность",
-    image: media.services.karate,
+    imagePlaceholder: true,
   },
 ];
 
@@ -214,7 +218,7 @@ function BlockHeader({
       </span>
       <h3
         className={cn(
-          "mt-4 font-display text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl",
+          "heading-feature mt-4",
           isDark ? "text-white" : "text-forest-900"
         )}
       >
@@ -222,8 +226,8 @@ function BlockHeader({
       </h3>
       <p
         className={cn(
-          "mt-3 text-base leading-relaxed sm:text-lg sm:leading-7",
-          isDark ? "text-white/75" : "text-muted-foreground"
+          "mt-3 max-w-[42rem] text-pretty text-body sm:text-body-lg sm:leading-[1.7]",
+          isDark ? "text-white/80" : "text-muted-foreground"
         )}
       >
         {description}
@@ -240,24 +244,25 @@ function SurfaceCard({
   index: number;
 }) {
   return (
-    <Reveal delay={index * 0.06}>
-      <div className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:border-lime/40 hover:bg-white/10">
+    <Reveal delay={index * 0.06} className="h-full">
+      <div className="group card-media-dark">
         <MediaImage
           media={item.image}
           ratio="photo"
           rounded={false}
           overlay
-          imageClassName="group-hover:scale-105 saturate-[1.12]"
+          className="shrink-0 rounded-none"
+          imageClassName="object-cover object-center transition-transform duration-700 ease-premium group-hover:scale-105 saturate-[1.12]"
           sizes="(max-width: 768px) 100vw, 33vw"
         />
-        <div className="p-4 sm:p-5">
-          <p className="text-xs font-semibold uppercase tracking-wider text-lime/80">
+        <div className="flex flex-1 flex-col p-5 sm:p-6">
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-sand/80">
             {item.label}
           </p>
-          <p className="mt-1 font-display text-lg font-bold text-white">
+          <p className="mt-1.5 font-display text-lg font-bold text-white sm:text-xl">
             {item.surface}
           </p>
-          <p className="mt-2 text-sm leading-relaxed text-white/65">
+          <p className="mt-2 flex-1 text-sm leading-relaxed text-white/70">
             {item.detail}
           </p>
         </div>
@@ -266,11 +271,27 @@ function SurfaceCard({
   );
 }
 
+function ImagePlaceholder({ tone }: { tone: "dark" | "light" }) {
+  return (
+    <div
+      className={cn(
+        tone === "dark" ? "card-placeholder-dark" : "card-placeholder-light"
+      )}
+      aria-hidden
+    >
+      <span className="text-[11px] font-semibold uppercase tracking-[0.18em]">
+        Фото скоро
+      </span>
+    </div>
+  );
+}
+
 function CompactFeature({
   icon: Icon,
   title,
   text,
   image,
+  imagePlaceholder,
   highlight,
   tone,
   index,
@@ -279,59 +300,53 @@ function CompactFeature({
   title: string;
   text: string;
   image?: MediaImageSource;
+  imagePlaceholder?: boolean;
   highlight?: string;
   tone: "dark" | "light";
   index: number;
 }) {
   const isDark = tone === "dark";
   return (
-    <Reveal delay={index * 0.04}>
+    <Reveal delay={index * 0.04} className="h-full">
       <div
         className={cn(
-          "group flex h-full flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow",
-          isDark
-            ? "border-white/10 bg-white/[0.06] hover:border-lime/35"
-            : "border-forest-900/10 bg-white hover:border-lime/45"
+          "group flex h-full flex-col overflow-hidden rounded-2xl transition-all duration-500 ease-premium",
+          isDark ? "card-glass-dark hover:-translate-y-1" : "card-media-light"
         )}
       >
-        {image && (
+        {image ? (
           <MediaImage
             media={image}
             ratio="wide"
             rounded={false}
-            imageClassName="group-hover:scale-105 saturate-[1.1]"
+            imageClassName="transition-transform duration-700 ease-premium group-hover:scale-105 saturate-[1.1]"
             sizes="(max-width: 768px) 100vw, 50vw"
           />
-        )}
-        <div className="flex flex-1 gap-3.5 p-4 sm:p-5">
-          <span
-            className={cn(
-              "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl",
-              isDark
-                ? "bg-lime/20 text-lime ring-1 ring-lime/30"
-                : "bg-gradient-to-br from-lime/30 to-lime/10 text-forest-900"
-            )}
-          >
+        ) : imagePlaceholder ? (
+          <ImagePlaceholder tone={tone} />
+        ) : null}
+        <div className="flex flex-1 gap-4 p-5 sm:p-6">
+          <span className={isDark ? "icon-wrap-dark" : "icon-wrap"}>
             <Icon className="h-5 w-5" aria-hidden />
           </span>
           <div className="min-w-0">
             <h4
               className={cn(
-                "font-display text-base font-semibold sm:text-lg",
+                "font-display text-base font-bold sm:text-lg",
                 isDark ? "text-white" : "text-forest-900"
               )}
             >
               {title}
             </h4>
             {highlight && (
-              <p className="mt-1 text-xs font-semibold text-lime sm:text-sm">
+              <p className="mt-1.5 text-xs font-semibold text-sand sm:text-sm">
                 {highlight}
               </p>
             )}
             <p
               className={cn(
-                "mt-1.5 text-sm leading-relaxed",
-                isDark ? "text-white/65" : "text-muted-foreground"
+                "mt-2 text-sm leading-relaxed",
+                isDark ? "text-white/70" : "text-muted-foreground"
               )}
             >
               {text}
@@ -353,24 +368,24 @@ function TrainingCard({
   const Icon = item.icon;
   return (
     <Reveal delay={index * 0.08}>
-      <div className="group flex h-full flex-col overflow-hidden rounded-3xl border border-lime/30 bg-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-lime/60 hover:shadow-glow">
+      <div className="group card-media-light rounded-3xl border-sand/20">
         <MediaImage
           media={item.image}
           ratio="photo"
           rounded={false}
           overlay
-          imageClassName="group-hover:scale-105 saturate-[1.12]"
+          imageClassName="transition-transform duration-700 ease-premium group-hover:scale-105 saturate-[1.12]"
           sizes="(max-width: 768px) 100vw, 50vw"
         />
-        <div className="flex flex-1 flex-col p-5 sm:p-6">
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-lime/25 text-forest-900 ring-1 ring-lime/40">
+        <div className="flex flex-1 flex-col p-6 sm:p-7">
+          <span className="icon-wrap w-fit">
             <Icon className="h-5 w-5" aria-hidden />
           </span>
           <h4 className="mt-4 text-card-title">{item.title}</h4>
           <p className="mt-2 flex-1 text-card-body">{item.text}</p>
           <a
             href="#booking"
-            className="mt-5 inline-flex min-h-[44px] items-center gap-1.5 text-sm font-semibold text-forest-900 transition-colors group-hover:text-lime-600"
+            className="mt-6 inline-flex min-h-[44px] items-center gap-1.5 text-sm font-semibold text-forest-900 transition-colors group-hover:text-terracotta"
           >
             Записаться
             <ArrowUpRight className="h-4 w-4 shrink-0" />
@@ -432,7 +447,7 @@ export function Services() {
                 <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-lime/80">
                   Покрытия кортов
                 </h4>
-                <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3 md:items-stretch">
                   {courtSurfaces.map((item, i) => (
                     <SurfaceCard key={item.label} item={item} index={i} />
                   ))}
@@ -444,29 +459,18 @@ export function Services() {
                 <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-lime/80">
                   Типы площадок
                 </h4>
-                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-stretch">
                   {courtTypes.map((item, i) => (
-                    <Reveal key={item.title} delay={0.1 + i * 0.05}>
-                      <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] transition-colors hover:border-lime/35">
-                        {item.image && (
-                          <MediaImage
-                            media={item.image}
-                            ratio="wide"
-                            rounded={false}
-                            imageClassName="group-hover:scale-105 saturate-[1.1]"
-                            sizes="(max-width: 640px) 100vw, 33vw"
-                          />
-                        )}
-                        <div className="flex flex-1 items-start gap-3 p-4">
-                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-lime/20 text-lime">
-                            <item.icon className="h-5 w-5" aria-hidden />
-                          </span>
-                          <div>
-                            <p className="font-semibold text-white">{item.title}</p>
-                            <p className="mt-1 text-sm leading-relaxed text-white/60">
-                              {item.text}
-                            </p>
-                          </div>
+                    <Reveal key={item.title} delay={0.1 + i * 0.05} className="h-full">
+                      <div className="card-glass-dark group flex h-full items-start gap-4 p-5">
+                        <span className="icon-wrap-dark">
+                          <item.icon className="h-5 w-5" aria-hidden />
+                        </span>
+                        <div className="min-w-0">
+                          <p className="font-display font-bold text-white">{item.title}</p>
+                          <p className="mt-1.5 text-sm leading-relaxed text-white/70">
+                            {item.text}
+                          </p>
                         </div>
                       </div>
                     </Reveal>
@@ -477,7 +481,7 @@ export function Services() {
               {/* Игровая зона */}
               <div>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                  <h4 className="font-display text-xl font-bold text-white sm:text-2xl">
+                  <h4 className="heading-subsection heading-subsection-light">
                     Игровая зона
                   </h4>
                   <p className="max-w-md text-sm text-white/60">
@@ -566,7 +570,7 @@ export function Services() {
                       icon={item.icon}
                       title={item.title}
                       text={item.text}
-                      image={item.image}
+                      imagePlaceholder={item.imagePlaceholder}
                       tone="light"
                       index={i}
                     />

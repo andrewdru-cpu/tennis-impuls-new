@@ -25,7 +25,7 @@ export function Booking() {
         <>
           <div className="absolute inset-0 bg-grid opacity-[0.12]" aria-hidden />
           <div
-            className="absolute -right-40 top-0 h-[420px] w-[420px] rounded-full bg-lime/20 blur-[120px]"
+            className="absolute -right-40 top-0 h-[420px] w-[420px] rounded-full bg-lime/28 blur-[120px]"
             aria-hidden
           />
         </>
@@ -50,7 +50,7 @@ export function Booking() {
            Позже подключить к реальной системе бронирования / CRM / API.
       */}
       <Reveal delay={0.1} className="section-inner mx-auto max-w-lg">
-        <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-xl sm:p-7 lg:p-8">
+        <div className="card-form-dark">
           <div className="space-y-6">
             <div>
               <label className="mb-3 flex items-center gap-2 text-sm font-medium text-white/70">
@@ -64,11 +64,10 @@ export function Booking() {
                     type="button"
                     onClick={() => setCourt(c)}
                     className={cn(
-                      "min-h-[44px] rounded-xl border px-3 py-3 text-xs font-semibold transition-all duration-200 sm:text-sm",
-                      "active:scale-[0.98]",
+                      "chip-interactive min-h-[44px] rounded-xl border px-3 py-3 text-xs font-semibold sm:text-sm",
                       court === c
-                        ? "border-lime bg-lime text-forest-900 shadow-[0_0_0_1px_rgba(184,224,62,0.4)]"
-                        : "border-white/15 bg-white/5 text-white/80 hover:border-white/40 hover:bg-white/10"
+                        ? "border-lime bg-lime text-forest-900 shadow-lime"
+                        : "border-white/15 bg-white/5 text-white/80 hover:border-lime/40 hover:bg-lime/10"
                     )}
                   >
                     {c}
@@ -82,18 +81,17 @@ export function Booking() {
                 <Clock className="h-4 w-4 shrink-0 text-lime" />
                 Время
               </label>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2.5">
                 {times.map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setTime(t)}
                     className={cn(
-                      "min-h-[44px] rounded-xl border px-3 py-2.5 text-sm font-semibold transition-all duration-200 sm:px-4",
-                      "active:scale-[0.98]",
+                      "chip-interactive min-h-[44px] rounded-xl border px-3 py-2.5 text-sm font-semibold sm:px-4",
                       time === t
-                        ? "border-lime bg-lime text-forest-900 shadow-[0_0_0_1px_rgba(184,224,62,0.4)]"
-                        : "border-white/15 bg-white/5 text-white/80 hover:border-white/40 hover:bg-white/10"
+                        ? "border-lime bg-lime text-forest-900 shadow-lime"
+                        : "border-white/15 bg-white/5 text-white/80 hover:border-lime/40 hover:bg-lime/10"
                     )}
                   >
                     {t}

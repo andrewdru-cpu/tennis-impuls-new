@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import { transitionMenu, transitionMenuItem } from "@/lib/motion";
 
 const contactLinks = [
   {
@@ -98,7 +99,7 @@ export function ContactMenu({ className, variant = "light" }: ContactMenuProps) 
         </span>
         <ChevronDown
           className={cn(
-            "h-5 w-5 transition-transform duration-300",
+            "h-5 w-5 transition-transform duration-500 ease-out-expo",
             open && "rotate-180"
           )}
         />
@@ -111,7 +112,7 @@ export function ContactMenu({ className, variant = "light" }: ContactMenuProps) 
             initial={{ opacity: 0, y: -8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
-            transition={{ duration: 0.2, ease: [0.21, 0.47, 0.32, 0.98] }}
+            transition={transitionMenu}
             className={cn(
               "absolute left-0 right-0 z-50 mt-2 overflow-hidden rounded-2xl border shadow-card sm:right-auto sm:min-w-[320px]",
               isDark
@@ -125,7 +126,7 @@ export function ContactMenu({ className, variant = "light" }: ContactMenuProps) 
                   key={item.label}
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.04, duration: 0.2 }}
+                  transition={{ delay: i * 0.035, ...transitionMenuItem }}
                 >
                   <a
                     role="menuitem"
@@ -134,7 +135,7 @@ export function ContactMenu({ className, variant = "light" }: ContactMenuProps) 
                     rel={item.external ? "noreferrer" : undefined}
                     onClick={() => setOpen(false)}
                     className={cn(
-                      "flex min-h-11 items-center gap-3 rounded-xl px-4 py-3.5 text-sm font-medium transition-colors",
+                      "flex min-h-11 items-center gap-3 rounded-xl px-4 py-3.5 text-sm font-medium transition-[background-color,color] duration-400 ease-premium",
                       isDark
                         ? "text-white/90 hover:bg-white/10 hover:text-white"
                         : "text-forest-900 hover:bg-forest-900/5"

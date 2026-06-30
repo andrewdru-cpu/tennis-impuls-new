@@ -103,7 +103,7 @@ export function MediaImage({
             background:
               typeof overlay === "string"
                 ? overlay
-                : "linear-gradient(to top, rgba(8,35,26,0.65) 0%, rgba(8,35,26,0.05) 55%, transparent 100%)",
+                : "linear-gradient(to top, rgba(10,47,36,0.68) 0%, rgba(10,47,36,0.06) 55%, transparent 100%)",
           }}
         />
       )}

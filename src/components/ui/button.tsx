@@ -5,22 +5,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-[transform,background-color,box-shadow,border-color,color,opacity] duration-500 ease-premium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/50 focus-visible:ring-offset-2 focus-visible:ring-offset-cream disabled:pointer-events-none disabled:opacity-50 active:scale-[0.985] active:duration-150 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         primary:
-          "bg-lime text-forest-900 shadow-soft hover:bg-lime-300 hover:shadow-glow hover:-translate-y-0.5 hover:brightness-105",
-        dark: "bg-forest-900 text-white shadow-soft hover:bg-forest-800 hover:-translate-y-0.5",
+          "bg-gradient-to-r from-terracotta to-terracotta-500 text-white shadow-terracotta hover:from-terracotta-500 hover:to-terracotta-600 hover:shadow-glow hover:-translate-y-px",
+        dark: "bg-forest-900 text-white shadow-soft hover:bg-forest-800 hover:shadow-elevated hover:-translate-y-px",
         outline:
-          "border border-forest-900/20 bg-transparent text-forest-900 hover:border-forest-900 hover:bg-forest-900 hover:text-white hover:-translate-y-0.5",
+          "border-2 border-forest-900/15 bg-white/80 text-forest-900 shadow-soft hover:border-terracotta/40 hover:bg-white hover:text-forest-900 hover:shadow-card hover:-translate-y-px",
         ghost: "bg-transparent text-forest-900 hover:bg-forest-900/5",
         glass:
-          "glass border border-white/20 text-white hover:border-lime/30 hover:bg-white/15 hover:-translate-y-0.5",
-        link: "rounded-none text-forest-900 underline-offset-4 hover:underline active:scale-100",
+          "glass border border-white/25 text-white shadow-soft hover:border-sand/40 hover:bg-white/15 hover:-translate-y-px",
+        link: "rounded-none text-terracotta underline-offset-4 hover:underline hover:text-terracotta-600 active:scale-100",
       },
       size: {
-        sm: "h-10 min-h-10 px-4 text-xs",
+        sm: "h-11 min-h-11 px-4 text-xs",
         default: "h-11 min-h-11 px-6",
         lg: "h-14 min-h-[3.25rem] px-8 text-base",
         icon: "h-11 min-h-11 w-11",

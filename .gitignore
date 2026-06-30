@@ -52,5 +52,10 @@ next-env.d.ts
 !.vscode/extensions.json
 
 # исходные медиа-материалы (тяжёлые оригиналы и скрипты обработки —
-# не нужны в репозитории; готовые фото лежат в public/images)
+# не нужны в репозитории; на сайте используются .webp из public/images)
 /media-raw
+
+# JPEG-оригиналы после конвертации в WebP (не деплоить ~10 MB лишних)
+public/images/**/*.jpg
+public/images/**/*.jpeg
+public/images/**/*.JPG

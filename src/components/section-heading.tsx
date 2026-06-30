@@ -30,14 +30,14 @@ export function SectionHeading({
     >
       {eyebrow && (
         <Reveal>
-          <Badge variant={isLight ? "glass" : "lime"}>{eyebrow}</Badge>
+          <Badge variant={isLight ? "glass" : "terracotta"}>{eyebrow}</Badge>
         </Reveal>
       )}
       <Reveal delay={0.05}>
         <h2
           className={cn(
-            "mt-4 font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl lg:text-[2.5rem] lg:leading-[1.12]",
-            isLight ? "text-white" : "text-forest-900"
+            "heading-section mt-4",
+            isLight && "heading-section-light"
           )}
         >
           {title}
@@ -47,8 +47,8 @@ export function SectionHeading({
         <Reveal delay={0.1}>
           <p
             className={cn(
-              "mt-4 max-w-2xl text-base leading-relaxed sm:text-lg sm:leading-7",
-              isLight ? "text-white/75" : "text-muted-foreground"
+              "mt-4 max-w-[42rem] text-pretty text-body sm:text-body-lg sm:leading-[1.7]",
+              isLight ? "text-white/80" : "text-muted-foreground"
             )}
           >
             {description}

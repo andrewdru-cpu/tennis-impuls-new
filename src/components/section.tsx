@@ -7,7 +7,7 @@ type SectionProps = {
   innerClassName?: string;
   /** Фоновые декорации вне container-wide (сетка, блюры) */
   before?: React.ReactNode;
-  /** light = белый, muted = secondary, dark = forest-950 */
+  /** light = cream, muted = secondary, dark = forest-950 */
   tone?: "light" | "muted" | "dark";
 };
 
@@ -24,7 +24,7 @@ export function Section({
       id={id}
       className={cn(
         "section relative",
-        tone === "light" && "bg-white",
+        tone === "light" && "bg-cream",
         tone === "muted" && "bg-secondary",
         tone === "dark" && "bg-forest-950 text-white",
         className

@@ -49,7 +49,7 @@ export function Contacts() {
         <div className="section-inner grid gap-6 lg:grid-cols-2">
           <div>
             <Reveal delay={0.02}>
-              <div className="rounded-3xl border border-forest-900/10 bg-white p-4 sm:p-6">
+              <div className="card-surface overflow-visible rounded-3xl p-4 sm:p-6">
                 <p className="mb-4 text-sm font-medium text-muted-foreground">
                   Выберите удобный способ связи — ответим быстро.
                 </p>
@@ -60,25 +60,23 @@ export function Contacts() {
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               {contactCards.map((c, i) => (
                 <Reveal key={c.label} delay={0.08 + i * 0.05}>
-                  <div className="flex h-full flex-col gap-3 rounded-3xl border border-forest-900/10 bg-white p-6">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-forest-900 text-lime">
+                  <div className="card-feature group rounded-3xl">
+                    <span className="icon-wrap-solid">
                       <c.icon className="h-5 w-5" />
                     </span>
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                         {c.label}
                       </p>
                       {c.href ? (
                         <a
                           href={c.href}
-                          className="mt-1 block text-card-title transition-colors hover:text-lime-600"
+                          className="touch-link mt-0.5 block text-card-title hover:text-terracotta"
                         >
                           {c.value}
                         </a>
                       ) : (
-                        <p className="mt-1 text-card-title">
-                          {c.value}
-                        </p>
+                        <p className="mt-1 text-card-title">{c.value}</p>
                       )}
                     </div>
                   </div>
@@ -92,7 +90,7 @@ export function Contacts() {
                (iframe или react-компонент) с реальной точкой клуба.
           */}
           <Reveal delay={0.1}>
-            <div className="relative flex min-h-[320px] flex-col justify-end overflow-hidden rounded-3xl bg-forest-950 p-8 text-white">
+            <div className="relative flex min-h-[280px] flex-col justify-end overflow-hidden rounded-3xl bg-forest-950 p-6 text-white sm:min-h-[320px] sm:p-8">
               <div
                 className="absolute inset-0 bg-grid opacity-20"
                 aria-hidden
@@ -111,7 +109,7 @@ export function Contacts() {
                 <p className="mt-1 text-sm text-white/70">
                   {siteConfig.address}
                 </p>
-                <Button asChild variant="primary" className="mt-5">
+                <Button asChild variant="primary" size="lg" className="mt-5 w-full sm:w-auto">
                   <a
                     href={siteConfig.mapsUrl}
                     target="_blank"

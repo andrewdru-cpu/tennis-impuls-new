@@ -5,8 +5,10 @@ import { cn } from "@/lib/utils";
 interface LogoProps {
   className?: string;
   variant?: "light" | "dark";
-  /** Показать текстовый wordmark рядом с эмблемой (по умолчанию да) */
+  /** Показать текстовый wordmark рядом с эмблемой (по умолчанию true) */
   showWordmark?: boolean;
+  /** Компактный вид для узкой шапки на мобильных */
+  compact?: boolean;
 }
 
 /**
@@ -20,11 +22,12 @@ export function Logo({
   className,
   variant = "dark",
   showWordmark = true,
+  compact = false,
 }: LogoProps) {
   const isLight = variant === "light";
   return (
-    <div className={cn("flex items-center gap-2.5", className)}>
-      <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-black/5">
+    <div className={cn("flex min-w-0 items-center gap-2 sm:gap-2.5", className)}>
+      <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-black/5 sm:h-11 sm:w-11">
         <Image
           src="/logo/logo-full.png"
           alt="Эмблема ЦТТ Импульс"
@@ -35,10 +38,10 @@ export function Logo({
         />
       </span>
       {showWordmark && (
-        <div className="flex flex-col leading-none">
+        <div className="flex min-w-0 flex-col leading-none">
           <span
             className={cn(
-              "font-display text-lg font-extrabold tracking-tight",
+              "truncate font-display text-base font-extrabold tracking-tight sm:text-lg",
               isLight ? "text-white" : "text-forest-900"
             )}
           >
@@ -46,7 +49,8 @@ export function Logo({
           </span>
           <span
             className={cn(
-              "text-[10px] font-semibold uppercase tracking-[0.26em]",
+              "truncate text-[10px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.26em]",
+              compact && "hidden min-[400px]:block",
               isLight ? "text-lime" : "text-lime-600"
             )}
           >

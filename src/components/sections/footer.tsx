@@ -6,7 +6,7 @@ import { navItems, siteConfig } from "@/lib/site";
 export function Footer() {
   return (
     <footer className="bg-forest-950 text-white">
-      <div className="container-wide py-16 sm:py-20">
+      <div className="container-wide py-12 sm:py-20">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <Logo variant="light" />
@@ -20,21 +20,21 @@ export function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Telegram"
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-lime hover:text-forest-900"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-[transform,background-color,color] duration-500 ease-premium hover:scale-105 hover:bg-lime hover:text-forest-900"
               >
                 <Send className="h-4 w-4" />
               </a>
               <a
                 href={siteConfig.phoneHref}
                 aria-label="Позвонить"
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-lime hover:text-forest-900"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-[transform,background-color,color] duration-500 ease-premium hover:scale-105 hover:bg-lime hover:text-forest-900"
               >
                 <Phone className="h-4 w-4" />
               </a>
               <a
                 href={`mailto:${siteConfig.email}`}
                 aria-label="Написать"
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-lime hover:text-forest-900"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-[transform,background-color,color] duration-500 ease-premium hover:scale-105 hover:bg-lime hover:text-forest-900"
               >
                 <Mail className="h-4 w-4" />
               </a>
@@ -45,13 +45,10 @@ export function Footer() {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">
               Навигация
             </p>
-            <ul className="mt-5 grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
+            <ul className="mt-5 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
               {navItems.map((item) => (
                 <li key={item.href}>
-                  <a
-                    href={item.href}
-                    className="text-white/70 transition-colors hover:text-lime"
-                  >
+                  <a href={item.href} className="touch-link text-white/70 hover:text-lime">
                     {item.label}
                   </a>
                 </li>
@@ -63,25 +60,22 @@ export function Footer() {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">
               Контакты
             </p>
-            <ul className="mt-5 space-y-3 text-sm text-white/70">
+            <ul className="mt-5 space-y-1 text-sm text-white/70">
               <li>
-                <a
-                  href={siteConfig.phoneHref}
-                  className="transition-colors hover:text-lime"
-                >
+                <a href={siteConfig.phoneHref} className="touch-link hover:text-lime">
                   {siteConfig.phone}
                 </a>
               </li>
               <li>
                 <a
                   href={`mailto:${siteConfig.email}`}
-                  className="transition-colors hover:text-lime"
+                  className="touch-link hover:text-lime"
                 >
                   {siteConfig.email}
                 </a>
               </li>
-              <li>{siteConfig.address}</li>
-              <li>Ежедневно, 07:00 – 23:00</li>
+              <li className="py-2 leading-relaxed">{siteConfig.address}</li>
+              <li className="py-2 leading-relaxed">Ежедневно, 07:00 – 23:00</li>
             </ul>
           </div>
         </div>
