@@ -69,8 +69,10 @@ export const media = {
   /* -------------------------------------------------------------- HERO --- */
   hero: {
     kind: "image",
-    src: "/images/hero/poster.webp",
-    alt: "Теннисный комплекс ЦТТ Импульс у Лосиного Острова — яркий вид на корты и инфраструктуру",
+    src: "/images/hero/new-hero.webp",
+    alt: "Аэрофото теннисного комплекса ЦТТ Импульс — главное здание с надписью и корты у Лосиного Острова",
+    width: 1920,
+    height: 800,
   } as HeroMedia,
 
   /* ------------------------------------------------------------- KIDS --- */
@@ -99,13 +101,33 @@ export const media = {
       src: "/images/services/IMG_8857.webp",
       alt: "Падел — ракетка и мячи на корте клуба",
     },
+    groundCourt: {
+      src: "/images/services/ground-court.jpg",
+      alt: "Грунтовые корты с покрытием Tennisit в ЦТТ Импульс",
+    },
+    yogaStudio: {
+      src: "/images/services/yoga-studio.jpg",
+      alt: "Студия йоги в ЦТТ Импульс",
+    },
+    danceStudio: {
+      src: "/images/services/dance-studio.jpg",
+      alt: "Танцевальная студия в ЦТТ Импульс",
+    },
+    gymHall: {
+      src: "/images/services/gym-hall.jpg",
+      alt: "Тренажёрный зал в ЦТТ Импульс",
+    },
+    ofpTraining: {
+      src: "/images/services/ofp-training.jpg",
+      alt: "Зал общей физической подготовки в ЦТТ Импульс",
+    },
     ofp: {
       src: "/images/facilities/hall.webp",
       alt: "Зал общей физической подготовки в клубе",
     },
     karate: {
-      src: "/images/team/coach-5.webp",
-      alt: "Тренировка по каратэ в секции клуба",
+      src: "/images/services/karate.jpg",
+      alt: "Секция каратэ в ЦТТ Импульс",
     },
     activities: {
       src: "/images/gallery/02.webp",

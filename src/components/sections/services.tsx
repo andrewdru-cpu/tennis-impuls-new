@@ -46,7 +46,8 @@ const courtSurfaces = [
     surface: "Tennisit",
     detail:
       "Премиальное грунтовое покрытие Tennisit — мягкий отскок и естественная игра на свежем воздухе",
-    image: media.facilities.outdoor,
+    image: media.services.groundCourt,
+    imagePosition: "center 38%",
   },
   {
     label: "Падел-корт",
@@ -154,37 +155,44 @@ const fitnessDirections: {
   icon: LucideIcon;
   title: string;
   text: string;
-  imagePlaceholder: true;
+  image?: MediaImageSource;
+  imagePosition?: string;
+  imagePlaceholder?: boolean;
 }[] = [
   {
     icon: Music,
     title: "Танцевальная студия",
     text: "Групповые и индивидуальные занятия — пластика, координация и драйв",
-    imagePlaceholder: true,
+    image: media.services.danceStudio,
+    imagePosition: "center 42%",
   },
   {
     icon: Flower2,
     title: "Студия йоги",
     text: "Восстановление, гибкость и баланс — практики для тела и дыхания",
-    imagePlaceholder: true,
+    image: media.services.yogaStudio,
+    imagePosition: "center 42%",
   },
   {
     icon: Dumbbell,
     title: "Тренажёрный зал",
     text: "Силовая и функциональная подготовка на профессиональном оборудовании",
-    imagePlaceholder: true,
+    image: media.services.gymHall,
+    imagePosition: "center 42%",
   },
   {
     icon: Activity,
     title: "Залы ОФП",
     text: "Общая физическая подготовка — станки, зеркала, инвентарь для любого уровня",
-    imagePlaceholder: true,
+    image: media.services.ofpTraining,
+    imagePosition: "center 45%",
   },
   {
     icon: Shield,
     title: "Секция каратэ",
     text: "Тренировки для детей и взрослых — дисциплина, техника и уверенность",
-    imagePlaceholder: true,
+    image: media.services.karate,
+    imagePosition: "center 40%",
   },
 ];
 
@@ -251,8 +259,9 @@ function SurfaceCard({
           ratio="photo"
           rounded={false}
           overlay
+          position={item.imagePosition ?? "center"}
           className="shrink-0 rounded-none"
-          imageClassName="object-cover object-center transition-transform duration-700 ease-premium group-hover:scale-105 saturate-[1.12]"
+          imageClassName="object-cover transition-transform duration-700 ease-premium group-hover:scale-105 saturate-[1.12]"
           sizes="(max-width: 768px) 100vw, 33vw"
         />
         <div className="flex flex-1 flex-col p-5 sm:p-6">
@@ -292,6 +301,7 @@ function CompactFeature({
   text,
   image,
   imagePlaceholder,
+  imagePosition,
   highlight,
   tone,
   index,
@@ -301,6 +311,7 @@ function CompactFeature({
   text: string;
   image?: MediaImageSource;
   imagePlaceholder?: boolean;
+  imagePosition?: string;
   highlight?: string;
   tone: "dark" | "light";
   index: number;
@@ -319,6 +330,7 @@ function CompactFeature({
             media={image}
             ratio="wide"
             rounded={false}
+            position={imagePosition ?? "center"}
             imageClassName="transition-transform duration-700 ease-premium group-hover:scale-105 saturate-[1.1]"
             sizes="(max-width: 768px) 100vw, 50vw"
           />
@@ -570,6 +582,8 @@ export function Services() {
                       icon={item.icon}
                       title={item.title}
                       text={item.text}
+                      image={item.image}
+                      imagePosition={item.imagePosition}
                       imagePlaceholder={item.imagePlaceholder}
                       tone="light"
                       index={i}

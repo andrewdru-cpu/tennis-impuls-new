@@ -59,3 +59,10 @@ next-env.d.ts
 public/images/**/*.jpg
 public/images/**/*.jpeg
 public/images/**/*.JPG
+# Исключение: фото грунтового корта в блоке «Услуги»
+!public/images/services/ground-court.jpg
+!public/images/services/yoga-studio.jpg
+!public/images/services/ofp-training.jpg
+!public/images/services/dance-studio.jpg
+!public/images/services/gym-hall.jpg
+!public/images/services/karate.jpg

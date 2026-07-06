@@ -3,13 +3,24 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { media as siteMedia, type HeroMedia as HeroMediaType } from "@/lib/media";
 
-/** Многослойный оверлей: глубина, контраст, тёплые акценты слева */
-const HERO_OVERLAY = [
-  "linear-gradient(105deg, rgba(10,47,36,0.92) 0%, rgba(10,47,36,0.74) 28%, rgba(10,47,36,0.38) 58%, rgba(10,47,36,0.12) 100%)",
-  "linear-gradient(180deg, rgba(10,47,36,0.6) 0%, transparent 28%, transparent 52%, rgba(5,25,18,0.9) 100%)",
-  "radial-gradient(ellipse 90% 70% at 15% 50%, rgba(206,88,56,0.26) 0%, transparent 55%)",
-  "radial-gradient(ellipse 55% 45% at 88% 18%, rgba(212,165,116,0.18) 0%, transparent 50%)",
-  "radial-gradient(ellipse 50% 40% at 70% 75%, rgba(180,220,66,0.14) 0%, transparent 50%)",
+/**
+ * Оверлеи под new-hero.webp:
+ * — слева и в центре «окно» для здания «ЦТТ Импульс» и кортов;
+ * — справа плотнее — под текстовую колонку (второстепенные постройки).
+ */
+const OVERLAY_DESKTOP = [
+  "linear-gradient(252deg, rgba(10,47,36,0.88) 0%, rgba(10,47,36,0.72) 18%, rgba(10,47,36,0.38) 38%, rgba(10,47,36,0.1) 52%, transparent 58%)",
+  "linear-gradient(78deg, transparent 0%, transparent 42%, rgba(10,47,36,0.06) 50%, rgba(10,47,36,0.22) 62%, rgba(10,47,36,0.55) 78%, rgba(5,25,18,0.82) 100%)",
+  "radial-gradient(ellipse 48% 62% at 40% 54%, transparent 0%, rgba(10,47,36,0.08) 72%, rgba(10,47,36,0.2) 100%)",
+  "linear-gradient(180deg, rgba(10,47,36,0.32) 0%, transparent 14%, transparent 72%, rgba(5,25,18,0.12) 90%, rgba(5,25,18,0.42) 100%)",
+  "radial-gradient(ellipse 55% 75% at 92% 48%, rgba(10,47,36,0.45) 0%, transparent 62%)",
+  "radial-gradient(ellipse 40% 35% at 88% 88%, rgba(206,88,56,0.16) 0%, transparent 58%)",
+].join(", ");
+
+const OVERLAY_MOBILE = [
+  "linear-gradient(180deg, rgba(10,47,36,0.22) 0%, transparent 26%, transparent 46%, rgba(10,47,36,0.38) 64%, rgba(5,25,18,0.94) 100%)",
+  "linear-gradient(270deg, rgba(10,47,36,0.55) 0%, rgba(10,47,36,0.2) 32%, transparent 58%)",
+  "radial-gradient(ellipse 60% 50% at 45% 38%, transparent 0%, rgba(10,47,36,0.1) 68%, rgba(10,47,36,0.28) 100%)",
 ].join(", ");
 
 function heroImageSrc(media: HeroMediaType): string {
@@ -33,54 +44,64 @@ export function HeroMedia({
   const alt = heroImageAlt(media);
 
   return (
-    <div className={cn("absolute inset-0 -z-10 overflow-hidden bg-forest-950", className)}>
+    <div className={cn("absolute inset-0 z-0 overflow-hidden bg-forest-950", className)}>
+      {/* object-cover со scale=1 — фото всегда заполняет фон без тёмных полей;
+          кадр центрирован на здании «ЦТТ Импульс», чтобы оно не обрезалось */}
       <Image
         src={src}
         alt={alt}
         fill
         priority
+        quality={90}
         sizes="100vw"
-        className="object-cover object-center scale-[1.06] brightness-[0.94] saturate-[1.22] contrast-[1.06]"
+        className={cn(
+          "object-cover brightness-[1.02] saturate-[1.06] contrast-[1.02]",
+          "object-[58%_44%] sm:object-[56%_47%] lg:object-[55%_50%]"
+        )}
       />
 
       <div
-        className="absolute inset-0"
-        style={{ background: HERO_OVERLAY }}
+        className="absolute inset-0 hidden md:block"
+        style={{ background: OVERLAY_DESKTOP }}
         aria-hidden
       />
 
-      {/* Виньетка по краям */}
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(5,25,18,0.45)_100%)]"
+        className="absolute inset-0 md:hidden"
+        style={{ background: OVERLAY_MOBILE }}
         aria-hidden
       />
 
-      {/* Световые акценты палитры */}
+      {/* Мягкая виньетка — слабее в центре-слева, где здание */}
       <div
-        className="absolute -left-24 top-[18%] h-[520px] w-[520px] rounded-full bg-terracotta/35 blur-[120px]"
-        aria-hidden
-      />
-      <div
-        className="absolute -right-16 top-[8%] h-[440px] w-[440px] rounded-full bg-sand/28 blur-[100px]"
-        aria-hidden
-      />
-      <div
-        className="absolute bottom-[20%] left-[40%] h-[320px] w-[320px] rounded-full bg-lime/20 blur-[90px]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_90%_80%_at_38%_52%,transparent_0%,rgba(5,25,18,0.32)_100%)]"
         aria-hidden
       />
 
-      {/* Нижний fade + тонкая линия акцента */}
+      {/* Свечения — справа под текст, слева не затемняем здание */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-forest-950 via-forest-950/80 to-transparent"
+        className="absolute -right-20 top-[14%] hidden h-[420px] w-[360px] rounded-full bg-terracotta/28 blur-[120px] md:block"
         aria-hidden
       />
       <div
-        className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-terracotta/15 via-lime/35 to-sand/25"
+        className="absolute bottom-[18%] right-[8%] hidden h-[240px] w-[240px] rounded-full bg-lime/14 blur-[90px] md:block"
+        aria-hidden
+      />
+      <div
+        className="absolute left-[4%] top-[20%] h-[200px] w-[200px] rounded-full bg-sand/10 blur-[80px] md:opacity-60"
         aria-hidden
       />
 
-      {/* Лёгкая сетка для премиальной текстуры */}
-      <div className="absolute inset-0 bg-grid opacity-[0.06]" aria-hidden />
+      <div
+        className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-forest-950 via-forest-950/60 to-transparent"
+        aria-hidden
+      />
+      <div
+        className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-sand/20 via-lime/35 to-terracotta/25"
+        aria-hidden
+      />
+
+      <div className="absolute inset-0 bg-grid opacity-[0.04]" aria-hidden />
     </div>
   );
 }
