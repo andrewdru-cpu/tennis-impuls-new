@@ -42,6 +42,9 @@ yarn-error.log*
 # vercel local config
 .vercel
 
+# git metadata (не нужен в upload)
+.git
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -53,3 +56,6 @@ next-env.d.ts
 
 # исходные медиа (тяжёлые оригиналы; на сайте используются public/images)
 media-raw
+
+# временные скриншоты и артефакты разработки
+hero-screenshot*.png

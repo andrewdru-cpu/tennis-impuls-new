@@ -4,14 +4,14 @@ import { cn } from "@/lib/utils";
 import { media as siteMedia, type HeroMedia as HeroMediaType } from "@/lib/media";
 
 /**
- * Оверлеи под new-hero.webp:
+ * Оверлеи под new-hero.jpg:
  * — слева и в центре «окно» для здания «ЦТТ Импульс» и кортов;
  * — справа плотнее — под текстовую колонку (второстепенные постройки).
  */
 const OVERLAY_DESKTOP = [
   "linear-gradient(252deg, rgba(10,47,36,0.88) 0%, rgba(10,47,36,0.72) 18%, rgba(10,47,36,0.38) 38%, rgba(10,47,36,0.1) 52%, transparent 58%)",
   "linear-gradient(78deg, transparent 0%, transparent 42%, rgba(10,47,36,0.06) 50%, rgba(10,47,36,0.22) 62%, rgba(10,47,36,0.55) 78%, rgba(5,25,18,0.82) 100%)",
-  "radial-gradient(ellipse 48% 62% at 40% 54%, transparent 0%, rgba(10,47,36,0.08) 72%, rgba(10,47,36,0.2) 100%)",
+  "radial-gradient(ellipse 48% 62% at 28% 50%, transparent 0%, rgba(10,47,36,0.08) 72%, rgba(10,47,36,0.2) 100%)",
   "linear-gradient(180deg, rgba(10,47,36,0.32) 0%, transparent 14%, transparent 72%, rgba(5,25,18,0.12) 90%, rgba(5,25,18,0.42) 100%)",
   "radial-gradient(ellipse 55% 75% at 92% 48%, rgba(10,47,36,0.45) 0%, transparent 62%)",
   "radial-gradient(ellipse 40% 35% at 88% 88%, rgba(206,88,56,0.16) 0%, transparent 58%)",
@@ -45,8 +45,7 @@ export function HeroMedia({
 
   return (
     <div className={cn("absolute inset-0 z-0 overflow-hidden bg-forest-950", className)}>
-      {/* object-cover со scale=1 — фото всегда заполняет фон без тёмных полей;
-          кадр центрирован на здании «ЦТТ Импульс», чтобы оно не обрезалось */}
+      {/* object-cover — здание «ЦТТ Импульс» в фокусе; яркая цветокоррекция */}
       <Image
         src={src}
         alt={alt}
@@ -55,8 +54,8 @@ export function HeroMedia({
         quality={90}
         sizes="100vw"
         className={cn(
-          "object-cover brightness-[1.02] saturate-[1.06] contrast-[1.02]",
-          "object-[58%_44%] sm:object-[56%_47%] lg:object-[55%_50%]"
+          "object-cover brightness-[1.1] saturate-[1.15] contrast-[1.08]",
+          "object-[28%_50%] sm:object-[28%_50%] lg:object-[28%_50%]"
         )}
       />
 
@@ -74,7 +73,7 @@ export function HeroMedia({
 
       {/* Мягкая виньетка — слабее в центре-слева, где здание */}
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_90%_80%_at_38%_52%,transparent_0%,rgba(5,25,18,0.32)_100%)]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_90%_80%_at_28%_50%,transparent_0%,rgba(5,25,18,0.32)_100%)]"
         aria-hidden
       />
 

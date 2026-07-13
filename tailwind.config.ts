@@ -170,9 +170,9 @@ const config: Config = {
         "glow-lime":
           "0 0 0 1px rgba(180, 220, 66, 0.3), 0 8px 28px -4px rgba(180, 220, 66, 0.28), 0 16px 40px -10px rgba(10, 47, 36, 0.1)",
         "glow-warm":
-          "0 0 0 1px rgba(206, 88, 56, 0.22), 0 8px 32px -6px rgba(206, 88, 56, 0.3), 0 12px 40px -8px rgba(180, 220, 66, 0.18)",
+          "0 0 0 1px rgba(206, 88, 56, 0.28), 0 10px 36px -6px rgba(206, 88, 56, 0.38), 0 14px 44px -8px rgba(180, 220, 66, 0.2)",
         card:
-          "0 1px 3px rgba(10, 47, 36, 0.04), 0 16px 48px -12px rgba(10, 47, 36, 0.14)",
+          "0 1px 3px rgba(10, 47, 36, 0.05), 0 18px 52px -12px rgba(10, 47, 36, 0.17)",
         elevated:
           "0 4px 12px rgba(10, 47, 36, 0.06), 0 24px 64px -16px rgba(10, 47, 36, 0.2)",
         terracotta:

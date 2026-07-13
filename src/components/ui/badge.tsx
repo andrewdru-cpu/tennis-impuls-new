@@ -13,8 +13,9 @@ const badgeVariants = cva(
           "bg-terracotta/14 text-terracotta-700 ring-1 ring-terracotta/35 shadow-[0_2px_12px_-4px_rgba(206,88,56,0.35)]",
         sand: "bg-sand/25 text-forest-800 ring-1 ring-sand/45",
         dark: "bg-forest-900/5 text-forest-800 ring-1 ring-forest-900/10",
-        glass: "glass text-white ring-1 ring-lime/30 shadow-glow-lime",
-        outline: "border border-lime/40 text-white shadow-glow-lime",
+        glass:
+          "glass text-white ring-1 ring-terracotta/45 shadow-[0_2px_16px_-4px_rgba(206,88,56,0.5)]",
+        outline: "border border-terracotta/45 text-white",
       },
     },
     defaultVariants: {

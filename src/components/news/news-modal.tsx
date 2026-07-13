@@ -109,7 +109,7 @@ export function NewsModal({ article, onClose }: NewsModalProps) {
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Button asChild size="lg">
                   <a href="#booking" onClick={onClose}>
-                    Записаться в клуб
+                    Записаться на занятие
                   </a>
                 </Button>
                 <Button type="button" variant="outline" size="lg" onClick={onClose}>

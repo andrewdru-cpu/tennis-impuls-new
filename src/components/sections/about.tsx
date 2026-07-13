@@ -63,7 +63,7 @@ export function About() {
           title={
             <>
               Теннис, фитнес и отдых{" "}
-              <span className="text-lime-600">в одном месте</span>
+              <span className="text-terracotta-600">в одном месте</span>
             </>
           }
         />

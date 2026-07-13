@@ -1,12 +1,4 @@
-import {
-  Activity,
-  ArrowUpRight,
-  Check,
-  HeartHandshake,
-  Shield,
-  Star,
-  Table2,
-} from "@/lib/icons";
+import { Check, Star } from "@/lib/icons";
 
 import { SectionHeading } from "@/components/section-heading";
 import { Section } from "@/components/section";
@@ -18,13 +10,6 @@ import { cn } from "@/lib/utils";
  * 👉 ЦЕНЫ: чтобы добавить стоимость — заполните price и unit.
  *    Пустое price показывает заглушку «Уточняйте на ресепшене».
  */
-type ExtraDirection = {
-  label: string;
-  href: string;
-  icon: typeof Activity;
-  description: string;
-};
-
 type PricingPlan = {
   name: string;
   price?: string;
@@ -34,33 +19,6 @@ type PricingPlan = {
   cta: string;
   featured?: boolean;
 };
-
-const extraDirections: ExtraDirection[] = [
-  {
-    label: "Секции по ОФП",
-    href: "#booking",
-    icon: Activity,
-    description: "Групповые и индивидуальные занятия в залах ОФП",
-  },
-  {
-    label: "Массаж",
-    href: "#booking",
-    icon: HeartHandshake,
-    description: "Лечебный, спортивный и восстановительный массаж",
-  },
-  {
-    label: "Каратэ",
-    href: "#booking",
-    icon: Shield,
-    description: "Секция каратэ для детей и взрослых",
-  },
-  {
-    label: "Настольный теннис",
-    href: "#booking",
-    icon: Table2,
-    description: "4 профессиональных стола в игровой зоне",
-  },
-];
 
 const plans: PricingPlan[] = [
   {
@@ -96,7 +54,7 @@ const plans: PricingPlan[] = [
     features: [
       "12 групповых занятий",
       "Профессиональные детские тренеры",
-      "Участие в клубных турнирах",
+      "Участие в турнирах центра",
       "Спортивная экипировка в подарок",
     ],
     cta: "Записать ребёнка",
@@ -210,47 +168,6 @@ export function Pricing() {
           </Reveal>
         ))}
       </div>
-
-      <Reveal delay={0.2} className="section-inner mx-auto mt-10 max-w-5xl">
-        <div className="card-panel">
-          <div className="max-w-2xl">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-terracotta">
-              Дополнительные направления
-            </p>
-            <h3 className="heading-subsection mt-2">
-              Запись на секции и услуги клуба
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
-              ОФП, массаж, каратэ и настольный теннис — отдельно от теннисных
-              абонементов. Стоимость уточняйте на ресепшене.
-            </p>
-          </div>
-
-          <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {extraDirections.map((direction, i) => {
-              const Icon = direction.icon;
-              return (
-                <Reveal key={direction.label} delay={0.24 + i * 0.05}>
-                  <a href={direction.href} className="card-direction group">
-                    <span className="icon-wrap">
-                      <Icon className="h-5 w-5" aria-hidden />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block font-semibold text-forest-900">
-                        {direction.label}
-                      </span>
-                      <span className="mt-0.5 block text-sm text-muted-foreground">
-                        {direction.description}
-                      </span>
-                    </span>
-                    <ArrowUpRight className="link-arrow h-4 w-4 shrink-0 text-forest-900/40 group-hover:text-terracotta" />
-                  </a>
-                </Reveal>
-              );
-            })}
-          </div>
-        </div>
-      </Reveal>
     </Section>
   );
 }

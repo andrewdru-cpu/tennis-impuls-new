@@ -42,7 +42,7 @@ export function Logo({
           <span
             className={cn(
               "truncate font-display text-base font-extrabold tracking-tight sm:text-lg",
-              isLight ? "text-white" : "text-forest-900"
+              isLight ? "text-terracotta-300" : "text-terracotta-500"
             )}
           >
             ЦТТ Импульс
@@ -51,7 +51,7 @@ export function Logo({
             className={cn(
               "truncate text-[10px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.26em]",
               compact && "hidden min-[400px]:block",
-              isLight ? "text-lime" : "text-lime-600"
+              isLight ? "text-white/70" : "text-forest-700"
             )}
           >
             Центр теннисных технологий

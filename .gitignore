@@ -24,6 +24,7 @@
 .DS_Store
 *.pem
 Thumbs.db
+hero-screenshot*.png
 
 # debug
 npm-debug.log*
@@ -32,12 +33,8 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (секреты — НИКОГДА не коммитим)
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env*.local
+.env*
+!.env.example
 
 # vercel
 .vercel
@@ -60,6 +57,7 @@ public/images/**/*.jpg
 public/images/**/*.jpeg
 public/images/**/*.JPG
 # Исключение: фото грунтового корта в блоке «Услуги»
+!public/images/hero/new-hero.jpg
 !public/images/services/ground-court.jpg
 !public/images/services/yoga-studio.jpg
 !public/images/services/ofp-training.jpg

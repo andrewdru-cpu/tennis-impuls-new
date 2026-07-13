@@ -72,56 +72,64 @@ function RankBadge({ coach }: { coach: Coach }) {
 function MassageCoachCard({ coach, index }: { coach: Coach; index: number }) {
   return (
     <Reveal delay={index * 0.06}>
-      <article className="group overflow-hidden rounded-2xl border-2 border-teal-200/70 bg-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-lime/50 hover:shadow-glow">
-        <div className="flex flex-row">
-          <div className="relative w-[112px] shrink-0 sm:w-[132px]">
+      <article className="group overflow-hidden rounded-2xl border-2 border-teal-200/70 bg-white shadow-card transition-all duration-500 ease-premium hover:-translate-y-1 hover:border-terracotta/40 hover:shadow-glow-warm">
+        <div className="flex flex-col sm:flex-row">
+          {/* Фото — отдельная колонка, без наложений */}
+          <div className="relative w-full shrink-0 overflow-hidden sm:w-[200px] lg:w-[220px]">
             {coach.image ? (
               <MediaImage
                 media={coach.image}
                 ratio="auto"
                 rounded={false}
                 position="center top"
-                className="aspect-[4/5] h-full min-h-[140px] rounded-none sm:min-h-[165px]"
-                imageClassName="object-cover object-[center_15%] group-hover:scale-105 saturate-[1.06]"
-                sizes="132px"
+                className="aspect-[16/10] h-full w-full rounded-none sm:aspect-auto sm:min-h-[250px]"
+                imageClassName="object-cover object-[center_20%] transition-transform duration-700 ease-premium group-hover:scale-[1.04] saturate-[1.1]"
+                sizes="(max-width: 640px) 100vw, 220px"
               />
             ) : (
-              <div className="flex aspect-[4/5] min-h-[140px] items-center justify-center bg-gradient-to-br from-teal-100 to-forest-100 sm:min-h-[165px]">
-                <UserRound className="h-8 w-8 text-teal-400/60" />
+              <div className="flex aspect-[16/10] items-center justify-center bg-gradient-to-br from-teal-100 to-forest-100 sm:aspect-auto sm:h-full sm:min-h-[250px]">
+                <UserRound className="h-10 w-10 text-teal-400/60" />
               </div>
             )}
-            <div className="absolute left-2 top-2 flex flex-wrap gap-1">
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-forest-950/20 to-transparent sm:hidden"
+              aria-hidden
+            />
+          </div>
+
+          {/* Контент — весь текст здесь, ничего не перекрывает фото */}
+          <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-6">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <RankBadge coach={coach} />
               {coach.badges.map((badge) => (
                 <span
                   key={badge}
-                  className="rounded-full bg-forest-900/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-lime backdrop-blur-sm"
+                  className="rounded-full bg-forest-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-lime sm:text-[11px]"
                 >
                   {badge}
                 </span>
               ))}
             </div>
-          </div>
 
-          <div className="flex min-w-0 flex-1 flex-col p-3 sm:p-4">
-            <RankBadge coach={coach} />
-
-            <h3 className="mt-2 text-base font-bold leading-snug text-forest-900 sm:text-lg">
+            <h3 className="mt-3 font-display text-lg font-bold leading-snug text-forest-900 sm:text-xl">
               {coach.name}
             </h3>
-            <p className="mt-0.5 text-xs font-semibold text-teal-700 sm:text-sm">{coach.role}</p>
+            <p className="mt-1 text-sm font-semibold text-teal-700">
+              {coach.role}
+            </p>
 
-            <p className="mt-2 line-clamp-3 flex-1 text-xs leading-relaxed text-muted-foreground sm:text-sm sm:leading-5">
+            <p className="mt-3 flex-1 text-pretty text-sm leading-relaxed text-muted-foreground">
               {coach.description}
             </p>
 
             {coach.serviceTags && (
-              <ul className="mt-2 flex flex-wrap gap-1.5">
+              <ul className="mt-4 flex flex-wrap gap-1.5">
                 {coach.serviceTags.map((tag) => (
                   <li
                     key={tag}
-                    className="inline-flex items-center gap-1 rounded-full bg-teal-100 px-2 py-0.5 text-[10px] font-semibold text-teal-900 ring-1 ring-teal-200 sm:text-xs"
+                    className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-2.5 py-1 text-[11px] font-semibold text-teal-900 ring-1 ring-teal-200 sm:text-xs"
                   >
-                    <Sparkles className="h-2.5 w-2.5 shrink-0" aria-hidden />
+                    <Sparkles className="h-3 w-3 shrink-0 text-teal-500" aria-hidden />
                     {tag}
                   </li>
                 ))}
@@ -130,10 +138,10 @@ function MassageCoachCard({ coach, index }: { coach: Coach; index: number }) {
 
             <a
               href="#booking"
-              className="mt-3 inline-flex min-h-[40px] w-fit items-center gap-1 text-xs font-semibold text-forest-900 transition-colors hover:text-lime-600 sm:min-h-[44px] sm:text-sm"
+              className="mt-4 inline-flex min-h-[44px] w-fit items-center gap-1.5 rounded-full bg-terracotta px-5 text-sm font-bold text-white shadow-terracotta transition-all duration-300 hover:bg-terracotta/90 hover:shadow-glow-warm"
             >
               Записаться на массаж
-              <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
+              <ArrowUpRight className="h-4 w-4 shrink-0" />
             </a>
           </div>
         </div>
@@ -297,8 +305,8 @@ function TeamGroupBlock({ group, groupIndex }: { group: TeamGroup; groupIndex: n
                 className={cn(
                   "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1 sm:h-11 sm:w-11 sm:rounded-2xl",
                   isDark
-                    ? "bg-lime/20 text-lime ring-lime/35"
-                    : "bg-lime/30 text-forest-900 ring-lime/45"
+                    ? "bg-terracotta/20 text-terracotta-300 ring-terracotta/40"
+                    : "bg-terracotta/12 text-terracotta-500 ring-terracotta/30"
                 )}
               >
                 <Icon className="h-5 w-5" aria-hidden />
@@ -331,8 +339,8 @@ function TeamGroupBlock({ group, groupIndex }: { group: TeamGroup; groupIndex: n
                   className={cn(
                     "mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] ring-1 sm:text-xs",
                     isDark
-                      ? "bg-white/10 text-lime ring-lime/30"
-                      : "bg-lime/25 text-forest-800 ring-lime/40"
+                      ? "bg-white/10 text-terracotta-200 ring-terracotta/35"
+                      : "bg-terracotta/12 text-terracotta-600 ring-terracotta/30"
                   )}
                 >
                   <Medal className="h-3.5 w-3.5" aria-hidden />
@@ -348,7 +356,7 @@ function TeamGroupBlock({ group, groupIndex }: { group: TeamGroup; groupIndex: n
               >
                 {subsection.coaches.map((coach, i) =>
                   coach.tier === "massage" ? (
-                    <div key={coach.id} className="col-span-2 max-w-xl">
+                    <div key={coach.id} className="col-span-2 max-w-2xl">
                       <MassageCoachCard coach={coach} index={i} />
                     </div>
                   ) : (
@@ -382,7 +390,7 @@ export function Team() {
           title={
             <>
               Подберём идеального{" "}
-              <span className="text-lime-600">специалиста под ваши задачи</span>
+              <span className="text-terracotta-600">специалиста под ваши задачи</span>
             </>
           }
           description="Теннис, фитнес и восстановление — опытные тренеры и массажист помогут достичь цели: от первых шагов на корте до персональной формы и реабилитации."

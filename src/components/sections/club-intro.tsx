@@ -9,8 +9,6 @@ import {
 
 import { Section } from "@/components/section";
 import { Reveal } from "@/components/reveal";
-import { MediaImage } from "@/components/media/media-image";
-import { media } from "@/lib/media";
 
 const highlights = [
   {
@@ -54,7 +52,7 @@ export function ClubIntro() {
 
       <div className="mx-auto max-w-4xl">
         <Reveal>
-          <span className="eyebrow rounded-full bg-lime/30 px-4 py-1.5 text-forest-900 ring-1 ring-lime/50 shadow-lime">
+          <span className="eyebrow rounded-full bg-terracotta/12 px-4 py-1.5 text-terracotta-600 ring-1 ring-terracotta/30 shadow-[0_2px_14px_-4px_rgba(206,88,56,0.4)]">
             ЦТТ «Импульс»
           </span>
         </Reveal>
@@ -62,7 +60,7 @@ export function ClubIntro() {
         <Reveal delay={0.05}>
           <h2 className="heading-section mt-4">
             Современный комплекс для спорта,{" "}
-            <span className="text-terracotta">восстановления и отдыха</span>
+            <span className="text-terracotta-600">восстановления и отдыха</span>
           </h2>
         </Reveal>
 
@@ -108,37 +106,6 @@ export function ClubIntro() {
             </Reveal>
           ))}
         </div>
-
-        <Reveal delay={0.18} className="mt-8">
-          <div className="overflow-hidden rounded-3xl shadow-card ring-1 ring-lime/20">
-            <MediaImage
-              media={media.facilities.aerial}
-              ratio="wide"
-              sizes="(max-width: 1024px) 100vw, 896px"
-              imageClassName="saturate-[1.12]"
-            />
-          </div>
-          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <MediaImage
-              media={media.facilities.indoor}
-              ratio="square"
-              sizes="160px"
-              imageClassName="saturate-[1.1]"
-            />
-            <MediaImage
-              media={media.facilities.outdoor}
-              ratio="square"
-              sizes="160px"
-              imageClassName="saturate-[1.1]"
-            />
-            <MediaImage
-              media={media.facilities.hall}
-              ratio="square"
-              sizes="160px"
-              imageClassName="saturate-[1.1]"
-            />
-          </div>
-        </Reveal>
       </div>
     </Section>
   );

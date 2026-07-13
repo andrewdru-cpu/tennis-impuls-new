@@ -81,11 +81,11 @@ export function News() {
   return (
     <Section id="news" tone="muted">
         <SectionHeading
-          eyebrow="Новости клуба"
+          eyebrow="Новости центра"
           title={
             <>
               Свежие события{" "}
-              <span className="text-lime-600">ЦТТ «Импульс»</span>
+              <span className="text-terracotta-600">ЦТТ «Импульс»</span>
             </>
           }
           description="Турниры, расписания и события комплекса — только актуальные материалы за последние дни."

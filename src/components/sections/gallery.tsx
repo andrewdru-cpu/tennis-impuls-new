@@ -90,7 +90,7 @@ export function Gallery() {
         title={
           <>
             Как выглядит{" "}
-            <span className="text-lime-600">ЦТТ «Импульс»</span>
+            <span className="text-terracotta-600">ЦТТ «Импульс»</span>
           </>
         }
         description="Корты, тренировки, инфраструктура и атмосфера комплекса — загляните внутрь клуба."

@@ -48,7 +48,7 @@ export function Footer() {
             <ul className="mt-5 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
               {navItems.map((item) => (
                 <li key={item.href}>
-                  <a href={item.href} className="touch-link text-white/70 hover:text-lime">
+                  <a href={item.href} className="touch-link text-white/70 hover:text-terracotta-200">
                     {item.label}
                   </a>
                 </li>
@@ -62,14 +62,14 @@ export function Footer() {
             </p>
             <ul className="mt-5 space-y-1 text-sm text-white/70">
               <li>
-                <a href={siteConfig.phoneHref} className="touch-link hover:text-lime">
+                <a href={siteConfig.phoneHref} className="touch-link hover:text-terracotta-200">
                   {siteConfig.phone}
                 </a>
               </li>
               <li>
                 <a
                   href={`mailto:${siteConfig.email}`}
-                  className="touch-link hover:text-lime"
+                  className="touch-link hover:text-terracotta-200"
                 >
                   {siteConfig.email}
                 </a>

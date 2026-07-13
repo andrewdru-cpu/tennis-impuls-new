@@ -1,22 +1,21 @@
 import {
-  Target,
   Trees,
   Baby,
-  Layers,
   Activity,
   Table2,
   ShowerHead,
   Crown,
   Armchair,
   ParkingCircle,
-  UserRound,
   Users,
   Music,
   Flower2,
   Dumbbell,
   Shield,
   Lightbulb,
+  Wind,
   Sun,
+  HeartHandshake,
   ArrowUpRight,
   type LucideIcon,
 } from "@/lib/icons";
@@ -33,166 +32,132 @@ import { cn } from "@/lib/utils";
 /*  Данные                                                                    */
 /* -------------------------------------------------------------------------- */
 
+/* ── ТЕННИС ── */
 const courtSurfaces = [
   {
-    label: "Открытые и крытые корты",
-    surface: "Полумягкий хард",
+    label: "Открытые корты",
+    surface: "Грунт (Tennisit)",
     detail:
-      "Профессиональное покрытие на открытых и крытых площадках — комфортная игра в любую погоду",
-    image: media.services.rental,
-  },
-  {
-    label: "Грунтовые корты",
-    surface: "Tennisit",
-    detail:
-      "Премиальное грунтовое покрытие Tennisit — мягкий отскок и естественная игра на свежем воздухе",
+      "Премиальный грунт Tennisit: мягкий отскок, бережная нагрузка на суставы и естественная игра на свежем воздухе.",
     image: media.services.groundCourt,
     imagePosition: "center 38%",
   },
   {
-    label: "Падел-корт",
+    label: "Крытые корты",
     surface: "Полумягкий хард",
-    detail: "Современный формат на крытом полумягком харде",
-    image: media.services.padel,
-  },
-];
-
-const courtTypes: {
-  icon: LucideIcon;
-  title: string;
-  text: string;
-}[] = [
-  {
-    icon: Layers,
-    title: "Большие корты",
-    text: "Полноразмерные площадки для взрослых игроков и соревнований",
-  },
-  {
-    icon: Baby,
-    title: "Детские корты",
-    text: "Адаптированные корты для юных спортсменов — безопасно и удобно",
-  },
-  {
-    icon: Target,
-    title: "Падел-корт",
-    text: "Отдельные площадки с покрытием полумягкий хард",
-  },
-];
-
-const gameZoneItems: {
-  icon: LucideIcon;
-  title: string;
-  text: string;
-  image?: MediaImageSource;
-  imagePlaceholder?: boolean;
-  highlight?: string;
-}[] = [
-  {
-    icon: Target,
-    title: "Теннисный корт",
-    text: "Полумягкий хард — большие и детские корты для тренировок и игры",
+    detail:
+      "Стандартная и детская площадки на полумягком харде — стабильный отскок и комфортная игра круглый год.",
     image: media.services.rental,
   },
   {
-    icon: Layers,
-    title: "Падел",
-    text: "Современный ракеточный формат на крытом полумягком харде",
+    label: "Падел",
+    surface: "Полумягкий хард",
+    detail:
+      "Крытый падел-корт на полумягком харде — самый динамичный ракеточный формат для игры в компании.",
     image: media.services.padel,
   },
-  {
-    icon: Activity,
-    title: "Зона ОФП",
-    text: "Специальная физическая подготовка — отдельные залы для функциональных и спецпрограмм",
-    image: media.services.ofp,
-    highlight: "Тренажёрный зал и зал спецпрограмм",
-  },
+];
+
+const tennisExtras: {
+  icon: LucideIcon;
+  title: string;
+  text: string;
+}[] = [
   {
     icon: Table2,
     title: "Настольный теннис",
-    text: "4 профессиональных стола, разделённых на 4 игровых сектора — играйте парами или компанией",
-    imagePlaceholder: true,
-  },
-  {
-    icon: ShowerHead,
-    title: "Комфортные раздевалки",
-    text: "Отдельные раздевалки для взрослых и детей — всё необходимое после тренировки",
-  },
-  {
-    icon: Crown,
-    title: "VIP-раздевалки",
-    text: "Премиальные VIP-раздевалки со своей сауной — максимальный комфорт для гостей",
-  },
-  {
-    icon: Armchair,
-    title: "Зона отдыха",
-    text: "Уютное пространство для отдыха между тренировками и после игры",
-  },
-  {
-    icon: ParkingCircle,
-    title: "Бесплатная парковка",
-    text: "Собственная парковка для всех гостей клуба на время визита",
+    text: "4 профессиональных стола, разделённых на 4 игровых сектора — играйте парами или компанией.",
   },
 ];
 
-const fitnessTraining = [
-  {
-    icon: UserRound,
-    title: "Индивидуальные тренировки",
-    text: "Персональная программа с тренером — техника, сила, восстановление. Максимум внимания и прогресса за каждое занятие.",
-    image: media.services.individual,
-    featured: true,
-  },
-  {
-    icon: Users,
-    title: "Групповые тренировки",
-    text: "Занятия в мини-группах — энергия команды и поддержка тренера. Подходит для любого уровня подготовки.",
-    image: media.services.group,
-    featured: true,
-  },
-];
-
+/* ── ФИТНЕС И ДРУГИЕ НАПРАВЛЕНИЯ ── */
 const fitnessDirections: {
   icon: LucideIcon;
   title: string;
   text: string;
   image?: MediaImageSource;
   imagePosition?: string;
-  imagePlaceholder?: boolean;
 }[] = [
   {
-    icon: Music,
-    title: "Танцевальная студия",
-    text: "Групповые и индивидуальные занятия — пластика, координация и драйв",
-    image: media.services.danceStudio,
-    imagePosition: "center 42%",
-  },
-  {
-    icon: Flower2,
-    title: "Студия йоги",
-    text: "Восстановление, гибкость и баланс — практики для тела и дыхания",
-    image: media.services.yogaStudio,
-    imagePosition: "center 42%",
-  },
-  {
-    icon: Dumbbell,
-    title: "Тренажёрный зал",
-    text: "Силовая и функциональная подготовка на профессиональном оборудовании",
-    image: media.services.gymHall,
-    imagePosition: "center 42%",
-  },
-  {
     icon: Activity,
-    title: "Залы ОФП",
-    text: "Общая физическая подготовка — станки, зеркала, инвентарь для любого уровня",
+    title: "Залы ОФП и специальной подготовки",
+    text: "Сила, выносливость и функциональная база — просторные залы с зеркалами и полным набором инвентаря.",
     image: media.services.ofpTraining,
     imagePosition: "center 45%",
   },
   {
+    icon: Flower2,
+    title: "Йога",
+    text: "Гибкость, дыхание и глубокое восстановление — практики в светлой студии для любого уровня.",
+    image: media.services.yogaStudio,
+    imagePosition: "center 42%",
+  },
+  {
+    icon: Music,
+    title: "Танцы",
+    text: "Пластика, координация и драйв — групповые и индивидуальные занятия под живую энергию музыки.",
+    image: media.services.danceStudio,
+    imagePosition: "center 42%",
+  },
+  {
     icon: Shield,
-    title: "Секция каратэ",
-    text: "Тренировки для детей и взрослых — дисциплина, техника и уверенность",
+    title: "Каратэ",
+    text: "Дисциплина, техника и уверенность в себе — тренировки для детей и взрослых.",
     image: media.services.karate,
     imagePosition: "center 40%",
+  },
+  {
+    icon: HeartHandshake,
+    title: "Спа-зал и массаж",
+    text: "Лечебный, спортивный и восстановительный массаж — перезагрузка тела после нагрузок.",
+  },
+  {
+    icon: Users,
+    title: "Групповые тренировки",
+    text: "Мини-группы по 4–6 человек — энергия команды и персональное внимание тренера каждому.",
+  },
+  {
+    icon: Baby,
+    title: "Детские тренировки",
+    text: "Программы от 4 лет — мягкое погружение в спорт, первые успехи и любовь к движению.",
+  },
+];
+
+/* ── ИНФРАСТРУКТУРА (после двух блоков) ── */
+const amenities: {
+  icon: LucideIcon;
+  title: string;
+  text: string;
+}[] = [
+  {
+    icon: ParkingCircle,
+    title: "Бесплатная парковка",
+    text: "Собственная парковка для всех гостей центра на время визита.",
+  },
+  {
+    icon: ShowerHead,
+    title: "Комфортные раздевалки",
+    text: "Отдельные раздевалки для взрослых и детей — всё необходимое после тренировки.",
+  },
+  {
+    icon: Crown,
+    title: "VIP-раздевалки",
+    text: "Премиальные VIP-раздевалки со своей сауной — максимальный комфорт для гостей.",
+  },
+  {
+    icon: Armchair,
+    title: "Зона отдыха",
+    text: "Уютное пространство для отдыха между тренировками и после игры.",
+  },
+  {
+    icon: Lightbulb,
+    title: "Четырёхуровневое освещение",
+    text: "Профессиональный свет на кортах — комфортная игра утром, днём и вечером.",
+  },
+  {
+    icon: Wind,
+    title: "Система кондиционирования",
+    text: "Стабильный микроклимат круглый год — прохладно летом и комфортно зимой.",
   },
 ];
 
@@ -218,8 +183,8 @@ function BlockHeader({
         className={cn(
           "inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em]",
           isDark
-            ? "bg-lime/20 text-lime ring-1 ring-lime/35"
-            : "bg-lime/30 text-forest-800 ring-1 ring-lime/50"
+            ? "bg-terracotta/20 text-terracotta-200 ring-1 ring-terracotta/40"
+            : "bg-terracotta/12 text-terracotta-600 ring-1 ring-terracotta/30"
         )}
       >
         {eyebrow}
@@ -280,29 +245,12 @@ function SurfaceCard({
   );
 }
 
-function ImagePlaceholder({ tone }: { tone: "dark" | "light" }) {
-  return (
-    <div
-      className={cn(
-        tone === "dark" ? "card-placeholder-dark" : "card-placeholder-light"
-      )}
-      aria-hidden
-    >
-      <span className="text-[11px] font-semibold uppercase tracking-[0.18em]">
-        Фото скоро
-      </span>
-    </div>
-  );
-}
-
 function CompactFeature({
   icon: Icon,
   title,
   text,
   image,
-  imagePlaceholder,
   imagePosition,
-  highlight,
   tone,
   index,
 }: {
@@ -310,9 +258,7 @@ function CompactFeature({
   title: string;
   text: string;
   image?: MediaImageSource;
-  imagePlaceholder?: boolean;
   imagePosition?: string;
-  highlight?: string;
   tone: "dark" | "light";
   index: number;
 }) {
@@ -325,18 +271,22 @@ function CompactFeature({
           isDark ? "card-glass-dark hover:-translate-y-1" : "card-media-light"
         )}
       >
-        {image ? (
-          <MediaImage
-            media={image}
-            ratio="wide"
-            rounded={false}
-            position={imagePosition ?? "center"}
-            imageClassName="transition-transform duration-700 ease-premium group-hover:scale-105 saturate-[1.1]"
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
-        ) : imagePlaceholder ? (
-          <ImagePlaceholder tone={tone} />
-        ) : null}
+        {image && (
+          <div className="relative shrink-0 overflow-hidden">
+            <MediaImage
+              media={image}
+              ratio="wide"
+              rounded={false}
+              position={imagePosition ?? "center"}
+              imageClassName="transition-transform duration-700 ease-premium group-hover:scale-[1.06] saturate-[1.15]"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-forest-950/25 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+              aria-hidden
+            />
+          </div>
+        )}
         <div className="flex flex-1 gap-4 p-5 sm:p-6">
           <span className={isDark ? "icon-wrap-dark" : "icon-wrap"}>
             <Icon className="h-5 w-5" aria-hidden />
@@ -344,20 +294,17 @@ function CompactFeature({
           <div className="min-w-0">
             <h4
               className={cn(
-                "font-display text-base font-bold sm:text-lg",
-                isDark ? "text-white" : "text-forest-900"
+                "font-display text-base font-bold tracking-tight transition-colors duration-300 sm:text-lg",
+                isDark
+                  ? "text-white"
+                  : "text-forest-900 group-hover:text-terracotta"
               )}
             >
               {title}
             </h4>
-            {highlight && (
-              <p className="mt-1.5 text-xs font-semibold text-sand sm:text-sm">
-                {highlight}
-              </p>
-            )}
             <p
               className={cn(
-                "mt-2 text-sm leading-relaxed",
+                "mt-2 text-pretty text-sm leading-relaxed",
                 isDark ? "text-white/70" : "text-muted-foreground"
               )}
             >
@@ -370,38 +317,23 @@ function CompactFeature({
   );
 }
 
-function TrainingCard({
+function AmenityCard({
   item,
   index,
 }: {
-  item: (typeof fitnessTraining)[number];
+  item: (typeof amenities)[number];
   index: number;
 }) {
   const Icon = item.icon;
   return (
-    <Reveal delay={index * 0.08}>
-      <div className="group card-media-light rounded-3xl border-sand/20">
-        <MediaImage
-          media={item.image}
-          ratio="photo"
-          rounded={false}
-          overlay
-          imageClassName="transition-transform duration-700 ease-premium group-hover:scale-105 saturate-[1.12]"
-          sizes="(max-width: 768px) 100vw, 50vw"
-        />
-        <div className="flex flex-1 flex-col p-6 sm:p-7">
-          <span className="icon-wrap w-fit">
-            <Icon className="h-5 w-5" aria-hidden />
-          </span>
-          <h4 className="mt-4 text-card-title">{item.title}</h4>
-          <p className="mt-2 flex-1 text-card-body">{item.text}</p>
-          <a
-            href="#booking"
-            className="mt-6 inline-flex min-h-[44px] items-center gap-1.5 text-sm font-semibold text-forest-900 transition-colors group-hover:text-terracotta"
-          >
-            Записаться
-            <ArrowUpRight className="h-4 w-4 shrink-0" />
-          </a>
+    <Reveal delay={index * 0.05} className="h-full">
+      <div className="card-feature group h-full">
+        <span className="icon-wrap">
+          <Icon className="h-5 w-5" aria-hidden />
+        </span>
+        <div className="min-w-0">
+          <h4 className="text-card-title">{item.title}</h4>
+          <p className="text-card-body mt-2">{item.text}</p>
         </div>
       </div>
     </Reveal>
@@ -417,19 +349,28 @@ export function Services() {
     <Section id="services" className="overflow-hidden">
       <header className="max-w-3xl">
         <SectionHeading
-          eyebrow="Услуги клуба"
+          eyebrow="Услуги спортивного центра"
           title={
             <>
               Теннис и фитнес —{" "}
-              <span className="text-lime-600">всё на одной территории</span>
+              <span className="text-terracotta-600">всё на одной территории</span>
             </>
           }
-          description="Два направления комплекса: профессиональные корты и игровая инфраструктура — плюс фитнес, групповые программы и восстановление."
+          description={
+            <>
+              Корты, залы и зоны восстановления{" "}
+              <span className="font-semibold text-terracotta">
+                на одной территории
+              </span>{" "}
+              — играйте, тренируйтесь и восстанавливайтесь без лишних поездок
+              по городу.
+            </>
+          }
         />
       </header>
 
       <div className="section-inner space-y-8 sm:space-y-10">
-        {/* ── БЛОК ТЕННИС ── */}
+        {/* ── БЛОК 1 · ТЕННИС ── */}
         <Reveal>
           <div
             id="services-tennis"
@@ -446,18 +387,18 @@ export function Services() {
                 eyebrow="Направление"
                 title={
                   <>
-                    <Trees className="mr-2 inline-block h-8 w-8 text-lime sm:h-9 sm:w-9" />
+                    <Trees className="mr-2 inline-block h-8 w-8 text-terracotta-300 sm:h-9 sm:w-9" />
                     Теннис
                   </>
                 }
-                description="Открытые и крытые корты на полумягком харде, грунт Tennisit, большие и детские площадки, падел — всё для игры и тренировок на одной территории."
+                description="Открытые корты на грунте Tennisit, крытые корты на полумягком харде — стандартная и детская площадки, падел и настольный теннис. Всё для игры и тренировок на одной территории."
                 tone="dark"
               />
 
-              {/* Покрытия */}
+              {/* Корты */}
               <div>
-                <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-lime/80">
-                  Покрытия кортов
+                <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-terracotta-300/90">
+                  Корты и покрытия
                 </h4>
                 <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3 md:items-stretch">
                   {courtSurfaces.map((item, i) => (
@@ -466,51 +407,45 @@ export function Services() {
                 </div>
               </div>
 
-              {/* Типы кортов */}
-              <div>
-                <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-lime/80">
-                  Типы площадок
-                </h4>
-                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-stretch">
-                  {courtTypes.map((item, i) => (
-                    <Reveal key={item.title} delay={0.1 + i * 0.05} className="h-full">
-                      <div className="card-glass-dark group flex h-full items-start gap-4 p-5">
-                        <span className="icon-wrap-dark">
-                          <item.icon className="h-5 w-5" aria-hidden />
-                        </span>
-                        <div className="min-w-0">
-                          <p className="font-display font-bold text-white">{item.title}</p>
-                          <p className="mt-1.5 text-sm leading-relaxed text-white/70">
-                            {item.text}
-                          </p>
-                        </div>
-                      </div>
-                    </Reveal>
-                  ))}
-                </div>
-              </div>
+              {/* Настольный теннис + освещение */}
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                {tennisExtras.map((item, i) => (
+                  <CompactFeature
+                    key={item.title}
+                    icon={item.icon}
+                    title={item.title}
+                    text={item.text}
+                    tone="dark"
+                    index={i}
+                  />
+                ))}
 
-              {/* Игровая зона */}
-              <div>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                  <h4 className="heading-subsection heading-subsection-light">
-                    Игровая зона
-                  </h4>
-                  <p className="max-w-md text-sm text-white/60">
-                    Инфраструктура для игры, подготовки и комфортного отдыха на
-                    территории комплекса
-                  </p>
-                </div>
-                <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {gameZoneItems.map((item, i) => (
-                    <CompactFeature
-                      key={item.title}
-                      {...item}
-                      tone="dark"
-                      index={i}
-                    />
-                  ))}
-                </div>
+                {/* Четырёхзонное освещение крытых кортов */}
+                <Reveal delay={0.08} className="h-full">
+                  <div className="flex h-full flex-col gap-4 rounded-2xl border border-lime/25 bg-gradient-to-br from-lime/15 via-forest-900/40 to-forest-950/60 p-5 sm:flex-row sm:items-center sm:gap-5 sm:p-6">
+                    <div className="flex gap-3">
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-lime/25 text-lime">
+                        <Sun className="h-6 w-6" aria-hidden />
+                      </span>
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-forest-950 text-lime ring-1 ring-lime/30">
+                        <Lightbulb className="h-6 w-6" aria-hidden />
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-display text-lg font-bold text-white">
+                        Четырёхзонное освещение
+                      </p>
+                      <p className="mt-1 text-sm leading-relaxed text-white/70">
+                        Крытые корты с освещением в{" "}
+                        <strong className="font-semibold text-lime">
+                          четырёх независимых режимах
+                        </strong>{" "}
+                        — комфортная игра утром, днём и вечером в любое время
+                        года.
+                      </p>
+                    </div>
+                  </div>
+                </Reveal>
               </div>
 
               <div className="flex justify-start">
@@ -528,13 +463,13 @@ export function Services() {
         {/* Разделитель между направлениями */}
         <div className="flex items-center gap-4 py-2" aria-hidden>
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-forest-900/15 to-transparent" />
-          <span className="shrink-0 rounded-full bg-lime/30 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-forest-800">
+          <span className="shrink-0 rounded-full bg-terracotta/12 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-terracotta-600 ring-1 ring-terracotta/25">
             и
           </span>
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-forest-900/15 to-transparent" />
         </div>
 
-        {/* ── БЛОК ФИТНЕС ── */}
+        {/* ── БЛОК 2 · ФИТНЕС И ДРУГИЕ НАПРАВЛЕНИЯ ── */}
         <Reveal delay={0.05}>
           <div
             id="services-fitness"
@@ -550,74 +485,29 @@ export function Services() {
                 eyebrow="Направление"
                 title={
                   <>
-                    <Dumbbell className="mr-2 inline-block h-8 w-8 text-lime-600 sm:h-9 sm:w-9" />
-                    Фитнес
+                    <Dumbbell className="mr-2 inline-block h-8 w-8 text-terracotta-500 sm:h-9 sm:w-9" />
+                    Фитнес, восстановление{" "}
+                    <span className="text-terracotta-600">и развитие</span>
                   </>
                 }
-                description="Индивидуальные и групповые тренировки, танцы, йога, тренажёрный зал, ОФП и секция каратэ — полный спектр для здоровья и формы."
+                description="Сила, гибкость, пластика и внутренний баланс — семь направлений для любого возраста и уровня. Тренируйтесь в мини-группах, приводите детей от 4 лет и восстанавливайтесь в спа-зале после нагрузок."
                 tone="light"
               />
 
-              {/* Индивидуальные → групповые */}
-              <div>
-                <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-forest-700">
-                  Форматы тренировок
-                </h4>
-                <div className="mt-4 grid grid-cols-1 gap-5 lg:grid-cols-2">
-                  {fitnessTraining.map((item, i) => (
-                    <TrainingCard key={item.title} item={item} index={i} />
-                  ))}
-                </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {fitnessDirections.map((item, i) => (
+                  <CompactFeature
+                    key={item.title}
+                    icon={item.icon}
+                    title={item.title}
+                    text={item.text}
+                    image={item.image}
+                    imagePosition={item.imagePosition}
+                    tone="light"
+                    index={i}
+                  />
+                ))}
               </div>
-
-              {/* Направления */}
-              <div>
-                <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-forest-700">
-                  Направления
-                </h4>
-                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {fitnessDirections.map((item, i) => (
-                    <CompactFeature
-                      key={item.title}
-                      icon={item.icon}
-                      title={item.title}
-                      text={item.text}
-                      image={item.image}
-                      imagePosition={item.imagePosition}
-                      imagePlaceholder={item.imagePlaceholder}
-                      tone="light"
-                      index={i}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Освещение */}
-              <Reveal delay={0.1}>
-                <div className="flex flex-col gap-4 rounded-2xl border border-lime/40 bg-gradient-to-r from-lime/20 via-white to-lime/10 p-5 sm:flex-row sm:items-center sm:gap-6 sm:p-6">
-                  <div className="flex gap-3">
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-lime/30 text-forest-900">
-                      <Sun className="h-6 w-6" aria-hidden />
-                    </span>
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-forest-900 text-lime">
-                      <Lightbulb className="h-6 w-6" aria-hidden />
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-display text-lg font-bold text-forest-900">
-                      Профессиональное освещение
-                    </p>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground sm:text-[0.9375rem] sm:leading-6">
-                      Естественный свет и искусственное освещение в{" "}
-                      <strong className="font-semibold text-forest-900">
-                        четырёх разных режимах
-                      </strong>{" "}
-                      — комфортные тренировки утром, днём и вечером в любое
-                      время года.
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
 
               <div className="flex justify-start">
                 <Button asChild variant="dark" size="lg">
@@ -627,6 +517,26 @@ export function Services() {
                   </a>
                 </Button>
               </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* ── ИНФРАСТРУКТУРА ── */}
+        <Reveal delay={0.05}>
+          <div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <h3 className="heading-subsection">
+                Инфраструктура спортивного центра
+              </h3>
+              <p className="max-w-md text-sm text-muted-foreground">
+                Парковка, раздевалки и комфорт для гостей на всей территории
+                комплекса.
+              </p>
+            </div>
+            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {amenities.map((item, i) => (
+                <AmenityCard key={item.title} item={item} index={i} />
+              ))}
             </div>
           </div>
         </Reveal>

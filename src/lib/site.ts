@@ -31,8 +31,6 @@ export const navItems = [
   { label: "Бронирование", href: "#booking" },
   { label: "Цены", href: "#pricing" },
   { label: "Команда", href: "#team" },
-  { label: "О клубе", href: "#about" },
-  { label: "Галерея", href: "#gallery" },
   { label: "Новости", href: "#news" },
   { label: "Контакты", href: "#contacts" },
 ] as const;
