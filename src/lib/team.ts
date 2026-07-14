@@ -5,7 +5,7 @@ export type TeamMember = {
   category: string;
   /** Полный текст для модального окна */
   bio: string[];
-  /** Путь к фото от /public, например /images/team/averin-andrey.jpg */
+  /** Путь к фото от /public, например /images/team/averin.webp */
   photo?: string;
 };
 
@@ -27,7 +27,7 @@ export const teamGroups: TeamGroup[] = [
         id: "averin",
         name: "Аверин Андрей",
         category: "Тренер категории «Мастер»",
-        photo: "/images/team/averin-andrey.jpg",
+        photo: "/images/team/averin.webp",
         bio: [
           "Тренерский стаж с 2005 года. Работает с игроками любого уровня — от первых шагов на корте до подготовки к соревнованиям.",
           "Призёр и победитель российских и международных соревнований. Победитель турнира ITF Grade 3, многократный участник чемпионатов России.",
@@ -38,7 +38,7 @@ export const teamGroups: TeamGroup[] = [
         id: "baldin",
         name: "Балдин Александр",
         category: "Тренер категории «Мастер+»",
-        photo: "/images/team/baldin-aleksandr.jpg",
+        photo: "/images/team/baldin.webp",
         bio: [
           "Тренерский стаж с 2009 года, кандидат в мастера спорта. Специализируется на индивидуальной и групповой подготовке.",
           "Призёр турниров РТТ, TE и ITF, двукратный победитель Кубка России. Финалист чемпионата Европы в составе сборной России.",
@@ -49,7 +49,7 @@ export const teamGroups: TeamGroup[] = [
         id: "paraskeva",
         name: "Параскева Оксана",
         category: "Тренер категории «Мастер+»",
-        photo: "/images/team/paraskeva-oksana.jpg",
+        photo: "/images/team/paraskeva.webp",
         bio: [
           "Высшее образование МГАФК, специализация — спортивная подготовка по теннису. Тренерский стаж с 2010 года.",
           "Мастер спорта. Многократный победитель и призёр турниров TE, ITF и РТТ.",
@@ -60,7 +60,7 @@ export const teamGroups: TeamGroup[] = [
         id: "rakhmanina",
         name: "Рахманина Мария",
         category: "Тренер категории «Профи»",
-        photo: "/images/team/rahmanina-maria.jpg",
+        photo: "/images/team/rakhmanina.webp",
         bio: [
           "Мастер спорта по теннису. Тренерский стаж с 2005 года.",
           "Неоднократный победитель российских и международных турниров.",
@@ -79,7 +79,7 @@ export const teamGroups: TeamGroup[] = [
         id: "kovgan",
         name: "Ковган Евгений",
         category: "Тренер групповых программ, Мастер тренер",
-        photo: "/images/team/kovgan-evgeniy.jpg",
+        photo: "/images/team/kovgan.webp",
         bio: [
           "Мастер-тренер, стаж более 10 лет. Мастер спорта по лёгкой атлетике.",
           "Силовые и функциональные тренировки, ЛФК, ОФП с детьми и рекомендации по питанию.",
@@ -101,7 +101,7 @@ export const teamGroups: TeamGroup[] = [
         id: "smirnova",
         name: "Смирнова Галина",
         category: "Тренер групповых программ",
-        photo: "/images/team/smirnova-galina.jpg",
+        photo: "/images/team/smirnova.webp",
         bio: [
           "Тренер групповых программ в ЦТТ «Импульс».",
           "Проводит групповые занятия для гостей центра — комфортный темп и внимание к каждому участнику.",
