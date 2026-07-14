@@ -70,7 +70,7 @@ export const media = {
   hero: {
     kind: "image",
     src: "/images/hero/new-hero.jpg",
-    alt: "Аэрофото теннисного комплекса ЦТТ Импульс — главное здание с надписью и корты у Лосиного Острова",
+    alt: "Главное здание ЦТТ Импульс с надписью, крытый ангар и корты на территории комплекса",
     width: 1920,
     height: 1096,
   } as HeroMedia,
@@ -105,12 +105,16 @@ export const media = {
       src: "/images/services/ground-court.jpg",
       alt: "Грунтовые корты с покрытием Tennisit в ЦТТ Импульс",
     },
+    tableTennis: {
+      src: "/images/services/table-tennis.jpg",
+      alt: "Настольный теннис в ЦТТ Импульс",
+    },
     yogaStudio: {
       src: "/images/services/yoga-studio.jpg",
       alt: "Студия йоги в ЦТТ Импульс",
     },
     danceStudio: {
-      src: "/images/services/dance-studio.jpg",
+      src: "/images/services/dance-studio.JPG",
       alt: "Танцевальная студия в ЦТТ Импульс",
     },
     gymHall: {
@@ -118,7 +122,7 @@ export const media = {
       alt: "Тренажёрный зал в ЦТТ Импульс",
     },
     ofpTraining: {
-      src: "/images/services/ofp-training.jpg",
+      src: "/images/services/ofp-training.JPG",
       alt: "Зал общей физической подготовки в ЦТТ Импульс",
     },
     ofp: {
@@ -126,7 +130,7 @@ export const media = {
       alt: "Зал общей физической подготовки в клубе",
     },
     karate: {
-      src: "/images/services/karate.jpg",
+      src: "/images/services/karate.JPG",
       alt: "Секция каратэ в ЦТТ Импульс",
     },
     activities: {
@@ -152,6 +156,26 @@ export const media = {
     aerial: {
       src: "/images/facilities/aerial.webp",
       alt: "Теннисный комплекс ЦТТ Импульс с высоты, в окружении леса",
+    },
+    lockerBlue: {
+      src: "/images/facilities/locker-blue.jpg",
+      alt: "Синяя раздевалка в ЦТТ Импульс",
+    },
+    lockerPink: {
+      src: "/images/facilities/locker-pink.jpg",
+      alt: "Розовая раздевалка в ЦТТ Импульс",
+    },
+    vipLocker1: {
+      src: "/images/facilities/vip-locker-1.jpg",
+      alt: "VIP-раздевалка в ЦТТ Импульс",
+    },
+    vipLocker2: {
+      src: "/images/facilities/vip-locker-2.jpg",
+      alt: "VIP-раздевалка — зона отдыха в ЦТТ Импульс",
+    },
+    vipLocker3: {
+      src: "/images/facilities/vip-locker-3.jpg",
+      alt: "VIP-раздевалка — интерьер в ЦТТ Импульс",
     },
   } satisfies Record<string, MediaImageSource>,
 

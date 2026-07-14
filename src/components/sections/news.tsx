@@ -82,13 +82,7 @@ export function News() {
     <Section id="news" tone="muted">
         <SectionHeading
           eyebrow="Новости центра"
-          title={
-            <>
-              Свежие события{" "}
-              <span className="text-terracotta-600">ЦТТ «Импульс»</span>
-            </>
-          }
-          description="Турниры, расписания и события комплекса — только актуальные материалы за последние дни."
+          title="Актуальные события в ЦТТ Импульс"
         />
 
         <div className="section-inner mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:gap-6">

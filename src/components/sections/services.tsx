@@ -1,20 +1,10 @@
 import {
   Trees,
-  Baby,
   Activity,
-  Table2,
-  ShowerHead,
-  Crown,
-  Armchair,
-  ParkingCircle,
-  Users,
   Music,
   Flower2,
   Dumbbell,
   Shield,
-  Lightbulb,
-  Wind,
-  Sun,
   HeartHandshake,
   ArrowUpRight,
   type LucideIcon,
@@ -35,14 +25,6 @@ import { cn } from "@/lib/utils";
 /* ── ТЕННИС ── */
 const courtSurfaces = [
   {
-    label: "Открытые корты",
-    surface: "Грунт (Tennisit)",
-    detail:
-      "Премиальный грунт Tennisit: мягкий отскок, бережная нагрузка на суставы и естественная игра на свежем воздухе.",
-    image: media.services.groundCourt,
-    imagePosition: "center 38%",
-  },
-  {
     label: "Крытые корты",
     surface: "Полумягкий хард",
     detail:
@@ -56,17 +38,20 @@ const courtSurfaces = [
       "Крытый падел-корт на полумягком харде — самый динамичный ракеточный формат для игры в компании.",
     image: media.services.padel,
   },
-];
-
-const tennisExtras: {
-  icon: LucideIcon;
-  title: string;
-  text: string;
-}[] = [
   {
-    icon: Table2,
-    title: "Настольный теннис",
-    text: "4 профессиональных стола, разделённых на 4 игровых сектора — играйте парами или компанией.",
+    label: "Открытые корты",
+    surface: "Грунт (Tennisit)",
+    detail:
+      "Премиальный грунт Tennisit: мягкий отскок, бережная нагрузка на суставы и естественная игра на свежем воздухе.",
+    image: media.services.groundCourt,
+    imagePosition: "center 38%",
+  },
+  {
+    label: "Настольный теннис",
+    surface: "4 профессиональных стола",
+    detail:
+      "4 профессиональных стола, разделённых на 4 игровых сектора — играйте парами или компанией.",
+    image: media.services.tableTennis,
   },
 ];
 
@@ -77,26 +62,20 @@ const fitnessDirections: {
   text: string;
   image?: MediaImageSource;
   imagePosition?: string;
+  imagePlaceholder?: boolean;
 }[] = [
   {
-    icon: Activity,
-    title: "Залы ОФП и специальной подготовки",
-    text: "Сила, выносливость и функциональная база — просторные залы с зеркалами и полным набором инвентаря.",
-    image: media.services.ofpTraining,
+    icon: Dumbbell,
+    title: "Тренажёрный зал",
+    text: "Силовые и кардиотренажёры, свободные веса и функциональные зоны — всё для полноценной тренировки.",
+    image: media.services.gymHall,
     imagePosition: "center 45%",
   },
   {
-    icon: Flower2,
-    title: "Йога",
-    text: "Гибкость, дыхание и глубокое восстановление — практики в светлой студии для любого уровня.",
-    image: media.services.yogaStudio,
-    imagePosition: "center 42%",
-  },
-  {
     icon: Music,
-    title: "Танцы",
-    text: "Пластика, координация и драйв — групповые и индивидуальные занятия под живую энергию музыки.",
-    image: media.services.danceStudio,
+    title: "Зал для танцев и йоги",
+    text: "Просторная студия с зеркалами и профессиональным покрытием — для танцев, йоги и групповых занятий.",
+    image: media.services.yogaStudio,
     imagePosition: "center 42%",
   },
   {
@@ -107,63 +86,66 @@ const fitnessDirections: {
     imagePosition: "center 40%",
   },
   {
+    icon: Flower2,
+    title: "Йога",
+    text: "Гибкость, дыхание и глубокое восстановление — практики в светлой студии для любого уровня.",
+    image: media.services.danceStudio,
+    imagePosition: "center 42%",
+  },
+  {
+    icon: Activity,
+    title: "Танцы",
+    text: "Пластика, координация и драйв — групповые и индивидуальные занятия под живую энергию музыки.",
+    image: media.services.ofpTraining,
+    imagePosition: "center 42%",
+  },
+  {
     icon: HeartHandshake,
-    title: "Спа-зал и массаж",
+    title: "Массаж",
     text: "Лечебный, спортивный и восстановительный массаж — перезагрузка тела после нагрузок.",
-  },
-  {
-    icon: Users,
-    title: "Групповые тренировки",
-    text: "Мини-группы по 4–6 человек — энергия команды и персональное внимание тренера каждому.",
-  },
-  {
-    icon: Baby,
-    title: "Детские тренировки",
-    text: "Программы от 4 лет — мягкое погружение в спорт, первые успехи и любовь к движению.",
+    imagePlaceholder: true,
   },
 ];
 
-/* ── ИНФРАСТРУКТУРА (после двух блоков) ── */
-const amenities: {
-  icon: LucideIcon;
+/* ── ИНФРАСТРУКТУРА ── */
+const infrastructureCards: {
   title: string;
   text: string;
+  images?: MediaImageSource[];
+  imagePlaceholder?: boolean;
 }[] = [
   {
-    icon: ParkingCircle,
-    title: "Бесплатная парковка",
-    text: "Собственная парковка для всех гостей центра на время визита.",
-  },
-  {
-    icon: ShowerHead,
     title: "Комфортные раздевалки",
     text: "Отдельные раздевалки для взрослых и детей — всё необходимое после тренировки.",
+    imagePlaceholder: true,
   },
   {
-    icon: Crown,
-    title: "VIP-раздевалки",
+    title: "ВИП раздевалки",
     text: "Премиальные VIP-раздевалки со своей сауной — максимальный комфорт для гостей.",
-  },
-  {
-    icon: Armchair,
-    title: "Зона отдыха",
-    text: "Уютное пространство для отдыха между тренировками и после игры.",
-  },
-  {
-    icon: Lightbulb,
-    title: "Четырёхуровневое освещение",
-    text: "Профессиональный свет на кортах — комфортная игра утром, днём и вечером.",
-  },
-  {
-    icon: Wind,
-    title: "Система кондиционирования",
-    text: "Стабильный микроклимат круглый год — прохладно летом и комфортно зимой.",
+    imagePlaceholder: true,
   },
 ];
 
 /* -------------------------------------------------------------------------- */
 /*  UI-компоненты                                                             */
 /* -------------------------------------------------------------------------- */
+
+function PhotoSoonSlot({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "relative aspect-[21/9] shrink-0 overflow-hidden bg-gradient-to-br from-lime-50 via-white to-emerald-50/80 ring-1 ring-inset ring-forest-900/[0.06]",
+        className
+      )}
+      aria-hidden
+    >
+      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(180,220,66,0.08)_0%,transparent_45%,rgba(206,88,56,0.06)_100%)]" />
+      <span className="absolute inset-0 flex items-center justify-center text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-forest-900/35 sm:text-xs">
+        Фото скоро
+      </span>
+    </div>
+  );
+}
 
 function BlockHeader({
   eyebrow,
@@ -251,6 +233,7 @@ function CompactFeature({
   text,
   image,
   imagePosition,
+  imagePlaceholder,
   tone,
   index,
 }: {
@@ -259,6 +242,7 @@ function CompactFeature({
   text: string;
   image?: MediaImageSource;
   imagePosition?: string;
+  imagePlaceholder?: boolean;
   tone: "dark" | "light";
   index: number;
 }) {
@@ -271,6 +255,7 @@ function CompactFeature({
           isDark ? "card-glass-dark hover:-translate-y-1" : "card-media-light"
         )}
       >
+        {imagePlaceholder && <PhotoSoonSlot />}
         {image && (
           <div className="relative shrink-0 overflow-hidden">
             <MediaImage
@@ -317,21 +302,49 @@ function CompactFeature({
   );
 }
 
-function AmenityCard({
+function InfrastructureImageGrid({ images }: { images: MediaImageSource[] }) {
+  return (
+    <div
+      className={cn(
+        "grid shrink-0 gap-0.5",
+        images.length === 2 ? "grid-cols-2" : "grid-cols-3"
+      )}
+    >
+      {images.map((image) => (
+        <div key={image.src} className="relative overflow-hidden">
+          <MediaImage
+            media={image}
+            ratio="photo"
+            rounded={false}
+            imageClassName="transition-transform duration-700 ease-premium group-hover:scale-[1.05]"
+            sizes={
+              images.length === 2
+                ? "(max-width: 768px) 50vw, 25vw"
+                : "(max-width: 768px) 33vw, 20vw"
+            }
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function InfrastructurePhotoCard({
   item,
   index,
 }: {
-  item: (typeof amenities)[number];
+  item: (typeof infrastructureCards)[number];
   index: number;
 }) {
-  const Icon = item.icon;
   return (
     <Reveal delay={index * 0.05} className="h-full">
-      <div className="card-feature group h-full">
-        <span className="icon-wrap">
-          <Icon className="h-5 w-5" aria-hidden />
-        </span>
-        <div className="min-w-0">
+      <div className="card-media-light group flex h-full flex-col overflow-hidden p-0">
+        {item.imagePlaceholder ? (
+          <PhotoSoonSlot />
+        ) : item.images && item.images.length > 0 ? (
+          <InfrastructureImageGrid images={item.images} />
+        ) : null}
+        <div className="flex flex-1 flex-col p-5 sm:p-6">
           <h4 className="text-card-title">{item.title}</h4>
           <p className="text-card-body mt-2">{item.text}</p>
         </div>
@@ -374,13 +387,13 @@ export function Services() {
         <Reveal>
           <div
             id="services-tennis"
-            className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-forest-950 via-forest-900 to-forest-800 p-6 ring-1 ring-lime/20 sm:p-8 lg:p-10"
+            className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-forest-800 via-forest-700 to-emerald-800/90 p-6 ring-1 ring-lime/25 sm:p-8 lg:p-10"
           >
             <div
-              className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-lime/15 blur-[90px]"
+              className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-lime/12 blur-[90px]"
               aria-hidden
             />
-            <div className="absolute inset-0 bg-grid opacity-[0.08]" aria-hidden />
+            <div className="absolute inset-0 bg-grid opacity-[0.06]" aria-hidden />
 
             <div className="relative space-y-10">
               <BlockHeader
@@ -391,61 +404,19 @@ export function Services() {
                     Теннис
                   </>
                 }
-                description="Открытые корты на грунте Tennisit, крытые корты на полумягком харде — стандартная и детская площадки, падел и настольный теннис. Всё для игры и тренировок на одной территории."
+                description="Крытые корты на полумягком харде — стандартная и детская площадки, падел, открытые корты на грунте Tennisit и настольный теннис. Всё для игры и тренировок на одной территории."
                 tone="dark"
               />
 
-              {/* Корты */}
               <div>
                 <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-terracotta-300/90">
                   Корты и покрытия
                 </h4>
-                <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3 md:items-stretch">
+                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:items-stretch">
                   {courtSurfaces.map((item, i) => (
                     <SurfaceCard key={item.label} item={item} index={i} />
                   ))}
                 </div>
-              </div>
-
-              {/* Настольный теннис + освещение */}
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                {tennisExtras.map((item, i) => (
-                  <CompactFeature
-                    key={item.title}
-                    icon={item.icon}
-                    title={item.title}
-                    text={item.text}
-                    tone="dark"
-                    index={i}
-                  />
-                ))}
-
-                {/* Четырёхзонное освещение крытых кортов */}
-                <Reveal delay={0.08} className="h-full">
-                  <div className="flex h-full flex-col gap-4 rounded-2xl border border-lime/25 bg-gradient-to-br from-lime/15 via-forest-900/40 to-forest-950/60 p-5 sm:flex-row sm:items-center sm:gap-5 sm:p-6">
-                    <div className="flex gap-3">
-                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-lime/25 text-lime">
-                        <Sun className="h-6 w-6" aria-hidden />
-                      </span>
-                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-forest-950 text-lime ring-1 ring-lime/30">
-                        <Lightbulb className="h-6 w-6" aria-hidden />
-                      </span>
-                    </div>
-                    <div>
-                      <p className="font-display text-lg font-bold text-white">
-                        Четырёхзонное освещение
-                      </p>
-                      <p className="mt-1 text-sm leading-relaxed text-white/70">
-                        Крытые корты с освещением в{" "}
-                        <strong className="font-semibold text-lime">
-                          четырёх независимых режимах
-                        </strong>{" "}
-                        — комфортная игра утром, днём и вечером в любое время
-                        года.
-                      </p>
-                    </div>
-                  </div>
-                </Reveal>
               </div>
 
               <div className="flex justify-start">
@@ -460,7 +431,6 @@ export function Services() {
           </div>
         </Reveal>
 
-        {/* Разделитель между направлениями */}
         <div className="flex items-center gap-4 py-2" aria-hidden>
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-forest-900/15 to-transparent" />
           <span className="shrink-0 rounded-full bg-terracotta/12 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-terracotta-600 ring-1 ring-terracotta/25">
@@ -469,7 +439,7 @@ export function Services() {
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-forest-900/15 to-transparent" />
         </div>
 
-        {/* ── БЛОК 2 · ФИТНЕС И ДРУГИЕ НАПРАВЛЕНИЯ ── */}
+        {/* ── БЛОК 2 · ФИТНЕС ── */}
         <Reveal delay={0.05}>
           <div
             id="services-fitness"
@@ -486,11 +456,10 @@ export function Services() {
                 title={
                   <>
                     <Dumbbell className="mr-2 inline-block h-8 w-8 text-terracotta-500 sm:h-9 sm:w-9" />
-                    Фитнес, восстановление{" "}
-                    <span className="text-terracotta-600">и развитие</span>
+                    Залы специальной и ОФП подготовки
                   </>
                 }
-                description="Сила, гибкость, пластика и внутренний баланс — семь направлений для любого возраста и уровня. Тренируйтесь в мини-группах, приводите детей от 4 лет и восстанавливайтесь в спа-зале после нагрузок."
+                description="Тренажёрный зал, зал для танцев и занятий йоги"
                 tone="light"
               />
 
@@ -503,6 +472,7 @@ export function Services() {
                     text={item.text}
                     image={item.image}
                     imagePosition={item.imagePosition}
+                    imagePlaceholder={item.imagePlaceholder}
                     tone="light"
                     index={i}
                   />
@@ -523,19 +493,19 @@ export function Services() {
 
         {/* ── ИНФРАСТРУКТУРА ── */}
         <Reveal delay={0.05}>
-          <div>
+          <div className="pl-3 sm:pl-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <h3 className="heading-subsection">
                 Инфраструктура спортивного центра
               </h3>
               <p className="max-w-md text-sm text-muted-foreground">
-                Парковка, раздевалки и комфорт для гостей на всей территории
+                Комфортные и VIP-раздевалки для гостей на всей территории
                 комплекса.
               </p>
             </div>
-            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {amenities.map((item, i) => (
-                <AmenityCard key={item.title} item={item} index={i} />
+            <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
+              {infrastructureCards.map((item, i) => (
+                <InfrastructurePhotoCard key={item.title} item={item} index={i} />
               ))}
             </div>
           </div>

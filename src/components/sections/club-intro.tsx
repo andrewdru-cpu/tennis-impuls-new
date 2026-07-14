@@ -1,10 +1,10 @@
 import {
-  Lightbulb,
-  Wind,
   MapPin,
   Layers,
   Dumbbell,
   ParkingCircle,
+  Lightbulb,
+  Wind,
 } from "@/lib/icons";
 
 import { Section } from "@/components/section";
@@ -12,28 +12,24 @@ import { Reveal } from "@/components/reveal";
 
 const highlights = [
   {
+    icon: Layers,
+    title: "Корты всех форматов",
+    text: "Крытый Hard, открытый грунт и падел — всё на одной закрытой территории.",
+  },
+  {
+    icon: Dumbbell,
+    title: "Фитнес и восстановление",
+    text: "Тренажёрный зал, залы ОФП, танцев и йоги — всё для тренировок и восстановления.",
+  },
+  {
     icon: Lightbulb,
-    title: "Четырёхуровневое освещение",
-    text: "Профессиональный свет на кортах — комфортная игра утром, днём и вечером.",
-    accent: "from-lime/30 to-lime/5",
+    title: "Четырёхзонное освещение кортов",
+    text: "Профессиональный свет в четырёх режимах — комфортная игра утром, днём и вечером.",
   },
   {
     icon: Wind,
     title: "Система кондиционирования",
     text: "Стабильный микроклимат круглый год — прохладно летом и комфортно зимой.",
-    accent: "from-emerald-400/25 to-emerald-50",
-  },
-  {
-    icon: Layers,
-    title: "Корты всех форматов",
-    text: "Крытый Hard, открытый грунт и падел — всё на одной закрытой территории.",
-    accent: "from-lime/25 to-white",
-  },
-  {
-    icon: Dumbbell,
-    title: "Фитнес и восстановление",
-    text: "Тренажёрный зал, ОФП, раздевалки с душем и зоны отдыха между тренировками.",
-    accent: "from-forest-200/40 to-white",
   },
 ];
 
@@ -71,9 +67,8 @@ export function ClubIntro() {
             </strong>
             {" — "}
             многофункциональный спортивный комплекс на&nbsp;территории более
-            1&nbsp;га у&nbsp;Лосиного Острова. Корты, тренажёрный зал, групповые
-            программы и&nbsp;зоны отдыха — всё в&nbsp;одном месте, без лишних
-            поездок по&nbsp;городу.
+            1&nbsp;га у&nbsp;Лосиного Острова. Корты, тренажёрный зал и залы
+            ОФП — всё в&nbsp;одном месте, без лишних поездок по&nbsp;городу.
           </p>
         </Reveal>
 
@@ -91,10 +86,10 @@ export function ClubIntro() {
           </ul>
         </Reveal>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {highlights.map((item, i) => (
-            <Reveal key={item.title} delay={0.12 + i * 0.05}>
-              <div className="card-feature group">
+            <Reveal key={item.title} delay={0.12 + i * 0.05} className="h-full">
+              <div className="card-feature group h-full">
                 <span className="icon-wrap">
                   <item.icon className="h-5 w-5" aria-hidden />
                 </span>

@@ -23,19 +23,15 @@ export function Hero() {
     >
       <HeroMedia />
 
-      {/* Мягкий градиент справа — плавный переход к текстовой колонке, не заходит на здание */}
-      <div
-        className="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[min(38%,32rem)] bg-gradient-to-l from-forest-950/28 via-forest-950/8 to-transparent md:block"
-        aria-hidden
-      />
-
       <div
         className={cn(
-          "relative z-10 w-full",
+          "relative z-10 flex w-full flex-1 flex-col",
           "px-[max(1.25rem,env(safe-area-inset-left,0px))]",
           "pr-[max(1rem,env(safe-area-inset-right,0px))]",
-          "md:pl-[max(2rem,env(safe-area-inset-left,0px))]",
-          "md:pr-[max(1rem,env(safe-area-inset-right,0px))]"
+          "md:justify-start md:pl-[max(1.25rem,env(safe-area-inset-left,0px))]",
+          "md:pr-[max(0.75rem,env(safe-area-inset-right,0px))]",
+          "lg:pr-[max(1.5rem,env(safe-area-inset-right,0px))]",
+          "xl:pr-[max(2.5rem,env(safe-area-inset-right,0px))]"
         )}
       >
         <motion.div
@@ -44,16 +40,19 @@ export function Hero() {
           animate="visible"
           className={cn(
             "relative isolate ml-auto flex w-full flex-col items-end text-right",
-            "max-w-[30rem] lg:max-w-[32.5rem]",
-            "px-5 py-6 sm:px-6 lg:px-7 lg:py-7"
+            /* ~38–42% ширины — фото занимает ~58–62% слева без текста */
+            "max-w-[min(100%,22rem)] sm:max-w-[23rem]",
+            "md:mt-6 md:max-w-[min(38vw,24rem)] lg:mt-8 lg:max-w-[25rem]",
+            "px-4 py-6 sm:px-5 sm:py-6 lg:px-6 lg:py-7"
           )}
         >
-          {/* Размытие и маска — только на фоновом слое; контент (текст, кнопки) остаётся чётким */}
+          {/* Подложка только под колонку текста — над ангаром справа */}
           <div
             className={cn(
-              "absolute inset-0 -z-10",
-              "bg-[#0A2F24]/48 backdrop-blur-lg md:bg-[#0A2F24]/42",
-              "[mask-image:linear-gradient(to_left,#000_62%,transparent_100%)]"
+              "absolute inset-0 -z-10 rounded-2xl",
+              "bg-[#0A2F24]/44 backdrop-blur-sm md:bg-[#0A2F24]/40",
+              "[mask-image:linear-gradient(to_left,#000_82%,transparent_100%)]",
+              "md:[mask-image:linear-gradient(to_left,#000_88%,transparent_100%)]"
             )}
             aria-hidden
           />
@@ -82,11 +81,11 @@ export function Hero() {
             variants={item}
             className={cn(
               "mt-5 font-display font-extrabold leading-[1.08] tracking-[-0.02em] text-balance",
-              "text-[1.75rem] sm:text-[2.125rem] lg:text-[2.5rem]",
+              "text-[1.875rem] sm:text-[2.5rem] lg:text-[3.125rem]",
               "[text-shadow:0_2px_40px_rgba(0,0,0,0.55)]"
             )}
           >
-            <span className="block text-white">Теннис, фитнес</span>
+            <span className="block whitespace-nowrap text-white">Теннис, фитнес</span>
             <span className="mt-0.5 block">
               <span className="text-white/95">и отдых — </span>
               <span className="bg-gradient-to-r from-lime-300 via-sand-200 to-terracotta bg-clip-text text-transparent">

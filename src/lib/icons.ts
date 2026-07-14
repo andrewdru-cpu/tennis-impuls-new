@@ -26,6 +26,7 @@ export {
   HeartHandshake,
   Layers,
   Lightbulb,
+  Loader2,
   Mail,
   Medal,
   MapPin,
@@ -54,4 +55,6 @@ export {
   Music,
   Flower2,
   Armchair,
+  Volume2,
+  VolumeX,
 } from "lucide-react";

@@ -5,16 +5,14 @@ import { media as siteMedia, type HeroMedia as HeroMediaType } from "@/lib/media
 
 /**
  * Оверлеи под new-hero.jpg:
- * — слева и в центре «окно» для здания «ЦТТ Импульс» и кортов;
- * — справа плотнее — под текстовую колонку (второстепенные постройки).
+ * — левая ~58% (здание «ЦТТ Импульс» + корты) без затемнения;
+ * — мягкий градиент справа только под текст (над ангаром).
  */
 const OVERLAY_DESKTOP = [
-  "linear-gradient(252deg, rgba(10,47,36,0.88) 0%, rgba(10,47,36,0.72) 18%, rgba(10,47,36,0.38) 38%, rgba(10,47,36,0.1) 52%, transparent 58%)",
-  "linear-gradient(78deg, transparent 0%, transparent 42%, rgba(10,47,36,0.06) 50%, rgba(10,47,36,0.22) 62%, rgba(10,47,36,0.55) 78%, rgba(5,25,18,0.82) 100%)",
-  "radial-gradient(ellipse 48% 62% at 28% 50%, transparent 0%, rgba(10,47,36,0.08) 72%, rgba(10,47,36,0.2) 100%)",
-  "linear-gradient(180deg, rgba(10,47,36,0.32) 0%, transparent 14%, transparent 72%, rgba(5,25,18,0.12) 90%, rgba(5,25,18,0.42) 100%)",
-  "radial-gradient(ellipse 55% 75% at 92% 48%, rgba(10,47,36,0.45) 0%, transparent 62%)",
-  "radial-gradient(ellipse 40% 35% at 88% 88%, rgba(206,88,56,0.16) 0%, transparent 58%)",
+  "linear-gradient(90deg, rgba(10,47,36,0.1) 0%, rgba(10,47,36,0.04) 20%, transparent 58%)",
+  "linear-gradient(270deg, transparent 0%, transparent 56%, rgba(10,47,36,0.06) 66%, rgba(10,47,36,0.22) 78%, rgba(5,25,18,0.55) 90%, rgba(5,25,18,0.72) 100%)",
+  "linear-gradient(180deg, rgba(10,47,36,0.16) 0%, transparent 10%, transparent 80%, rgba(5,25,18,0.22) 100%)",
+  "radial-gradient(ellipse 36% 32% at 96% 82%, rgba(206,88,56,0.1) 0%, transparent 58%)",
 ].join(", ");
 
 const OVERLAY_MOBILE = [
@@ -54,8 +52,9 @@ export function HeroMedia({
         quality={90}
         sizes="100vw"
         className={cn(
-          "object-cover brightness-[1.1] saturate-[1.15] contrast-[1.08]",
-          "object-[28%_50%] sm:object-[28%_50%] lg:object-[28%_50%]"
+          "object-cover brightness-[1.14] saturate-[1.2] contrast-[1.05]",
+          /* здание слева в кадре, ангар справа — под текстовую колонку */
+          "object-[32%_40%] md:object-[34%_38%] lg:object-[36%_36%]"
         )}
       />
 
@@ -71,23 +70,19 @@ export function HeroMedia({
         aria-hidden
       />
 
-      {/* Мягкая виньетка — слабее в центре-слева, где здание */}
+      {/* Лёгкая виньетка по краям — центр кадра (здание) остаётся ярким */}
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_90%_80%_at_28%_50%,transparent_0%,rgba(5,25,18,0.32)_100%)]"
+        className="absolute inset-0 hidden bg-[radial-gradient(ellipse_100%_90%_at_34%_42%,transparent_0%,rgba(5,25,18,0.14)_100%)] md:block"
         aria-hidden
       />
 
-      {/* Свечения — справа под текст, слева не затемняем здание */}
+      {/* Свечения — только у правого края, под текст */}
       <div
-        className="absolute -right-20 top-[14%] hidden h-[420px] w-[360px] rounded-full bg-terracotta/28 blur-[120px] md:block"
+        className="absolute -right-16 top-[12%] hidden h-[380px] w-[280px] rounded-full bg-terracotta/22 blur-[110px] md:block"
         aria-hidden
       />
       <div
-        className="absolute bottom-[18%] right-[8%] hidden h-[240px] w-[240px] rounded-full bg-lime/14 blur-[90px] md:block"
-        aria-hidden
-      />
-      <div
-        className="absolute left-[4%] top-[20%] h-[200px] w-[200px] rounded-full bg-sand/10 blur-[80px] md:opacity-60"
+        className="absolute bottom-[16%] right-[2%] hidden h-[200px] w-[200px] rounded-full bg-lime/10 blur-[80px] md:block"
         aria-hidden
       />
 

@@ -42,7 +42,7 @@ export function Contacts() {
     <Section id="contacts" tone="muted">
         <SectionHeading
           eyebrow="Контакты"
-          title="Приезжайте в гости"
+          title="Приезжайте в центр"
           description="Мы рядом с Лосиным Островом — в 3 минутах от Москвы и МКАД. Удобная парковка для гостей центра."
         />
 
@@ -90,23 +90,23 @@ export function Contacts() {
                (iframe или react-компонент) с реальной точкой клуба.
           */}
           <Reveal delay={0.1}>
-            <div className="relative flex min-h-[280px] flex-col justify-end overflow-hidden rounded-3xl bg-forest-950 p-6 text-white sm:min-h-[320px] sm:p-8">
+            <div className="relative flex min-h-[280px] flex-col justify-end overflow-hidden rounded-3xl bg-gradient-to-br from-white via-lime-50 to-emerald-50/70 p-6 text-forest-900 ring-1 ring-forest-900/10 sm:min-h-[320px] sm:p-8">
               <div
-                className="absolute inset-0 bg-grid opacity-20"
+                className="absolute inset-0 bg-grid opacity-[0.08]"
                 aria-hidden
               />
               <div
-                className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-lime/20"
+                className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-lime/35"
                 aria-hidden
               >
-                <span className="absolute inset-0 animate-pulse-ring rounded-full bg-lime/30" />
-                <MapPin className="relative h-7 w-7 text-lime" />
+                <span className="absolute inset-0 animate-pulse-ring rounded-full bg-lime/40" />
+                <MapPin className="relative h-7 w-7 text-forest-900/80" />
               </div>
               <div className="relative">
                 <p className="font-display text-xl font-bold">
                   ЦТТ «Импульс»
                 </p>
-                <p className="mt-1 text-sm text-white/70">
+                <p className="mt-1 text-sm text-muted-foreground">
                   {siteConfig.address}
                 </p>
                 <Button asChild variant="primary" size="lg" className="mt-5 w-full sm:w-auto">

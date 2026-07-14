@@ -1,383 +1,78 @@
 "use client";
 
-import {
-  ArrowUpRight,
-  Award,
-  Dumbbell,
-  HeartHandshake,
-  Medal,
-  Sparkles,
-  Target,
-  UserRound,
-} from "@/lib/icons";
+import { useState } from "react";
+import { ArrowUpRight } from "@/lib/icons";
 
 import { SectionHeading } from "@/components/section-heading";
 import { Section } from "@/components/section";
 import { Reveal } from "@/components/reveal";
-import { MediaImage } from "@/components/media/media-image";
 import { Button } from "@/components/ui/button";
-import {
-  teamGroups,
-  tierStyles,
-  type Coach,
-  type TeamGroup,
-} from "@/lib/team";
+import { TeamModal } from "@/components/team/team-modal";
+import { TeamPhoto } from "@/components/team/team-photo";
+import { teamGroups, type TeamMember } from "@/lib/team";
 import { cn } from "@/lib/utils";
 
-const groupMeta: Record<
-  TeamGroup["id"],
-  { icon: typeof Target; accent: string; panel: string }
-> = {
-  tennis: {
-    icon: Target,
-    accent: "text-lime",
-    panel:
-      "border-lime/30 bg-gradient-to-br from-forest-950 via-forest-900 to-forest-800 text-white",
-  },
-  fitness: {
-    icon: Dumbbell,
-    accent: "text-lime-600",
-    panel:
-      "border-lime/40 bg-gradient-to-br from-lime-100/80 via-lime-50 to-white",
-  },
-  massage: {
-    icon: HeartHandshake,
-    accent: "text-teal-600",
-    panel:
-      "border-teal-200/60 bg-gradient-to-br from-teal-50 via-white to-lime-50/40",
-  },
-};
-
-function RankBadge({ coach }: { coach: Coach }) {
-  const style = tierStyles[coach.tier];
-  if (!coach.rank) return null;
-
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ring-1 sm:text-[11px]",
-        style.rankClass
-      )}
-    >
-      {coach.tier === "master" || coach.tier === "kms" ? (
-        <Award className="h-3 w-3 shrink-0" aria-hidden />
-      ) : (
-        <Medal className="h-3 w-3 shrink-0" aria-hidden />
-      )}
-      {coach.rank}
-    </span>
-  );
-}
-
-function MassageCoachCard({ coach, index }: { coach: Coach; index: number }) {
-  return (
-    <Reveal delay={index * 0.06}>
-      <article className="group overflow-hidden rounded-2xl border-2 border-teal-200/70 bg-white shadow-card transition-all duration-500 ease-premium hover:-translate-y-1 hover:border-terracotta/40 hover:shadow-glow-warm">
-        <div className="flex flex-col sm:flex-row">
-          {/* Фото — отдельная колонка, без наложений */}
-          <div className="relative w-full shrink-0 overflow-hidden sm:w-[200px] lg:w-[220px]">
-            {coach.image ? (
-              <MediaImage
-                media={coach.image}
-                ratio="auto"
-                rounded={false}
-                position="center top"
-                className="aspect-[16/10] h-full w-full rounded-none sm:aspect-auto sm:min-h-[250px]"
-                imageClassName="object-cover object-[center_20%] transition-transform duration-700 ease-premium group-hover:scale-[1.04] saturate-[1.1]"
-                sizes="(max-width: 640px) 100vw, 220px"
-              />
-            ) : (
-              <div className="flex aspect-[16/10] items-center justify-center bg-gradient-to-br from-teal-100 to-forest-100 sm:aspect-auto sm:h-full sm:min-h-[250px]">
-                <UserRound className="h-10 w-10 text-teal-400/60" />
-              </div>
-            )}
-            <div
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-forest-950/20 to-transparent sm:hidden"
-              aria-hidden
-            />
-          </div>
-
-          {/* Контент — весь текст здесь, ничего не перекрывает фото */}
-          <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-6">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <RankBadge coach={coach} />
-              {coach.badges.map((badge) => (
-                <span
-                  key={badge}
-                  className="rounded-full bg-forest-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-lime sm:text-[11px]"
-                >
-                  {badge}
-                </span>
-              ))}
-            </div>
-
-            <h3 className="mt-3 font-display text-lg font-bold leading-snug text-forest-900 sm:text-xl">
-              {coach.name}
-            </h3>
-            <p className="mt-1 text-sm font-semibold text-teal-700">
-              {coach.role}
-            </p>
-
-            <p className="mt-3 flex-1 text-pretty text-sm leading-relaxed text-muted-foreground">
-              {coach.description}
-            </p>
-
-            {coach.serviceTags && (
-              <ul className="mt-4 flex flex-wrap gap-1.5">
-                {coach.serviceTags.map((tag) => (
-                  <li
-                    key={tag}
-                    className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-2.5 py-1 text-[11px] font-semibold text-teal-900 ring-1 ring-teal-200 sm:text-xs"
-                  >
-                    <Sparkles className="h-3 w-3 shrink-0 text-teal-500" aria-hidden />
-                    {tag}
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            <a
-              href="#booking"
-              className="mt-4 inline-flex min-h-[44px] w-fit items-center gap-1.5 rounded-full bg-terracotta px-5 text-sm font-bold text-white shadow-terracotta transition-all duration-300 hover:bg-terracotta/90 hover:shadow-glow-warm"
-            >
-              Записаться на массаж
-              <ArrowUpRight className="h-4 w-4 shrink-0" />
-            </a>
-          </div>
-        </div>
-      </article>
-    </Reveal>
-  );
-}
-
-function CoachCard({
-  coach,
+function TeamMemberCard({
+  member,
   index,
-  tone,
+  priority,
+  onOpen,
 }: {
-  coach: Coach;
+  member: TeamMember;
   index: number;
-  tone: "dark" | "light";
+  priority?: boolean;
+  onOpen: () => void;
 }) {
-  const isDark = tone === "dark";
-
   return (
-    <Reveal delay={index * 0.06} className="h-full">
-      <article
-        className={cn(
-          "group card-surface flex h-full flex-col overflow-hidden rounded-2xl border-2 p-0",
-          isDark
-            ? "border-sand/20 bg-white/[0.07] hover:border-sand/40"
-            : "border-sand/25 hover:border-terracotta/25"
-        )}
-      >
+    <Reveal delay={index * 0.05} className="h-full">
+      <article className="card-surface group flex h-full flex-col overflow-hidden rounded-2xl p-0">
         <div className="relative overflow-hidden">
-          {coach.image ? (
-            <MediaImage
-              media={coach.image}
-              ratio="auto"
-              rounded={false}
-              position="top"
-              className="aspect-[5/6] w-full"
-              imageClassName="group-hover:scale-105 saturate-[1.08]"
-              sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px"
-            />
-          ) : (
-            <div className="relative aspect-[5/6] bg-gradient-to-br from-forest-900 to-forest-700">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <UserRound className="h-9 w-9 text-lime/50" />
-              </div>
-            </div>
-          )}
-
-          <div className="absolute inset-x-0 top-0 flex flex-wrap gap-1 p-2 sm:p-2.5">
-            {coach.badges.map((badge) => (
-              <span
-                key={badge}
-                className={cn(
-                  "rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide sm:text-[10px]",
-                  isDark
-                    ? "bg-lime/95 text-forest-900"
-                    : "bg-forest-900 text-lime"
-                )}
-              >
-                {badge}
-              </span>
-            ))}
-          </div>
+          <TeamPhoto
+            photo={member.photo}
+            alt={member.name}
+            ratio="portrait"
+            priority={priority}
+            className="w-full"
+            imageClassName="transition-transform duration-700 ease-premium group-hover:scale-[1.04] saturate-[1.08]"
+          />
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-forest-950/25 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+            aria-hidden
+          />
         </div>
 
-        <div className="flex flex-1 flex-col p-3 sm:p-3.5">
-          <div className="mb-2">
-            <RankBadge coach={coach} />
-          </div>
-
-          <h3
-            className={cn(
-              "font-display text-base font-bold leading-snug sm:text-lg",
-              isDark ? "text-white" : "text-forest-900"
-            )}
-          >
-            {coach.name}
+        <div className="flex flex-1 flex-col p-5 sm:p-6">
+          <h3 className="font-display text-lg font-bold leading-snug text-forest-900 sm:text-xl">
+            {member.name}
           </h3>
-          <p
-            className={cn(
-              "mt-0.5 text-xs font-semibold sm:text-sm",
-              isDark ? "text-lime/90" : "text-lime-700"
-            )}
-          >
-            {coach.role}
+          <p className="mt-2 text-sm font-semibold leading-snug text-terracotta-600">
+            {member.category}
           </p>
 
-          <p
-            className={cn(
-              "mt-2 line-clamp-3 flex-1 text-xs leading-relaxed sm:text-sm sm:leading-5",
-              isDark ? "text-white/70" : "text-muted-foreground"
-            )}
-          >
-            {coach.description}
-          </p>
-
-          {coach.serviceTags && (
-            <ul className="mt-2 flex flex-wrap gap-1.5">
-              {coach.serviceTags.map((tag) => (
-                <li
-                  key={tag}
-                  className={cn(
-                    "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 sm:text-xs",
-                    isDark
-                      ? "bg-teal-400/20 text-teal-100 ring-teal-300/30"
-                      : "bg-teal-100 text-teal-900 ring-teal-200"
-                  )}
-                >
-                  <Sparkles className="h-2.5 w-2.5 shrink-0" aria-hidden />
-                  {tag}
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <a
-            href="#booking"
-            className={cn(
-              "mt-3 inline-flex min-h-[40px] items-center gap-1 text-xs font-semibold transition-colors sm:min-h-[44px] sm:text-sm",
-              isDark
-                ? "text-lime hover:text-lime-200"
-                : "text-forest-900 hover:text-lime-600"
-            )}
-          >
-            Записаться
-            <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
-          </a>
+          <div className="mt-auto pt-5">
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={onOpen}
+              className={cn(
+                "w-full justify-between border-forest-900/12 bg-white/80",
+                "group-hover:border-terracotta/30 group-hover:text-terracotta-600"
+              )}
+            >
+              Подробнее
+              <ArrowUpRight className="h-4 w-4 shrink-0 transition-transform duration-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Button>
+          </div>
         </div>
       </article>
-    </Reveal>
-  );
-}
-
-function TeamGroupBlock({ group, groupIndex }: { group: TeamGroup; groupIndex: number }) {
-  const meta = groupMeta[group.id];
-  const Icon = meta.icon;
-  const isDark = group.id === "tennis";
-
-  return (
-    <Reveal delay={groupIndex * 0.08}>
-      <div
-        className={cn(
-          "relative overflow-hidden rounded-2xl border-2 p-4 sm:p-5 lg:p-6",
-          meta.panel
-        )}
-      >
-        {isDark && (
-          <>
-            <div
-              className="pointer-events-none absolute -right-16 top-0 h-56 w-56 rounded-full bg-lime/20 blur-[80px]"
-              aria-hidden
-            />
-            <div className="absolute inset-0 bg-grid opacity-[0.07]" aria-hidden />
-          </>
-        )}
-
-        <div className="relative space-y-4 sm:space-y-5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex items-start gap-3">
-              <span
-                className={cn(
-                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1 sm:h-11 sm:w-11 sm:rounded-2xl",
-                  isDark
-                    ? "bg-terracotta/20 text-terracotta-300 ring-terracotta/40"
-                    : "bg-terracotta/12 text-terracotta-500 ring-terracotta/30"
-                )}
-              >
-                <Icon className="h-5 w-5" aria-hidden />
-              </span>
-              <div>
-                <h3
-                  className={cn(
-                    "font-display text-xl font-bold sm:text-2xl",
-                    isDark ? "text-white" : "text-forest-900"
-                  )}
-                >
-                  {group.title}
-                </h3>
-                <p
-                  className={cn(
-                    "mt-1 max-w-xl text-xs leading-relaxed sm:text-sm",
-                    isDark ? "text-white/70" : "text-muted-foreground"
-                  )}
-                >
-                  {group.subtitle}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {group.subsections.map((subsection) => (
-            <div key={subsection.label ?? subsection.coaches[0]?.id}>
-              {subsection.label && (
-                <p
-                  className={cn(
-                    "mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] ring-1 sm:text-xs",
-                    isDark
-                      ? "bg-white/10 text-terracotta-200 ring-terracotta/35"
-                      : "bg-terracotta/12 text-terracotta-600 ring-terracotta/30"
-                  )}
-                >
-                  <Medal className="h-3.5 w-3.5" aria-hidden />
-                  {subsection.label}
-                </p>
-              )}
-              <div
-                className={cn(
-                  "grid grid-cols-2 gap-3 sm:gap-3.5",
-                  subsection.coaches.length >= 3 && "lg:grid-cols-3",
-                  subsection.coaches.length >= 4 && "xl:grid-cols-4"
-                )}
-              >
-                {subsection.coaches.map((coach, i) =>
-                  coach.tier === "massage" ? (
-                    <div key={coach.id} className="col-span-2 max-w-2xl">
-                      <MassageCoachCard coach={coach} index={i} />
-                    </div>
-                  ) : (
-                    <CoachCard
-                      key={coach.id}
-                      coach={coach}
-                      index={i}
-                      tone={isDark ? "dark" : "light"}
-                    />
-                  )
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </Reveal>
   );
 }
 
 export function Team() {
+  const [selected, setSelected] = useState<TeamMember | null>(null);
+
   return (
     <Section
       id="team"
@@ -389,11 +84,11 @@ export function Team() {
           eyebrow="Наша команда"
           title={
             <>
-              Подберём идеального{" "}
-              <span className="text-terracotta-600">специалиста под ваши задачи</span>
+              Профессионалы, которые{" "}
+              <span className="text-terracotta-600">ведут к результату</span>
             </>
           }
-          description="Теннис, фитнес и восстановление — опытные тренеры и массажист помогут достичь цели: от первых шагов на корте до персональной формы и реабилитации."
+          description="Тренеры и специалисты центра — опыт, внимание к деталям и индивидуальный подход к каждому гостю."
         />
         <Reveal delay={0.1}>
           <Button asChild variant="primary" size="lg" className="shrink-0 shadow-glow">
@@ -405,11 +100,36 @@ export function Team() {
         </Reveal>
       </div>
 
-      <div className="section-inner space-y-4 sm:space-y-6">
-        {teamGroups.map((group, i) => (
-          <TeamGroupBlock key={group.id} group={group} groupIndex={i} />
+      <div className="section-inner space-y-10 sm:space-y-12 lg:space-y-14">
+        {teamGroups.map((group, groupIndex) => (
+          <div key={group.id}>
+            <Reveal delay={groupIndex * 0.06}>
+              <div className="max-w-3xl">
+                <h3 className="heading-subsection text-balance">{group.title}</h3>
+                {group.description && (
+                  <p className="mt-2 max-w-2xl text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
+                    {group.description}
+                  </p>
+                )}
+              </div>
+            </Reveal>
+
+            <div className="mt-5 grid grid-cols-1 gap-4 sm:mt-6 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+              {group.members.map((member, index) => (
+                <TeamMemberCard
+                  key={member.id}
+                  member={member}
+                  index={index}
+                  priority={groupIndex === 0 && index < 4}
+                  onOpen={() => setSelected(member)}
+                />
+              ))}
+            </div>
+          </div>
         ))}
       </div>
+
+      <TeamModal member={selected} onClose={() => setSelected(null)} />
     </Section>
   );
 }

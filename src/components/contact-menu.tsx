@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Mail, MessageCircle, Phone } from "@/lib/icons";
 import {
@@ -56,13 +57,39 @@ interface ContactMenuProps {
 export function ContactMenu({ className, variant = "light" }: ContactMenuProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const isDark = variant === "dark";
+  const [menuStyle, setMenuStyle] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  } | null>(null);
+
+  const updateMenuPosition = useMemo(() => {
+    return () => {
+      const btn = buttonRef.current;
+      if (!btn) return;
+      const rect = btn.getBoundingClientRect();
+      const gap = 8; // соответствует mt-2
+      setMenuStyle({
+        top: rect.bottom + gap,
+        left: rect.left,
+        width: rect.width,
+      });
+    };
+  }, []);
 
   useEffect(() => {
     if (!open) return;
 
+    updateMenuPosition();
+
     const onPointerDown = (e: PointerEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      const inRoot = rootRef.current?.contains(target);
+      const inMenu = menuRef.current?.contains(target);
+      if (!inRoot && !inMenu) {
         setOpen(false);
       }
     };
@@ -71,13 +98,19 @@ export function ContactMenu({ className, variant = "light" }: ContactMenuProps) 
       if (e.key === "Escape") setOpen(false);
     };
 
+    const onReflow = () => updateMenuPosition();
+
     document.addEventListener("pointerdown", onPointerDown);
     document.addEventListener("keydown", onKeyDown);
+    window.addEventListener("resize", onReflow);
+    window.addEventListener("scroll", onReflow, true);
     return () => {
       document.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("resize", onReflow);
+      window.removeEventListener("scroll", onReflow, true);
     };
-  }, [open]);
+  }, [open, updateMenuPosition]);
 
   return (
     <div ref={rootRef} className={cn("relative w-full", className)}>
@@ -88,6 +121,7 @@ export function ContactMenu({ className, variant = "light" }: ContactMenuProps) 
         aria-expanded={open}
         aria-haspopup="menu"
         onClick={() => setOpen((v) => !v)}
+        ref={buttonRef}
         className={cn(
           "w-full justify-between sm:w-auto sm:min-w-[280px]",
           isDark && "shadow-glow"
@@ -105,58 +139,71 @@ export function ContactMenu({ className, variant = "light" }: ContactMenuProps) 
         />
       </Button>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            role="menu"
-            initial={{ opacity: 0, y: -8, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.98 }}
-            transition={transitionMenu}
-            className={cn(
-              "absolute left-0 right-0 z-50 mt-2 overflow-hidden rounded-2xl border shadow-card sm:right-auto sm:min-w-[320px]",
-              isDark
-                ? "border-white/10 bg-forest-950/95 backdrop-blur-xl"
-                : "border-forest-900/10 bg-white"
-            )}
-          >
-            <ul className="p-2">
-              {contactLinks.map((item, i) => (
-                <motion.li
-                  key={item.label}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.035, ...transitionMenuItem }}
-                >
-                  <a
-                    role="menuitem"
-                    href={item.href}
-                    target={item.external ? "_blank" : undefined}
-                    rel={item.external ? "noreferrer" : undefined}
-                    onClick={() => setOpen(false)}
-                    className={cn(
-                      "flex min-h-11 items-center gap-3 rounded-xl px-4 py-3.5 text-sm font-medium transition-[background-color,color] duration-400 ease-premium",
-                      isDark
-                        ? "text-white/90 hover:bg-white/10 hover:text-white"
-                        : "text-forest-900 hover:bg-forest-900/5"
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
-                        isDark ? "bg-lime/15 text-lime" : "bg-forest-900/5 text-forest-800"
-                      )}
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {open && menuStyle && (
+              <motion.div
+                ref={menuRef}
+                role="menu"
+                initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                transition={transitionMenu}
+                style={{
+                  position: "fixed",
+                  top: menuStyle.top,
+                  left: menuStyle.left,
+                  width: menuStyle.width,
+                }}
+                className={cn(
+                  "z-[9999] overflow-hidden rounded-2xl border shadow-card sm:min-w-[320px]",
+                  isDark
+                    ? "border-white/10 bg-forest-950/95 backdrop-blur-xl"
+                    : "border-forest-900/10 bg-white"
+                )}
+              >
+                <ul className="p-2">
+                  {contactLinks.map((item, i) => (
+                    <motion.li
+                      key={item.label}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.035, ...transitionMenuItem }}
                     >
-                      <item.icon className="h-5 w-5" />
-                    </span>
-                    {item.label}
-                  </a>
-                </motion.li>
-              ))}
-            </ul>
-          </motion.div>
+                      <a
+                        role="menuitem"
+                        href={item.href}
+                        target={item.external ? "_blank" : undefined}
+                        rel={item.external ? "noreferrer" : undefined}
+                        onClick={() => setOpen(false)}
+                        className={cn(
+                          "flex min-h-11 items-center gap-3 rounded-xl px-4 py-3.5 text-sm font-medium transition-[background-color,color] duration-400 ease-premium",
+                          isDark
+                            ? "text-white/90 hover:bg-white/10 hover:text-white"
+                            : "text-forest-900 hover:bg-forest-900/5"
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+                            isDark
+                              ? "bg-lime/15 text-lime"
+                              : "bg-forest-900/5 text-forest-800"
+                          )}
+                        >
+                          <item.icon className="h-5 w-5" />
+                        </span>
+                        {item.label}
+                      </a>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
     </div>
   );
 }

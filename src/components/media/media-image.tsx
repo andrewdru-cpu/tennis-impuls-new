@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 
 import { cn } from "@/lib/utils";
@@ -19,6 +22,8 @@ const aspectMap: Record<AspectRatio, string> = {
   wide: "aspect-[21/9]",
   auto: "",
 };
+
+const FALLBACK_PLACEHOLDER = "/images/services/table-tennis-placeholder.svg";
 
 export interface MediaImageProps {
   /** Источник из конфига media.ts ИЛИ передай src/alt напрямую */
@@ -67,12 +72,29 @@ export function MediaImage({
   priority = false,
   sizes = "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw",
 }: MediaImageProps) {
-  const finalSrc = media?.src ?? src;
+  const initialSrc = media?.src ?? src ?? "";
   const finalAlt = media?.alt ?? alt ?? "";
+  const [currentSrc, setCurrentSrc] = useState(initialSrc);
+  const [failed, setFailed] = useState(false);
 
-  if (!finalSrc) {
+  if (!initialSrc) {
     return null;
   }
+
+  const isSvg = currentSrc.toLowerCase().endsWith(".svg");
+  const imageClass = cn(
+    "absolute inset-0 h-full w-full transition-transform duration-700",
+    fit === "cover" ? "object-cover" : "object-contain",
+    imageClassName
+  );
+
+  const handleError = () => {
+    if (failed) return;
+    setFailed(true);
+    if (!currentSrc.endsWith(".svg")) {
+      setCurrentSrc(FALLBACK_PLACEHOLDER);
+    }
+  };
 
   return (
     <div
@@ -83,19 +105,27 @@ export function MediaImage({
         className
       )}
     >
-      <Image
-        src={finalSrc}
-        alt={finalAlt}
-        fill
-        sizes={sizes}
-        priority={priority}
-        className={cn(
-          "h-full w-full transition-transform duration-700",
-          fit === "cover" ? "object-cover" : "object-contain",
-          imageClassName
-        )}
-        style={{ objectPosition: position }}
-      />
+      {isSvg ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={currentSrc}
+          alt={finalAlt}
+          className={imageClass}
+          style={{ objectPosition: position }}
+          onError={handleError}
+        />
+      ) : (
+        <Image
+          src={currentSrc}
+          alt={finalAlt}
+          fill
+          sizes={sizes}
+          priority={priority}
+          className={imageClass}
+          style={{ objectPosition: position }}
+          onError={handleError}
+        />
+      )}
       {overlay && (
         <div
           className="pointer-events-none absolute inset-0"
