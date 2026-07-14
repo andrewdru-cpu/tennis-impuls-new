@@ -23,7 +23,6 @@ export default function Home() {
         <Booking />
         <Pricing />
         <Team />
-        <Gallery />
         <News />
         <Contacts />
       </main>

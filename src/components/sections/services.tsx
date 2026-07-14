@@ -201,16 +201,27 @@ function SurfaceCard({
   return (
     <Reveal delay={index * 0.06} className="h-full">
       <div className="group card-media-dark">
-        <MediaImage
-          media={item.image}
-          ratio="photo"
-          rounded={false}
-          overlay
-          position={item.imagePosition ?? "center"}
-          className="shrink-0 rounded-none"
-          imageClassName="object-cover transition-transform duration-700 ease-premium group-hover:scale-105 saturate-[1.12]"
-          sizes="(max-width: 768px) 100vw, 33vw"
-        />
+        {item.label === "Настольный теннис" ? (
+          <div className="relative aspect-[21/9] shrink-0 overflow-hidden">
+            <img
+              src={item.image?.src}
+              alt={item.image?.alt || item.label}
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-premium group-hover:scale-105 saturate-[1.12]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/40" />
+          </div>
+        ) : (
+          <MediaImage
+            media={item.image}
+            ratio="photo"
+            rounded={false}
+            overlay
+            position={item.imagePosition ?? "center"}
+            className="shrink-0 rounded-none"
+            imageClassName="object-cover transition-transform duration-700 ease-premium group-hover:scale-105 saturate-[1.12]"
+            sizes="(max-width: 768px) 100vw, 33vw"
+          />
+        )}
         <div className="flex flex-1 flex-col p-5 sm:p-6">
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-sand/80">
             {item.label}
