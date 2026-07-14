@@ -106,7 +106,7 @@ export const media = {
       alt: "Грунтовые корты с покрытием Tennisit в ЦТТ Импульс",
     },
     tableTennis: {
-      src: "/images/services/table-tennis.jpg",
+      src: "/images/services/table-tennis.webp",
       alt: "Настольный теннис в ЦТТ Импульс",
     },
     yogaStudio: {
