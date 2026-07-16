@@ -63,6 +63,8 @@ const fitnessDirections: {
   image?: MediaImageSource;
   imagePosition?: string;
   imagePlaceholder?: boolean;
+  /** Портрет в wide-рамке: аккуратный object-cover без «сплющивания» */
+  portraitCrop?: boolean;
 }[] = [
   {
     icon: Dumbbell,
@@ -72,9 +74,16 @@ const fitnessDirections: {
     imagePosition: "center 45%",
   },
   {
-    icon: Music,
-    title: "Зал для танцев и йоги",
-    text: "Просторная студия с зеркалами и профессиональным покрытием — для танцев, йоги и групповых занятий.",
+    icon: Activity,
+    title: "Зал специальной подготовки",
+    text: "Функциональный зал для ОФП и специальной подготовки — сила, выносливость и работа над формой.",
+    image: media.services.ofpTraining,
+    imagePosition: "center 42%",
+  },
+  {
+    icon: Flower2,
+    title: "Йога",
+    text: "Гибкость, дыхание и глубокое восстановление — практики в светлой студии для любого уровня.",
     image: media.services.yogaStudio,
     imagePosition: "center 42%",
   },
@@ -86,45 +95,50 @@ const fitnessDirections: {
     imagePosition: "center 40%",
   },
   {
-    icon: Flower2,
-    title: "Йога",
-    text: "Гибкость, дыхание и глубокое восстановление — практики в светлой студии для любого уровня.",
-    image: media.services.danceStudio,
-    imagePosition: "center 42%",
-  },
-  {
-    icon: Activity,
+    icon: Music,
     title: "Танцы",
     text: "Пластика, координация и драйв — групповые и индивидуальные занятия под живую энергию музыки.",
-    image: media.services.ofpTraining,
-    imagePosition: "center 42%",
+    image: media.services.dance,
+    imagePosition: "center",
   },
   {
     icon: HeartHandshake,
     title: "Массаж",
     text: "Лечебный, спортивный и восстановительный массаж — перезагрузка тела после нагрузок.",
-    imagePlaceholder: true,
+    image: media.services.massage,
+    imagePosition: "center 18%",
+    portraitCrop: true,
   },
 ];
 
 /* ── ИНФРАСТРУКТУРА ── */
-const infrastructureCards: {
+const lockerCards: {
   title: string;
   text: string;
-  images?: MediaImageSource[];
-  imagePlaceholder?: boolean;
+  image: MediaImageSource;
 }[] = [
   {
-    title: "Комфортные раздевалки",
-    text: "Отдельные раздевалки для взрослых и детей — всё необходимое после тренировки.",
-    imagePlaceholder: true,
+    title: "Мужская раздевалка",
+    text: "Удобные шкафчики, душевые и всё необходимое после тренировки — комфорт без очередей.",
+    image: media.services.lockerMen,
   },
   {
-    title: "ВИП раздевалки",
-    text: "Премиальные VIP-раздевалки со своей сауной — максимальный комфорт для гостей.",
-    imagePlaceholder: true,
+    title: "Женская раздевалка",
+    text: "Отдельная зона с шкафчиками и душевыми — чисто, спокойно и удобно после занятий.",
+    image: media.services.lockerWomen,
   },
 ];
+
+const vipLockers = {
+  title: "VIP-раздевалки с сауной",
+  text: "Премиальные VIP-раздевалки со своей сауной — максимальный комфорт после тренировок.",
+  images: [
+    media.services.vipLocker1,
+    media.services.vipSauna1,
+    media.services.vipSauna2,
+    media.services.vipSauna3,
+  ] as MediaImageSource[],
+};
 
 /* -------------------------------------------------------------------------- */
 /*  UI-компоненты                                                             */
@@ -171,10 +185,10 @@ function BlockHeader({
       >
         {eyebrow}
       </span>
-      <h3
+          <h3
         className={cn(
           "heading-feature mt-4",
-          isDark ? "text-white" : "text-forest-900"
+          isDark ? "text-white drop-shadow-sm" : "text-forest-800"
         )}
       >
         {title}
@@ -182,7 +196,7 @@ function BlockHeader({
       <p
         className={cn(
           "mt-3 max-w-[42rem] text-pretty text-body sm:text-body-lg sm:leading-[1.7]",
-          isDark ? "text-white/80" : "text-muted-foreground"
+          isDark ? "text-white/85" : "text-bright"
         )}
       >
         {description}
@@ -202,7 +216,8 @@ function SurfaceCard({
     <Reveal delay={index * 0.06} className="h-full">
       <div className="group card-media-dark">
         {item.label === "Настольный теннис" ? (
-          <div className="relative aspect-[21/9] shrink-0 overflow-hidden">
+          <div className="relative aspect-[4/3] shrink-0 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={item.image?.src}
               alt={item.image?.alt || item.label}
@@ -245,6 +260,7 @@ function CompactFeature({
   image,
   imagePosition,
   imagePlaceholder,
+  portraitCrop,
   tone,
   index,
 }: {
@@ -254,6 +270,7 @@ function CompactFeature({
   image?: MediaImageSource;
   imagePosition?: string;
   imagePlaceholder?: boolean;
+  portraitCrop?: boolean;
   tone: "dark" | "light";
   index: number;
 }) {
@@ -268,13 +285,21 @@ function CompactFeature({
       >
         {imagePlaceholder && <PhotoSoonSlot />}
         {image && (
-          <div className="relative shrink-0 overflow-hidden">
+          <div className="relative w-full shrink-0 overflow-hidden">
             <MediaImage
               media={image}
               ratio="wide"
+              fit="cover"
               rounded={false}
-              position={imagePosition ?? "center"}
-              imageClassName="transition-transform duration-700 ease-premium group-hover:scale-[1.06] saturate-[1.15]"
+              position={
+                imagePosition ?? (portraitCrop ? "center 18%" : "center")
+              }
+              imageClassName={cn(
+                "object-cover transition-transform duration-700 ease-premium",
+                portraitCrop
+                  ? "object-[center_18%] group-hover:scale-[1.03] saturate-[1.05]"
+                  : "group-hover:scale-[1.06] saturate-[1.15]"
+              )}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
             <div
@@ -283,7 +308,7 @@ function CompactFeature({
             />
           </div>
         )}
-        <div className="flex flex-1 gap-4 p-5 sm:p-6">
+        <div className="flex min-h-0 flex-1 gap-4 p-5 sm:p-6">
           <span className={isDark ? "icon-wrap-dark" : "icon-wrap"}>
             <Icon className="h-5 w-5" aria-hidden />
           </span>
@@ -293,7 +318,7 @@ function CompactFeature({
                 "font-display text-base font-bold tracking-tight transition-colors duration-300 sm:text-lg",
                 isDark
                   ? "text-white"
-                  : "text-forest-900 group-hover:text-terracotta"
+                  : "text-forest-800 group-hover:text-terracotta"
               )}
             >
               {title}
@@ -313,26 +338,23 @@ function CompactFeature({
   );
 }
 
-function InfrastructureImageGrid({ images }: { images: MediaImageSource[] }) {
+function VipPhotoGrid({ images }: { images: MediaImageSource[] }) {
   return (
-    <div
-      className={cn(
-        "grid shrink-0 gap-0.5",
-        images.length === 2 ? "grid-cols-2" : "grid-cols-3"
-      )}
-    >
+    <div className="grid grid-cols-2 gap-2 p-2 sm:gap-2.5 sm:p-3 lg:gap-3 lg:p-3.5">
       {images.map((image) => (
-        <div key={image.src} className="relative overflow-hidden">
+        <div
+          key={image.src}
+          className="relative aspect-[4/3] overflow-hidden rounded-xl ring-1 ring-[#C45C5C]/10 sm:rounded-2xl"
+        >
           <MediaImage
             media={image}
-            ratio="photo"
+            ratio="auto"
+            fit="cover"
+            position="center"
             rounded={false}
-            imageClassName="transition-transform duration-700 ease-premium group-hover:scale-[1.05]"
-            sizes={
-              images.length === 2
-                ? "(max-width: 768px) 50vw, 25vw"
-                : "(max-width: 768px) 33vw, 20vw"
-            }
+            className="absolute inset-0 h-full w-full !rounded-none"
+            imageClassName="object-cover object-center transition-transform duration-700 ease-premium group-hover:scale-[1.03]"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 40vw, 28vw"
           />
         </div>
       ))}
@@ -340,26 +362,57 @@ function InfrastructureImageGrid({ images }: { images: MediaImageSource[] }) {
   );
 }
 
-function InfrastructurePhotoCard({
+function LockerCard({
   item,
   index,
 }: {
-  item: (typeof infrastructureCards)[number];
+  item: (typeof lockerCards)[number];
   index: number;
 }) {
   return (
     <Reveal delay={index * 0.05} className="h-full">
-      <div className="card-media-light group flex h-full flex-col overflow-hidden p-0">
-        {item.imagePlaceholder ? (
-          <PhotoSoonSlot />
-        ) : item.images && item.images.length > 0 ? (
-          <InfrastructureImageGrid images={item.images} />
-        ) : null}
+      <article className="card-infra group">
+        <MediaImage
+          media={item.image}
+          ratio="photo"
+          fit="cover"
+          position="center"
+          rounded={false}
+          imageClassName="object-cover object-center transition-transform duration-700 ease-premium group-hover:scale-[1.03]"
+          sizes="(max-width: 768px) 100vw, 50vw"
+        />
         <div className="flex flex-1 flex-col p-5 sm:p-6">
-          <h4 className="text-card-title">{item.title}</h4>
-          <p className="text-card-body mt-2">{item.text}</p>
+          <h4 className="font-display text-lg font-semibold tracking-tight text-forest-800 sm:text-xl">
+            {item.title}
+          </h4>
+          <p className="mt-2 text-pretty text-sm leading-relaxed text-[#1F2E2A]/62 sm:text-[0.9375rem] sm:leading-[1.65]">
+            {item.text}
+          </p>
         </div>
-      </div>
+      </article>
+    </Reveal>
+  );
+}
+
+function VipLockersCard() {
+  return (
+    <Reveal delay={0.1} className="h-full">
+      <article className="card-infra group">
+        <div className="flex flex-col px-5 pb-3 pt-5 sm:px-6 sm:pb-4 sm:pt-6">
+          <div className="mb-2.5">
+            <span className="inline-flex items-center rounded-full bg-[#C45C5C]/10 px-3 py-1 text-[0.625rem] font-bold uppercase tracking-[0.16em] text-[#C45C5C] ring-1 ring-[#C45C5C]/20">
+              Premium
+            </span>
+          </div>
+          <h4 className="font-display text-display-sm font-semibold text-gradient-deep-salmon">
+            {vipLockers.title}
+          </h4>
+          <p className="mt-2 text-pretty text-sm leading-relaxed text-[#1F2E2A]/62 sm:text-[0.9375rem] sm:leading-[1.65]">
+            {vipLockers.text}
+          </p>
+        </div>
+        <VipPhotoGrid images={vipLockers.images} />
+      </article>
     </Reveal>
   );
 }
@@ -376,8 +429,11 @@ export function Services() {
           eyebrow="Услуги спортивного центра"
           title={
             <>
-              Теннис и фитнес —{" "}
-              <span className="text-terracotta-600">всё на одной территории</span>
+              <span className="text-gradient-purple-lime">Теннис и фитнес</span>
+              <span className="text-terracotta-600">
+                {" "}
+                — всё на одной территории
+              </span>
             </>
           }
           description={
@@ -398,10 +454,14 @@ export function Services() {
         <Reveal>
           <div
             id="services-tennis"
-            className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-forest-800 via-forest-700 to-emerald-800/90 p-6 ring-1 ring-lime/25 sm:p-8 lg:p-10"
+            className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-forest-800 via-forest-700 to-emerald-900/90 p-6 ring-1 ring-lime/30 sm:p-8 lg:p-10"
           >
             <div
-              className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-lime/12 blur-[90px]"
+              className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-lime/18 blur-[90px]"
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute -left-16 bottom-0 h-56 w-56 rounded-full bg-terracotta/15 blur-[80px]"
               aria-hidden
             />
             <div className="absolute inset-0 bg-grid opacity-[0.06]" aria-hidden />
@@ -411,8 +471,8 @@ export function Services() {
                 eyebrow="Направление"
                 title={
                   <>
-                    <Trees className="mr-2 inline-block h-8 w-8 text-terracotta-300 sm:h-9 sm:w-9" />
-                    Теннис
+                    <Trees className="mr-2 inline-block h-8 w-8 text-lime sm:h-9 sm:w-9" />
+                    <span className="text-white">Теннис</span>
                   </>
                 }
                 description="Крытые корты на полумягком харде — стандартная и детская площадки, падел, открытые корты на грунте Tennisit и настольный теннис. Всё для игры и тренировок на одной территории."
@@ -423,7 +483,7 @@ export function Services() {
                 <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-terracotta-300/90">
                   Корты и покрытия
                 </h4>
-                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:items-stretch">
+                <div className="mt-4 grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2">
                   {courtSurfaces.map((item, i) => (
                     <SurfaceCard key={item.label} item={item} index={i} />
                   ))}
@@ -443,21 +503,25 @@ export function Services() {
         </Reveal>
 
         <div className="flex items-center gap-4 py-2" aria-hidden>
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-forest-900/15 to-transparent" />
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-forest-900/12 to-transparent" />
           <span className="shrink-0 rounded-full bg-terracotta/12 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-terracotta-600 ring-1 ring-terracotta/25">
             и
           </span>
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-forest-900/15 to-transparent" />
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-forest-900/12 to-transparent" />
         </div>
 
         {/* ── БЛОК 2 · ФИТНЕС ── */}
         <Reveal delay={0.05}>
           <div
             id="services-fitness"
-            className="relative overflow-hidden rounded-[2rem] border-2 border-lime/30 bg-gradient-to-br from-lime-50 via-white to-emerald-50/80 p-6 shadow-soft sm:p-8 lg:p-10"
+            className="relative overflow-hidden rounded-[2rem] border-2 border-lime/35 bg-gradient-to-br from-lime-50 via-white to-cream p-6 shadow-soft sm:p-8 lg:p-10"
           >
             <div
               className="pointer-events-none absolute -left-16 bottom-0 h-64 w-64 rounded-full bg-lime/25 blur-[80px]"
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute -right-12 top-0 h-48 w-48 rounded-full bg-terracotta/10 blur-[70px]"
               aria-hidden
             />
 
@@ -467,14 +531,14 @@ export function Services() {
                 title={
                   <>
                     <Dumbbell className="mr-2 inline-block h-8 w-8 text-terracotta-500 sm:h-9 sm:w-9" />
-                    Залы специальной и ОФП подготовки
+                    Залы специальной, ОФП-подготовки и групповых программ
                   </>
                 }
-                description="Тренажёрный зал, зал для танцев и занятий йоги"
+                description="Тренажёрный зал, специальная подготовка, йога, каратэ, танцы и массаж — всё для тренировок и восстановления."
                 tone="light"
               />
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {fitnessDirections.map((item, i) => (
                   <CompactFeature
                     key={item.title}
@@ -484,6 +548,7 @@ export function Services() {
                     image={item.image}
                     imagePosition={item.imagePosition}
                     imagePlaceholder={item.imagePlaceholder}
+                    portraitCrop={item.portraitCrop}
                     tone="light"
                     index={i}
                   />
@@ -491,7 +556,7 @@ export function Services() {
               </div>
 
               <div className="flex justify-start">
-                <Button asChild variant="dark" size="lg">
+                <Button asChild variant="primary" size="lg">
                   <a href="#booking">
                     Записаться на тренировку
                     <ArrowUpRight className="h-4 w-4" />
@@ -505,19 +570,16 @@ export function Services() {
         {/* ── ИНФРАСТРУКТУРА ── */}
         <Reveal delay={0.05}>
           <div className="pl-3 sm:pl-4">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <h3 className="heading-subsection">
-                Инфраструктура спортивного центра
-              </h3>
-              <p className="max-w-md text-sm text-muted-foreground">
-                Комфортные и VIP-раздевалки для гостей на всей территории
-                комплекса.
-              </p>
-            </div>
-            <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
-              {infrastructureCards.map((item, i) => (
-                <InfrastructurePhotoCard key={item.title} item={item} index={i} />
-              ))}
+            <h3 className="font-display text-display-md font-bold text-balance text-gradient-deep-salmon">
+              Инфраструктура спортивного центра
+            </h3>
+            <div className="mt-5 space-y-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {lockerCards.map((item, i) => (
+                  <LockerCard key={item.title} item={item} index={i} />
+                ))}
+              </div>
+              <VipLockersCard />
             </div>
           </div>
         </Reveal>

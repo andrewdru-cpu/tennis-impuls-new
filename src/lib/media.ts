@@ -75,6 +75,14 @@ export const media = {
     height: 1096,
   } as HeroMedia,
 
+  /* -------------------------------------------------------------- PROMO --- */
+  /** Промо-ролик блока «Видео» — единственный видеофайл сайта */
+  promo: {
+    src: "/videos/impuls-promo.mp4",
+    poster: "/images/videos/impuls-promo-poster.jpg",
+    alt: "Промо-видео спортивного комплекса ЦТТ Импульс",
+  },
+
   /* ------------------------------------------------------------- KIDS --- */
   kids: kidsMedia,
 
@@ -109,6 +117,30 @@ export const media = {
       src: "/images/services/table-tennis.webp",
       alt: "Настольный теннис в ЦТТ Импульс",
     },
+    lockerMen: {
+      src: "/images/services/locker-men.webp",
+      alt: "Мужская раздевалка ЦТТ Импульс",
+    },
+    lockerWomen: {
+      src: "/images/services/locker-women.webp",
+      alt: "Женская раздевалка ЦТТ Импульс",
+    },
+    vipLocker1: {
+      src: "/images/services/vip-locker-1.webp",
+      alt: "VIP-раздевалка ЦТТ Импульс",
+    },
+    vipSauna1: {
+      src: "/images/services/vip-sauna-1.webp",
+      alt: "Сауна VIP-раздевалки",
+    },
+    vipSauna2: {
+      src: "/images/services/vip-sauna-2.webp",
+      alt: "Сауна VIP-раздевалки",
+    },
+    vipSauna3: {
+      src: "/images/services/vip-sauna-3.webp",
+      alt: "Сауна VIP-раздевалки",
+    },
     yogaStudio: {
       src: "/images/services/yoga-studio.jpg",
       alt: "Студия йоги в ЦТТ Импульс",
@@ -116,6 +148,10 @@ export const media = {
     danceStudio: {
       src: "/images/services/dance-studio.JPG",
       alt: "Танцевальная студия в ЦТТ Импульс",
+    },
+    dance: {
+      src: "/images/services/dance.webp",
+      alt: "Танцы в ЦТТ Импульс",
     },
     gymHall: {
       src: "/images/services/gym-hall.jpg",
@@ -132,6 +168,10 @@ export const media = {
     karate: {
       src: "/images/services/karate.JPG",
       alt: "Секция каратэ в ЦТТ Импульс",
+    },
+    massage: {
+      src: "/images/team/privalov-massage.webp",
+      alt: "Массаж в ЦТТ Импульс — специалист Привалов",
     },
     activities: {
       src: "/images/gallery/02.webp",
@@ -210,7 +250,7 @@ export const media = {
       alt: "Костанян Аркадий — тренер каратэ киокушинкай",
     },
     privalov: {
-      src: "/images/team/privalov.webp",
+      src: "/images/team/privalov-massage.webp",
       alt: "Привалов Роман — массажист-реабилитолог",
     },
     // Устаревшие ключи (совместимость)

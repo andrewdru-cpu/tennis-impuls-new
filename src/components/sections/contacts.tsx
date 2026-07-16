@@ -61,22 +61,24 @@ export function Contacts() {
               {contactCards.map((c, i) => (
                 <Reveal key={c.label} delay={0.08 + i * 0.05}>
                   <div className="card-feature group rounded-3xl">
-                    <span className="icon-wrap-solid">
+                    <span className="icon-wrap-solid text-lime">
                       <c.icon className="h-5 w-5" />
                     </span>
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      <p className="text-xs font-bold uppercase tracking-wider text-terracotta-600">
                         {c.label}
                       </p>
                       {c.href ? (
                         <a
                           href={c.href}
-                          className="touch-link mt-0.5 block text-card-title hover:text-terracotta"
+                          className="touch-link mt-0.5 block font-display text-base font-semibold text-[#1F2E2A] hover:text-terracotta-600 sm:text-lg"
                         >
                           {c.value}
                         </a>
                       ) : (
-                        <p className="mt-1 text-card-title">{c.value}</p>
+                        <p className="mt-1 font-display text-base font-semibold text-[#1F2E2A] sm:text-lg">
+                          {c.value}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -103,7 +105,7 @@ export function Contacts() {
                 <MapPin className="relative h-7 w-7 text-forest-900/80" />
               </div>
               <div className="relative">
-                <p className="font-display text-xl font-bold">
+                <p className="text-ctt-red font-display text-xl font-bold">
                   ЦТТ «Импульс»
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">

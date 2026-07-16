@@ -60,20 +60,20 @@ export function Hero() {
             <span
               className={cn(
                 "inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 sm:px-4 sm:py-2",
-                "border border-terracotta/30 bg-white/[0.11] backdrop-blur-xl",
-                "shadow-[0_8px_32px_-8px_rgba(206,88,56,0.4)]",
-                "text-[0.625rem] font-bold uppercase tracking-[0.2em] text-sand-100 sm:text-[0.6875rem]"
+                "border border-red-ctt/40 bg-white/[0.12] backdrop-blur-xl",
+                "shadow-[0_8px_32px_-8px_rgba(226,54,54,0.45)]",
+                "text-[0.625rem] font-bold uppercase tracking-[0.2em] sm:text-[0.6875rem]"
               )}
             >
               <span
-                className="h-1.5 w-1.5 shrink-0 rounded-full bg-terracotta shadow-[0_0_14px_rgba(206,88,56,0.95)]"
+                className="h-1.5 w-1.5 shrink-0 rounded-full bg-red-ctt shadow-[0_0_14px_rgba(226,54,54,0.95)]"
                 aria-hidden
               />
-              ЦТТ «Импульс»
+              <span className="text-ctt-red">ЦТТ «Импульс»</span>
               <span className="text-white/30" aria-hidden>
                 ·
               </span>
-              Лосиный Остров
+              <span className="text-sand-100">Лосиный Остров</span>
             </span>
           </motion.div>
 
@@ -85,12 +85,12 @@ export function Hero() {
               "[text-shadow:0_2px_40px_rgba(0,0,0,0.55)]"
             )}
           >
-            <span className="block whitespace-nowrap text-white">Теннис, фитнес</span>
+            <span className="block whitespace-nowrap text-white">
+              Теннис, фитнес
+            </span>
             <span className="mt-0.5 block">
-              <span className="text-white/95">и отдых — </span>
-              <span className="bg-gradient-to-r from-lime-300 via-sand-200 to-terracotta bg-clip-text text-transparent">
-                в одном месте
-              </span>
+              <span className="text-white">и отдых — в </span>
+              <span className="text-ctt-red">одном месте</span>
             </span>
           </motion.h1>
 
@@ -111,7 +111,7 @@ export function Hero() {
 
           <motion.div
             variants={item}
-            className="mt-5 h-0.5 w-12 self-end rounded-full bg-gradient-to-l from-terracotta via-lime/85 to-sand/65 sm:mt-6 sm:w-16"
+            className="mt-5 h-0.5 w-12 self-end rounded-full bg-gradient-to-l from-terracotta via-lime to-sand/70 sm:mt-6 sm:w-16"
             aria-hidden
           />
 

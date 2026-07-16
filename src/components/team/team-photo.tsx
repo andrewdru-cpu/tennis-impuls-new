@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 type TeamPhotoProps = {
   photo?: string;
   alt: string;
-  ratio?: "portrait" | "video";
+  ratio?: "portrait" | "video" | "photo" | "wide";
   className?: string;
   imageClassName?: string;
   /** Приоритет загрузки для первых карточек above the fold */
@@ -18,11 +18,15 @@ type TeamPhotoProps = {
 const ratioClass = {
   portrait: "aspect-[3/4]",
   video: "aspect-video",
+  photo: "aspect-[4/3]",
+  wide: "aspect-[16/10]",
 } as const;
 
 const defaultSizes = {
   portrait: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
   video: "(max-width: 768px) 100vw, 672px",
+  photo: "(max-width: 768px) 100vw, 50vw",
+  wide: "(max-width: 768px) 100vw, 50vw",
 } as const;
 
 /** Оптимизированный рендер фото тренера из /public/images/team/ */
@@ -65,10 +69,7 @@ export function TeamPhoto({
         fill
         sizes={sizes ?? defaultSizes[ratio]}
         priority={priority}
-        className={cn(
-          "object-cover object-[center_15%]",
-          imageClassName
-        )}
+        className={cn("object-cover object-center", imageClassName)}
       />
     </div>
   );

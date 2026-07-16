@@ -18,8 +18,7 @@ export interface MediaVideoProps {
 /**
  * Универсальный компонент видео.
  *
- * 👉 Реальное видео положить в /public/videos/ и указать пути в media.ts
- *    (или через проп `sources`). Рекомендуется отдавать .webm + .mp4.
+ * 👉 Промо-ролик: /videos/impuls-promo.mp4 (см. media.promo в media.ts).
  *    Постер — статичный кадр из /public/images/...
  */
 export function MediaVideo({

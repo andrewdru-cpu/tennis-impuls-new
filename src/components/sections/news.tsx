@@ -65,7 +65,7 @@ function NewsCard({
           <p className="mt-2 line-clamp-3 flex-1 text-card-body">
             {article.excerpt}
           </p>
-          <span className="mt-5 inline-flex min-h-[44px] items-center gap-1.5 text-sm font-semibold text-forest-900 transition-colors duration-500 ease-premium group-hover:text-terracotta">
+          <span className="mt-5 inline-flex min-h-[44px] items-center gap-1.5 text-sm font-semibold text-[#1F2E2A] transition-colors duration-500 ease-premium group-hover:text-terracotta">
             Читать полностью
             <ArrowUpRight className="link-arrow h-4 w-4 shrink-0" />
           </span>
@@ -82,7 +82,12 @@ export function News() {
     <Section id="news" tone="muted">
         <SectionHeading
           eyebrow="Новости центра"
-          title="Актуальные события в ЦТТ Импульс"
+          title={
+            <>
+              Актуальные события в{" "}
+              <span className="text-ctt-red">ЦТТ Импульс</span>
+            </>
+          }
         />
 
         <div className="section-inner mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:gap-6">

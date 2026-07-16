@@ -130,7 +130,7 @@ export const teamGroups: TeamGroup[] = [
         id: "privalov",
         name: "Привалов Роман",
         category: "Массажист-реабилитолог",
-        photo: "/images/team/privalov.webp",
+        photo: "/images/team/privalov-massage.webp",
         bio: [
           "Специалист первой категории с медицинским образованием.",
           "Помогает восстановиться после нагрузок и травм, снимает мышечное напряжение и улучшает самочувствие.",
@@ -143,3 +143,43 @@ export const teamGroups: TeamGroup[] = [
 
 /** Плоский список для совместимости */
 export const teamMembers: TeamMember[] = teamGroups.flatMap((group) => group.members);
+
+export function findTeamMember(id: string): TeamMember | undefined {
+  return teamMembers.find((member) => member.id === id);
+}
+
+export function findTeamGroupForMember(
+  memberId: string
+): TeamGroup | undefined {
+  return teamGroups.find((group) =>
+    group.members.some((member) => member.id === memberId)
+  );
+}
+
+/**
+ * Специалисты для формы записи.
+ * tennis → только теннисные тренеры
+ * other → фитнес / ОФП / групповые + массаж (Привалов)
+ */
+export function getBookableSpecialists(
+  bookingGroup: "tennis" | "other"
+): TeamMember[] {
+  if (bookingGroup === "tennis") {
+    return teamGroups.find((group) => group.id === "tennis")?.members ?? [];
+  }
+
+  const fitness =
+    teamGroups.find((group) => group.id === "fitness")?.members ?? [];
+  const massage =
+    teamGroups.find((group) => group.id === "massage")?.members ?? [];
+  return [...fitness, ...massage];
+}
+
+/** Какая вкладка Booking соответствует специалисту */
+export function getBookingGroupForMember(
+  memberId: string
+): "tennis" | "other" | null {
+  const group = findTeamGroupForMember(memberId);
+  if (!group) return null;
+  return group.id === "tennis" ? "tennis" : "other";
+}

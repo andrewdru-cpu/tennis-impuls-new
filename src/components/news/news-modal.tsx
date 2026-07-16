@@ -92,7 +92,7 @@ export function NewsModal({ article, onClose }: NewsModalProps) {
               </time>
               <h3
                 id="news-modal-title"
-                className="mt-3 font-display text-2xl font-bold leading-tight text-forest-900 sm:text-3xl"
+                className="mt-3 font-display text-2xl font-bold leading-tight text-forest-800 sm:text-3xl"
               >
                 {article.title}
               </h3>

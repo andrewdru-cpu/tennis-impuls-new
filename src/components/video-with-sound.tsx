@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
 import { Volume2, VolumeX } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
@@ -17,6 +17,9 @@ export interface VideoWithSoundProps {
   /** Текст кнопки при включённом звуке */
   muteLabel?: string;
   loop?: boolean;
+  /** Автозапуск (для промо — true) */
+  autoPlay?: boolean;
+  children?: ReactNode;
 }
 
 export function VideoWithSound({
@@ -27,6 +30,8 @@ export function VideoWithSound({
   unmuteLabel = "Включить звук",
   muteLabel = "Выключить звук",
   loop = true,
+  autoPlay = true,
+  children,
 }: VideoWithSoundProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(true);
@@ -51,23 +56,23 @@ export function VideoWithSound({
     <div className={cn("group relative overflow-hidden bg-forest-950", className)}>
       <video
         ref={videoRef}
-        className={cn(
-          "h-full w-full object-cover",
-          videoClassName
-        )}
+        className={cn("h-full w-full object-cover", videoClassName)}
         src={src}
         poster={poster}
-        autoPlay
+        autoPlay={autoPlay}
         muted
         playsInline
         loop={loop}
         preload="metadata"
+        controls={false}
       />
 
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-forest-950/35 via-transparent to-forest-950/10"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-forest-950/40 via-transparent to-forest-950/20"
         aria-hidden
       />
+
+      {children}
 
       <button
         type="button"

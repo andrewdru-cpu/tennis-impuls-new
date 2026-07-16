@@ -13,8 +13,8 @@ const buttonVariants = cva(
           "bg-gradient-to-r from-terracotta to-terracotta-500 text-white shadow-terracotta hover:from-terracotta-500 hover:to-terracotta-600 hover:shadow-glow hover:-translate-y-px",
         dark: "bg-forest-900 text-white shadow-soft hover:bg-forest-800 hover:shadow-elevated hover:-translate-y-px",
         outline:
-          "border-2 border-forest-900/15 bg-white/80 text-forest-900 shadow-soft hover:border-terracotta/40 hover:bg-white hover:text-forest-900 hover:shadow-card hover:-translate-y-px",
-        ghost: "bg-transparent text-forest-900 hover:bg-forest-900/5",
+          "border-2 border-forest-900/12 bg-white/80 text-[#1F2E2A] shadow-soft hover:border-terracotta/40 hover:bg-white hover:text-[#1F2E2A] hover:shadow-card hover:-translate-y-px",
+        ghost: "bg-transparent text-[#1F2E2A] hover:bg-forest-900/5",
         glass:
           "glass border border-white/25 text-white shadow-soft hover:border-sand/40 hover:bg-white/15 hover:-translate-y-px",
         link: "rounded-none text-terracotta underline-offset-4 hover:underline hover:text-terracotta-600 active:scale-100",

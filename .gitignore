@@ -25,6 +25,7 @@
 *.pem
 Thumbs.db
 hero-screenshot*.png
+_imglist.txt
 
 # debug
 npm-debug.log*
@@ -48,15 +49,20 @@ next-env.d.ts
 .vscode/*
 !.vscode/extensions.json
 
-# исходные медиа-материалы (тяжёлые оригиналы и скрипты обработки —
-# не нужны в репозитории; на сайте используются .webp из public/images)
+# исходные медиа-материалы (тяжёлые оригиналы)
 /media-raw
 
-# JPEG-оригиналы после конвертации в WebP (не деплоить ~10 MB лишних)
+# тяжёлые / исходные форматы — не деплоить
+*.MOV
+*.mov
+*.heic
+*.HEIC
+
+# JPEG-оригиналы после конвертации в WebP (не деплоить лишнее)
 public/images/**/*.jpg
 public/images/**/*.jpeg
 public/images/**/*.JPG
-# Исключение: фото грунтового корта в блоке «Услуги»
+# Исключения: файлы, которые реально отдаёт сайт
 !public/images/hero/new-hero.jpg
 !public/images/services/ground-court.jpg
 !public/images/services/yoga-studio.jpg
@@ -64,3 +70,4 @@ public/images/**/*.JPG
 !public/images/services/dance-studio.jpg
 !public/images/services/gym-hall.jpg
 !public/images/services/karate.jpg
+!public/images/videos/**

@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import {
   Activity,
   Baby,
@@ -26,6 +27,16 @@ import { SectionHeading } from "@/components/section-heading";
 import { Section } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { Button } from "@/components/ui/button";
+import {
+  BOOKING_SPECIALIST_EVENT,
+  readSpecialistFromUrl,
+} from "@/lib/booking-deeplink";
+import {
+  findTeamMember,
+  getBookableSpecialists,
+  getBookingGroupForMember,
+  type TeamMember,
+} from "@/lib/team";
 import { cn } from "@/lib/utils";
 
 /* -------------------------------------------------------------------------- */
@@ -52,7 +63,11 @@ type BookingFormValues = {
 type BookingPayload = BookingFormValues & {
   group: string;
   service: string;
+  specialist: string;
+  specialistId: string;
 };
+
+const ANY_SPECIALIST_ID = "any";
 
 const serviceGroups: {
   id: ServiceGroupId;
@@ -183,23 +198,30 @@ function validateBookingForm(values: BookingFormValues): Partial<
   return errors;
 }
 
+function shortCategory(category: string): string {
+  return category
+    .replace(/^Тренер категории\s*/i, "")
+    .replace(/^Тренер\s+/i, "")
+    .trim();
+}
+
 /* -------------------------------------------------------------------------- */
 /*  UI                                                                        */
 /* -------------------------------------------------------------------------- */
 
 const inputClass = cn(
-  "w-full rounded-xl border border-white/15 bg-white/[0.07] px-4 py-3.5 text-sm text-white",
-  "placeholder:text-white/40",
+  "w-full rounded-xl border border-forest-900/12 bg-white px-4 py-3.5 text-sm text-[#1F2E2A]",
+  "placeholder:text-[#1F2E2A]/40",
   "transition-[border-color,background-color,box-shadow] duration-300",
-  "hover:border-white/25",
-  "focus:border-terracotta/70 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-terracotta/35 focus:shadow-[0_0_20px_-6px_rgba(206,88,56,0.4)]"
+  "hover:border-forest-900/20",
+  "focus:border-terracotta/70 focus:bg-cream/40 focus:outline-none focus:ring-2 focus:ring-terracotta/30 focus:shadow-[0_0_20px_-6px_rgba(206,88,56,0.35)]"
 );
 
 const inputErrorClass =
-  "border-red-400/55 hover:border-red-400/65 focus:border-red-400/80 focus:ring-red-400/30";
+  "border-red-400/70 hover:border-red-400/80 focus:border-red-500 focus:ring-red-400/25";
 
 const labelClass =
-  "mb-2 flex items-center gap-2 text-sm font-medium text-white/70";
+  "mb-2 flex items-center gap-2 text-sm font-medium text-[#1F2E2A]/75";
 
 function FieldError({
   message,
@@ -210,7 +232,7 @@ function FieldError({
 }) {
   if (!message) return null;
   return (
-    <p id={id} className="mt-1.5 text-xs font-medium text-red-300" role="alert">
+    <p id={id} className="mt-1.5 text-xs font-medium text-red-600" role="alert">
       {message}
     </p>
   );
@@ -219,15 +241,17 @@ function FieldError({
 function BookingSuccess({
   serviceTitle,
   groupLabel,
+  specialistLabel,
   onReset,
 }: {
   serviceTitle: string;
   groupLabel: string;
+  specialistLabel: string;
   onReset: () => void;
 }) {
   return (
     <div
-      className="mt-8 animate-fade-up rounded-2xl border border-lime/40 bg-gradient-to-br from-lime/20 via-emerald-900/25 to-terracotta/15 p-6 ring-1 ring-lime/25 sm:p-8"
+      className="mt-8 animate-fade-up rounded-2xl border border-lime/50 bg-gradient-to-br from-lime-50 via-white to-terracotta/10 p-6 ring-1 ring-lime/30 sm:p-8"
       role="status"
       aria-live="polite"
     >
@@ -236,18 +260,24 @@ function BookingSuccess({
           <Check className="h-7 w-7" aria-hidden />
         </span>
         <div className="mt-4 sm:mt-0 sm:ml-5">
-          <p className="font-display text-xl font-bold text-white sm:text-2xl">
+          <p className="font-display text-xl font-bold text-forest-800 sm:text-2xl">
             Заявка отправлена!
           </p>
-          <p className="mt-2 text-sm leading-relaxed text-white/85 sm:text-base">
+          <p className="mt-2 text-sm leading-relaxed text-bright sm:text-base">
             Мы свяжемся с вами в ближайшее время.
           </p>
-          <p className="mt-3 text-sm text-white/60">
+          <p className="mt-3 text-sm text-[#1F2E2A]/60">
             Направление:{" "}
-            <span className="font-semibold text-terracotta-200">
+            <span className="font-semibold text-terracotta-600">
               {serviceTitle}
             </span>{" "}
-            <span className="text-white/45">({groupLabel})</span>
+            <span className="text-[#1F2E2A]/45">({groupLabel})</span>
+          </p>
+          <p className="mt-1 text-sm text-[#1F2E2A]/60">
+            Специалист:{" "}
+            <span className="font-semibold text-forest-800">
+              {specialistLabel}
+            </span>
           </p>
         </div>
       </div>
@@ -255,7 +285,7 @@ function BookingSuccess({
         type="button"
         variant="outline"
         size="lg"
-        className="mt-6 w-full border-white/25 bg-white/5 text-white hover:bg-white/10 sm:w-auto"
+        className="mt-6 w-full sm:w-auto"
         onClick={onReset}
       >
         Отправить ещё одну заявку
@@ -264,10 +294,81 @@ function BookingSuccess({
   );
 }
 
+function SpecialistChip({
+  selected,
+  onSelect,
+  label,
+  detail,
+  photo,
+  photoAlt,
+}: {
+  selected: boolean;
+  onSelect: () => void;
+  label: string;
+  detail: string;
+  photo?: string;
+  photoAlt?: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={selected}
+      onClick={onSelect}
+      className={cn(
+        "chip-interactive group flex min-w-[11.5rem] flex-1 items-center gap-3 rounded-2xl border p-3 text-left sm:min-w-0 sm:p-3.5",
+        selected
+          ? "border-terracotta bg-terracotta/10 shadow-[0_0_0_1px_rgba(206,88,56,0.35),0_8px_28px_-8px_rgba(206,88,56,0.35)]"
+          : "border-forest-900/10 bg-white hover:-translate-y-0.5 hover:border-terracotta/40 hover:bg-cream/60 hover:shadow-soft"
+      )}
+    >
+      <span
+        className={cn(
+          "relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 transition-colors duration-300",
+          selected ? "ring-terracotta/50" : "ring-forest-900/8"
+        )}
+      >
+        {photo ? (
+          <Image
+            src={photo}
+            alt={photoAlt ?? label}
+            width={44}
+            height={44}
+            className="h-full w-full object-cover object-center"
+          />
+        ) : (
+          <span
+            className={cn(
+              "flex h-full w-full items-center justify-center",
+              selected
+                ? "bg-terracotta text-white"
+                : "bg-terracotta/10 text-terracotta"
+            )}
+          >
+            <UserRound className="h-5 w-5" aria-hidden />
+          </span>
+        )}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-bold leading-snug text-forest-800">
+          {label}
+        </span>
+        <span className="mt-0.5 block truncate text-xs text-[#1F2E2A]/55">
+          {detail}
+        </span>
+      </span>
+      {selected && (
+        <Check className="h-4 w-4 shrink-0 text-terracotta" aria-hidden />
+      )}
+    </button>
+  );
+}
+
 export function Booking() {
   const formRef = useRef<HTMLFormElement>(null);
   const [groupId, setGroupId] = useState<ServiceGroupId>("tennis");
   const [serviceId, setServiceId] = useState<string | null>(null);
+  const [specialistId, setSpecialistId] = useState<string>(ANY_SPECIALIST_ID);
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -278,6 +379,12 @@ export function Booking() {
   const activeGroup = serviceGroups.find((g) => g.id === groupId)!;
   const activeService =
     activeGroup.services.find((s) => s.id === serviceId) ?? null;
+  const bookableSpecialists = getBookableSpecialists(groupId);
+  const activeSpecialist: TeamMember | null =
+    specialistId === ANY_SPECIALIST_ID
+      ? null
+      : (findTeamMember(specialistId) ?? null);
+  const specialistLabel = activeSpecialist?.name ?? "Любой специалист";
 
   function resetFormState() {
     setSubmitted(false);
@@ -287,9 +394,48 @@ export function Booking() {
     formRef.current?.reset();
   }
 
+  function applySpecialistDeepLink(rawId: string | null) {
+    if (!rawId) return;
+    const member = findTeamMember(rawId);
+    const bookingGroup = getBookingGroupForMember(rawId);
+    if (!member || !bookingGroup) return;
+
+    setGroupId(bookingGroup);
+    setSpecialistId(member.id);
+    setServiceId(member.id === "privalov" ? "massage" : null);
+    resetFormState();
+  }
+
+  useEffect(() => {
+    applySpecialistDeepLink(readSpecialistFromUrl());
+
+    const onCustom = (event: Event) => {
+      const detail = (event as CustomEvent<{ specialistId?: string }>).detail;
+      applySpecialistDeepLink(detail?.specialistId ?? readSpecialistFromUrl());
+    };
+    const onPop = () => applySpecialistDeepLink(readSpecialistFromUrl());
+
+    window.addEventListener(BOOKING_SPECIALIST_EVENT, onCustom);
+    window.addEventListener("popstate", onPop);
+    window.addEventListener("hashchange", onPop);
+    return () => {
+      window.removeEventListener(BOOKING_SPECIALIST_EVENT, onCustom);
+      window.removeEventListener("popstate", onPop);
+      window.removeEventListener("hashchange", onPop);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount listeners once
+  }, []);
+
+  useEffect(() => {
+    if (specialistId === ANY_SPECIALIST_ID) return;
+    const stillValid = bookableSpecialists.some((m) => m.id === specialistId);
+    if (!stillValid) setSpecialistId(ANY_SPECIALIST_ID);
+  }, [bookableSpecialists, specialistId]);
+
   function selectGroup(id: ServiceGroupId) {
     setGroupId(id);
     setServiceId(null);
+    setSpecialistId(ANY_SPECIALIST_ID);
     resetFormState();
   }
 
@@ -320,6 +466,9 @@ export function Booking() {
       await submitBookingRequest({
         group: activeGroup.label,
         service: activeService.title,
+        specialist: specialistLabel,
+        specialistId:
+          specialistId === ANY_SPECIALIST_ID ? ANY_SPECIALIST_ID : specialistId,
         ...data,
       });
       form.reset();
@@ -336,39 +485,37 @@ export function Booking() {
   return (
     <Section
       id="booking"
-      className="relative overflow-hidden bg-gradient-to-b from-forest-800 via-forest-700 to-forest-800 py-16 text-white sm:py-24 lg:py-28"
+      className="relative overflow-hidden bg-gradient-to-b from-lime-50 via-cream to-white py-16 sm:py-24 lg:py-28"
       before={
         <>
-          <div className="absolute inset-0 bg-grid opacity-[0.08]" aria-hidden />
           <div
-            className="absolute -right-40 top-0 h-[420px] w-[420px] rounded-full bg-terracotta/18 blur-[120px]"
+            className="absolute -right-40 top-0 h-[420px] w-[420px] rounded-full bg-terracotta/12 blur-[120px]"
             aria-hidden
           />
           <div
-            className="absolute -left-32 bottom-0 h-[320px] w-[320px] rounded-full bg-lime/12 blur-[110px]"
+            className="absolute -left-32 bottom-0 h-[320px] w-[320px] rounded-full bg-lime/20 blur-[110px]"
             aria-hidden
           />
         </>
       }
     >
       <SectionHeading
-        tone="light"
         align="center"
         className="mx-auto"
         eyebrow="Запись на услуги"
         title={
           <>
             Записаться{" "}
-            <span className="text-terracotta-300">на занятие</span>
+            <span className="text-terracotta-600">на занятие</span>
           </>
         }
-        description="Выберите направление и удобное время. Мы свяжемся с вами для подтверждения записи."
+        description="Выберите направление, услугу и специалиста. Мы свяжемся с вами для подтверждения записи."
       />
 
       <Reveal delay={0.1} className="section-inner mx-auto max-w-5xl">
-        <div className="card-form-dark p-6 sm:p-8 lg:p-10">
+        <div className="card-form-light p-6 sm:p-8 lg:p-10">
           {/* ── Шаг 1 · Группа услуг ── */}
-          <div className="grid grid-cols-1 gap-2 rounded-[1.25rem] bg-white/[0.06] p-2 ring-1 ring-white/10 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 rounded-[1.25rem] bg-forest-900/[0.03] p-2 ring-1 ring-forest-900/10 sm:grid-cols-2">
             {serviceGroups.map((group) => {
               const GroupIcon = group.icon;
               const isActive = group.id === groupId;
@@ -381,14 +528,14 @@ export function Booking() {
                   className={cn(
                     "chip-interactive flex min-h-[72px] items-center justify-center gap-3 rounded-2xl px-5 py-4 text-sm font-bold sm:min-h-[76px] sm:text-base",
                     isActive
-                      ? "bg-gradient-to-r from-terracotta to-terracotta-500 text-white shadow-terracotta ring-1 ring-white/20"
-                      : "text-white/75 hover:bg-terracotta/12 hover:text-white"
+                      ? "bg-gradient-to-r from-terracotta to-terracotta-500 text-white shadow-terracotta"
+                      : "text-[#1F2E2A]/75 hover:bg-terracotta/10 hover:text-[#1F2E2A]"
                   )}
                 >
                   <GroupIcon
                     className={cn(
                       "h-5 w-5 shrink-0",
-                      !isActive && "text-terracotta-300"
+                      !isActive && "text-terracotta"
                     )}
                     aria-hidden
                   />
@@ -400,7 +547,7 @@ export function Booking() {
 
           {/* ── Шаг 2 · Услуга ── */}
           <div className="mt-7">
-            <p className="mb-3 text-sm font-medium text-white/70">
+            <p className="mb-3 text-sm font-medium text-[#1F2E2A]/75">
               Выберите услугу
             </p>
             <div
@@ -421,8 +568,8 @@ export function Booking() {
                     className={cn(
                       "chip-interactive group flex items-center gap-3 rounded-2xl border p-4 text-left sm:p-5",
                       isSelected
-                        ? "border-terracotta bg-terracotta/15 shadow-[0_0_0_1px_rgba(206,88,56,0.4),0_8px_28px_-8px_rgba(206,88,56,0.45)]"
-                        : "border-white/12 bg-white/5 hover:-translate-y-0.5 hover:border-terracotta/50 hover:bg-white/[0.08] hover:shadow-[0_10px_30px_-10px_rgba(206,88,56,0.4)]"
+                        ? "border-terracotta bg-terracotta/10 shadow-[0_0_0_1px_rgba(206,88,56,0.35),0_8px_28px_-8px_rgba(206,88,56,0.35)]"
+                        : "border-forest-900/10 bg-white hover:-translate-y-0.5 hover:border-terracotta/40 hover:bg-cream/60 hover:shadow-soft"
                     )}
                   >
                     <span
@@ -430,22 +577,22 @@ export function Booking() {
                         "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300",
                         isSelected
                           ? "bg-terracotta text-white"
-                          : "bg-white/10 text-terracotta-200"
+                          : "bg-terracotta/10 text-terracotta"
                       )}
                     >
                       <ServiceIcon className="h-5 w-5" aria-hidden />
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-sm font-bold leading-snug text-white">
+                      <span className="block text-sm font-bold leading-snug text-forest-800">
                         {service.title}
                       </span>
-                      <span className="mt-0.5 block text-xs text-white/55">
+                      <span className="mt-0.5 block text-xs text-[#1F2E2A]/55">
                         {service.detail}
                       </span>
                     </span>
                     {isSelected && (
                       <Check
-                        className="ml-auto h-5 w-5 shrink-0 text-terracotta-200"
+                        className="ml-auto h-5 w-5 shrink-0 text-terracotta"
                         aria-hidden
                       />
                     )}
@@ -455,13 +602,49 @@ export function Booking() {
             </div>
           </div>
 
-          {/* ── Шаг 3 · Форма ── */}
+          {/* ── Шаг 3 · Специалист (после услуги) ── */}
+          {activeService && (
+            <div className="mt-7">
+              <p className="mb-1 text-sm font-medium text-[#1F2E2A]/75">
+                Выберите специалиста
+              </p>
+              <p className="mb-3 text-xs text-[#1F2E2A]/50">
+                Необязательно — можно оставить «Любой специалист»
+              </p>
+              <div
+                role="radiogroup"
+                aria-label="Специалист"
+                className="-mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3"
+              >
+                <SpecialistChip
+                  selected={specialistId === ANY_SPECIALIST_ID}
+                  onSelect={() => setSpecialistId(ANY_SPECIALIST_ID)}
+                  label="Любой специалист"
+                  detail="Подберём за вас"
+                />
+                {bookableSpecialists.map((member) => (
+                  <SpecialistChip
+                    key={member.id}
+                    selected={specialistId === member.id}
+                    onSelect={() => setSpecialistId(member.id)}
+                    label={member.name}
+                    detail={shortCategory(member.category)}
+                    photo={member.photo}
+                    photoAlt={member.name}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── Шаг 4 · Форма ── */}
           {activeService && (
             <>
               {submitted ? (
                 <BookingSuccess
                   serviceTitle={activeService.title}
                   groupLabel={activeGroup.label}
+                  specialistLabel={specialistLabel}
                   onReset={resetFormState}
                 />
               ) : (
@@ -472,19 +655,25 @@ export function Booking() {
                   noValidate
                   className="mt-8 animate-fade-up"
                 >
-                  <div className="mb-5 rounded-2xl bg-white/5 px-4 py-3 text-sm leading-relaxed text-white/70">
+                  <div className="mb-5 rounded-2xl bg-lime-50 px-4 py-3 text-sm leading-relaxed text-[#1F2E2A]/75">
                     Вы записываетесь:{" "}
-                    <span className="font-semibold text-terracotta-200">
+                    <span className="font-semibold text-terracotta-600">
                       {activeService.title}
+                    </span>
+                    {" · "}
+                    <span className="font-semibold text-forest-800">
+                      {specialistLabel}
                     </span>{" "}
-                    <span className="text-white/45">({activeGroup.label})</span>
+                    <span className="text-[#1F2E2A]/45">
+                      ({activeGroup.label})
+                    </span>
                   </div>
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                       <label htmlFor="booking-name" className={labelClass}>
-                        <UserRound className="h-4 w-4 shrink-0 text-terracotta-300" />
-                        Имя <span className="text-terracotta-300">*</span>
+                        <UserRound className="h-4 w-4 shrink-0 text-terracotta" />
+                        Имя <span className="text-terracotta">*</span>
                       </label>
                       <input
                         id="booking-name"
@@ -517,8 +706,8 @@ export function Booking() {
                     </div>
                     <div>
                       <label htmlFor="booking-phone" className={labelClass}>
-                        <Phone className="h-4 w-4 shrink-0 text-terracotta-300" />
-                        Телефон <span className="text-terracotta-300">*</span>
+                        <Phone className="h-4 w-4 shrink-0 text-terracotta" />
+                        Телефон <span className="text-terracotta">*</span>
                       </label>
                       <input
                         id="booking-phone"
@@ -551,9 +740,9 @@ export function Booking() {
                     </div>
                     <div>
                       <label htmlFor="booking-date" className={labelClass}>
-                        <CalendarDays className="h-4 w-4 shrink-0 text-terracotta-300" />
+                        <CalendarDays className="h-4 w-4 shrink-0 text-terracotta" />
                         Предпочтительная дата{" "}
-                        <span className="text-terracotta-300">*</span>
+                        <span className="text-terracotta">*</span>
                       </label>
                       <input
                         id="booking-date"
@@ -565,7 +754,7 @@ export function Booking() {
                         }
                         className={cn(
                           inputClass,
-                          "[color-scheme:dark]",
+                          "focus:border-terracotta/70",
                           fieldErrors.date && inputErrorClass
                         )}
                         onChange={() => {
@@ -585,9 +774,9 @@ export function Booking() {
                     </div>
                     <div>
                       <label htmlFor="booking-time" className={labelClass}>
-                        <Clock className="h-4 w-4 shrink-0 text-terracotta-300" />
+                        <Clock className="h-4 w-4 shrink-0 text-terracotta" />
                         Предпочтительное время{" "}
-                        <span className="text-terracotta-300">*</span>
+                        <span className="text-terracotta">*</span>
                       </label>
                       <input
                         id="booking-time"
@@ -599,7 +788,6 @@ export function Booking() {
                         }
                         className={cn(
                           inputClass,
-                          "[color-scheme:dark]",
                           fieldErrors.time && inputErrorClass
                         )}
                         onChange={() => {
@@ -619,55 +807,51 @@ export function Booking() {
                     </div>
                     <div className="sm:col-span-2">
                       <label htmlFor="booking-comment" className={labelClass}>
-                        Комментарий{" "}
-                        <span className="font-normal text-white/40">
-                          (опционально)
-                        </span>
+                        Комментарий
                       </label>
                       <textarea
                         id="booking-comment"
                         name="comment"
                         rows={3}
-                        placeholder="Уровень подготовки, пожелания к тренеру, вопросы…"
-                        className={cn(inputClass, "resize-none")}
+                        placeholder="Пожелания по уровню, формату занятия или удобному времени"
+                        className={cn(inputClass, "min-h-[5.5rem] resize-y")}
                       />
                     </div>
                   </div>
 
                   {formError && (
                     <p
-                      className="mt-4 rounded-xl border border-red-400/35 bg-red-950/30 px-4 py-3 text-sm text-red-200"
+                      className="mt-4 text-sm font-medium text-red-600"
                       role="alert"
                     >
                       {formError}
                     </p>
                   )}
 
-                  <Button
-                    size="lg"
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="mt-6 w-full disabled:opacity-70"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2
-                          className="h-5 w-5 animate-spin"
-                          aria-hidden
-                        />
-                        Отправка...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="h-5 w-5" />
-                        Отправить заявку
-                      </>
-                    )}
-                  </Button>
-
-                  <p className="mt-4 text-center text-xs leading-relaxed text-white/50">
-                    Нажимая кнопку, вы соглашаетесь с правилами центра
-                  </p>
+                  <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <Button
+                      type="submit"
+                      size="lg"
+                      disabled={isSubmitting}
+                      className="w-full sm:w-auto"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Отправляем…
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-4 w-4" />
+                          Отправить заявку
+                        </>
+                      )}
+                    </Button>
+                    <p className="text-xs leading-relaxed text-[#1F2E2A]/50 sm:max-w-sm">
+                      Нажимая кнопку, вы соглашаетесь на обратный звонок для
+                      подтверждения записи.
+                    </p>
+                  </div>
                 </form>
               )}
             </>

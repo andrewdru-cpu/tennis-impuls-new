@@ -27,24 +27,26 @@ export function Logo({
   const isLight = variant === "light";
   return (
     <div className={cn("flex min-w-0 items-center gap-2 sm:gap-2.5", className)}>
-      <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-black/5 sm:h-11 sm:w-11">
+      {/*
+        Явные width/height (не fill): если CSS/Tailwind не загрузился,
+        fill + absolute растягивает эмблему на весь экран.
+      */}
+      <span
+        className="relative inline-flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-black/5 sm:h-11 sm:w-11"
+        style={{ width: 44, height: 44 }}
+      >
         <Image
           src="/logo/logo-full.png"
           alt="Эмблема ЦТТ Импульс"
-          fill
-          sizes="44px"
-          className="object-contain"
+          width={44}
+          height={44}
+          className="h-full w-full object-contain"
           priority
         />
       </span>
       {showWordmark && (
         <div className="flex min-w-0 flex-col leading-none">
-          <span
-            className={cn(
-              "truncate font-display text-base font-extrabold tracking-tight sm:text-lg",
-              isLight ? "text-terracotta-300" : "text-terracotta-500"
-            )}
-          >
+          <span className="text-ctt-red truncate font-display text-base font-extrabold tracking-tight sm:text-lg">
             ЦТТ Импульс
           </span>
           <span

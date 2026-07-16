@@ -82,7 +82,7 @@ export function HeroMedia({
         aria-hidden
       />
       <div
-        className="absolute bottom-[16%] right-[2%] hidden h-[200px] w-[200px] rounded-full bg-lime/10 blur-[80px] md:block"
+        className="absolute bottom-[16%] right-[2%] hidden h-[200px] w-[200px] rounded-full bg-lime/15 blur-[80px] md:block"
         aria-hidden
       />
 
@@ -91,7 +91,7 @@ export function HeroMedia({
         aria-hidden
       />
       <div
-        className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-sand/20 via-lime/35 to-terracotta/25"
+        className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-sand/20 via-lime/40 to-terracotta/30"
         aria-hidden
       />
 

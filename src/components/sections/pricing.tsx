@@ -63,52 +63,72 @@ const plans: PricingPlan[] = [
 
 export function Pricing() {
   return (
-    <Section id="pricing" tone="muted">
+    <Section
+      id="pricing"
+      className="overflow-hidden bg-gradient-to-b from-lime-50/80 via-cream to-terracotta/5"
+    >
       <SectionHeading
         align="center"
+        className="mx-auto"
         eyebrow="Цены и абонементы"
-        title="Прозрачные тарифы без скрытых платежей"
+        title={
+          <>
+            Прозрачные тарифы{" "}
+            <span className="text-terracotta-600">без скрытых платежей</span>
+          </>
+        }
         description="Актуальные цены уточняйте на ресепшене или по телефону — мы подберём формат под ваши задачи."
       />
 
-      <div className="section-inner mx-auto grid max-w-5xl grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="section-inner mx-auto grid max-w-5xl grid-cols-1 items-stretch gap-6 lg:grid-cols-3 lg:gap-7">
         {plans.map((plan, i) => (
-          <Reveal key={plan.name} delay={i * 0.08}>
+          <Reveal key={plan.name} delay={i * 0.08} className="h-full">
             <div
               className={cn(
+                "h-full",
                 plan.featured ? "card-pricing-featured" : "card-pricing"
               )}
             >
               {plan.featured && (
-                <span className="absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1 rounded-full bg-terracotta px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-terracotta">
-                  <Star className="h-3.5 w-3.5 fill-white" />
+                <span className="absolute -top-3 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-xs font-extrabold uppercase tracking-wider text-forest-900 shadow-[0_6px_20px_-4px_rgba(10,47,36,0.45)] ring-2 ring-lime">
+                  <Star className="h-3.5 w-3.5 fill-lime text-forest-900" />
                   Хит продаж
                 </span>
               )}
 
-              <h3 className={cn("text-card-title", plan.featured && "text-white")}>
+              <h3
+                className={cn(
+                  "font-display text-xl font-bold sm:text-2xl",
+                  plan.featured ? "text-white" : "text-forest-800"
+                )}
+              >
                 {plan.name}
               </h3>
               <p
                 className={cn(
-                  "mt-1 text-sm",
-                  plan.featured ? "text-white/60" : "text-muted-foreground"
+                  "mt-1.5 text-sm font-medium",
+                  plan.featured ? "text-white/80" : "text-terracotta-600"
                 )}
               >
                 {plan.description}
               </p>
 
-              <div className="mt-6 min-h-[3.5rem]">
+              <div className="mt-6 min-h-[4rem]">
                 {plan.price ? (
                   <div className="flex items-end gap-1.5">
-                    <span className="font-display text-4xl font-extrabold">
+                    <span
+                      className={cn(
+                        "font-display text-4xl font-extrabold tracking-tight sm:text-5xl",
+                        plan.featured ? "text-white" : "text-ctt-red"
+                      )}
+                    >
                       {plan.price}
                     </span>
                     {plan.unit && (
                       <span
                         className={cn(
-                          "pb-1 text-sm font-medium",
-                          plan.featured ? "text-white/60" : "text-muted-foreground"
+                          "pb-1.5 text-sm font-semibold",
+                          plan.featured ? "text-lime-200" : "text-terracotta-600"
                         )}
                       >
                         {plan.unit}
@@ -118,15 +138,20 @@ export function Pricing() {
                 ) : (
                   <p
                     className={cn(
-                      "rounded-2xl border border-dashed px-4 py-3 text-sm font-medium leading-relaxed",
+                      "rounded-2xl border border-dashed px-4 py-3.5 text-sm font-semibold leading-relaxed",
                       plan.featured
-                        ? "border-white/20 bg-white/5 text-white/70"
-                        : "border-forest-900/15 bg-forest-900/[0.03] text-muted-foreground"
+                        ? "border-white/25 bg-white/10 text-white"
+                        : "border-terracotta/25 bg-terracotta/5 text-forest-800"
                     )}
                   >
                     Стоимость уточняйте на ресепшене
                     {plan.unit && (
-                      <span className="mt-0.5 block text-xs opacity-80">
+                      <span
+                        className={cn(
+                          "mt-1 block text-xs font-medium",
+                          plan.featured ? "text-white/70" : "text-terracotta-600"
+                        )}
+                      >
                         Формат: {plan.unit}
                       </span>
                     )}
@@ -134,21 +159,26 @@ export function Pricing() {
                 )}
               </div>
 
-              <ul className="mt-7 flex-1 space-y-3">
+              <ul className="mt-7 flex-1 space-y-3.5">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-start gap-3 text-sm">
                     <span
                       className={cn(
                         "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
                         plan.featured
-                          ? "bg-terracotta text-white"
-                          : "bg-forest-900/5 text-forest-700"
+                          ? "bg-lime text-forest-950"
+                          : "bg-terracotta/15 text-terracotta"
                       )}
                     >
                       <Check className="h-3.5 w-3.5" />
                     </span>
                     <span
-                      className={plan.featured ? "text-white/85" : "text-forest-800"}
+                      className={cn(
+                        "leading-snug",
+                        plan.featured
+                          ? "font-medium text-white/90"
+                          : "font-medium text-[#1F2E2A]/78"
+                      )}
                     >
                       {f}
                     </span>
@@ -159,8 +189,12 @@ export function Pricing() {
               <Button
                 asChild
                 size="lg"
-                variant={plan.featured ? "primary" : "outline"}
-                className="mt-8 w-full"
+                variant="primary"
+                className={cn(
+                  "mt-8 w-full",
+                  plan.featured &&
+                    "!bg-none bg-white text-forest-900 shadow-soft hover:!bg-lime hover:text-forest-950"
+                )}
               >
                 <a href="#booking">{plan.cta}</a>
               </Button>

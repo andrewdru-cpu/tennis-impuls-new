@@ -42,27 +42,27 @@ export function ClubIntro() {
   return (
     <Section
       id="about-preview"
-      className="overflow-hidden bg-gradient-to-b from-lime-50 via-lime-50/60 to-white"
+      className="overflow-hidden bg-gradient-to-b from-lime-50 via-cream to-white"
     >
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime/60 to-transparent" />
-
       <div className="mx-auto max-w-4xl">
         <Reveal>
-          <span className="eyebrow rounded-full bg-terracotta/12 px-4 py-1.5 text-terracotta-600 ring-1 ring-terracotta/30 shadow-[0_2px_14px_-4px_rgba(206,88,56,0.4)]">
+          <span className="eyebrow rounded-full bg-red-ctt/10 px-4 py-1.5 text-ctt-red ring-1 ring-red-ctt/30 shadow-[0_2px_14px_-4px_rgba(230,57,70,0.35)]">
             ЦТТ «Импульс»
           </span>
         </Reveal>
 
         <Reveal delay={0.05}>
-          <h2 className="heading-section mt-4">
-            Современный комплекс для спорта,{" "}
-            <span className="text-terracotta-600">восстановления и отдыха</span>
+          <h2 className="mt-4 font-display text-display-lg font-bold text-balance text-forest-800">
+            Современный комплекс для{" "}
+            <span className="text-gradient-purple-lime">
+              спорта, восстановления и отдыха
+            </span>
           </h2>
         </Reveal>
 
         <Reveal delay={0.1}>
           <p className="text-body-prose mt-5 sm:text-body-lg sm:leading-[1.75]">
-            <strong className="font-semibold text-forest-900">
+            <strong className="text-ctt-red font-semibold">
               Центр теннисных технологий «Импульс»
             </strong>
             {" — "}
@@ -77,7 +77,7 @@ export function ClubIntro() {
             {locationBadges.map((badge) => (
               <li
                 key={badge.label}
-                className="inline-flex items-center gap-2 rounded-full border border-sand/40 bg-white px-4 py-2 text-sm font-semibold text-forest-800 shadow-soft"
+                className="inline-flex items-center gap-2 rounded-full border border-sand/40 bg-white px-4 py-2 text-sm font-semibold text-[#1F2E2A] shadow-soft"
               >
                 <badge.icon className="h-4 w-4 shrink-0 text-terracotta" />
                 {badge.label}

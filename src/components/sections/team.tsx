@@ -42,7 +42,7 @@ function TeamMemberCard({
         </div>
 
         <div className="flex flex-1 flex-col p-5 sm:p-6">
-          <h3 className="font-display text-lg font-bold leading-snug text-forest-900 sm:text-xl">
+          <h3 className="font-display text-lg font-bold leading-snug text-forest-800 sm:text-xl">
             {member.name}
           </h3>
           <p className="mt-2 text-sm font-semibold leading-snug text-terracotta-600">
@@ -72,6 +72,7 @@ function TeamMemberCard({
 
 export function Team() {
   const [selected, setSelected] = useState<TeamMember | null>(null);
+  const visibleGroups = teamGroups.filter((group) => group.id !== "massage");
 
   return (
     <Section
@@ -79,35 +80,25 @@ export function Team() {
       tone="muted"
       className="bg-gradient-to-b from-lime-50/50 via-secondary to-secondary"
     >
-      <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-end">
-        <SectionHeading
-          eyebrow="Наша команда"
-          title={
-            <>
-              Профессионалы, которые{" "}
-              <span className="text-terracotta-600">ведут к результату</span>
-            </>
-          }
-          description="Тренеры и специалисты центра — опыт, внимание к деталям и индивидуальный подход к каждому гостю."
-        />
-        <Reveal delay={0.1}>
-          <Button asChild variant="primary" size="lg" className="shrink-0 shadow-glow">
-            <a href="#booking">
-              Записаться к специалисту
-              <ArrowUpRight className="h-4 w-4" />
-            </a>
-          </Button>
-        </Reveal>
-      </div>
+      <SectionHeading
+        eyebrow="Наша команда"
+        title={
+          <>
+            Профессионалы, которые{" "}
+            <span className="text-gradient-purple-lime">ведут к результату</span>
+          </>
+        }
+        description="Тренеры и специалисты центра — опыт, внимание к деталям и индивидуальный подход к каждому гостю."
+      />
 
       <div className="section-inner space-y-10 sm:space-y-12 lg:space-y-14">
-        {teamGroups.map((group, groupIndex) => (
+        {visibleGroups.map((group, groupIndex) => (
           <div key={group.id}>
             <Reveal delay={groupIndex * 0.06}>
               <div className="max-w-3xl">
                 <h3 className="heading-subsection text-balance">{group.title}</h3>
                 {group.description && (
-                  <p className="mt-2 max-w-2xl text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  <p className="mt-2 max-w-2xl text-pretty text-sm leading-relaxed text-bright sm:text-base">
                     {group.description}
                   </p>
                 )}
@@ -128,6 +119,15 @@ export function Team() {
           </div>
         ))}
       </div>
+
+      <Reveal delay={0.1} className="mt-10 flex justify-center sm:mt-12">
+        <Button asChild variant="primary" size="lg" className="shadow-glow">
+          <a href="#booking">
+            Записаться к специалисту
+            <ArrowUpRight className="h-4 w-4" />
+          </a>
+        </Button>
+      </Reveal>
 
       <TeamModal member={selected} onClose={() => setSelected(null)} />
     </Section>

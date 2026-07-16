@@ -48,7 +48,7 @@ export function SectionHeading({
           <p
             className={cn(
               "mt-4 max-w-[42rem] text-pretty text-body sm:text-body-lg sm:leading-[1.7]",
-              isLight ? "text-white/80" : "text-muted-foreground"
+              isLight ? "text-white/88" : "text-bright"
             )}
           >
             {description}

@@ -82,7 +82,9 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-sm text-white/50 sm:flex-row">
           <p>
-            © {new Date().getFullYear()} {siteConfig.name}. Все права защищены.
+            © {new Date().getFullYear()}{" "}
+            <span className="text-ctt-red font-semibold">{siteConfig.name}</span>
+            . Все права защищены.
           </p>
           <p>Мытищи · Лосиный Остров</p>
         </div>
