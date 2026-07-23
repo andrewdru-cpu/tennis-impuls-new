@@ -5,8 +5,9 @@ import {
   Flower2,
   Dumbbell,
   Shield,
-  HeartHandshake,
   ArrowUpRight,
+  Users,
+  ShoppingBag,
   type LucideIcon,
 } from "@/lib/icons";
 
@@ -14,6 +15,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { Section } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { MediaImage } from "@/components/media/media-image";
+import { MassageBlock } from "@/components/services/massage-block";
 import { Button } from "@/components/ui/button";
 import { media, type MediaImageSource } from "@/lib/media";
 import { cn } from "@/lib/utils";
@@ -63,7 +65,6 @@ const fitnessDirections: {
   image?: MediaImageSource;
   imagePosition?: string;
   imagePlaceholder?: boolean;
-  /** Портрет в wide-рамке: аккуратный object-cover без «сплющивания» */
   portraitCrop?: boolean;
 }[] = [
   {
@@ -77,15 +78,14 @@ const fitnessDirections: {
     icon: Activity,
     title: "Зал специальной подготовки",
     text: "Функциональный зал для ОФП и специальной подготовки — сила, выносливость и работа над формой.",
-    image: media.services.ofpTraining,
-    imagePosition: "center 42%",
+    imagePlaceholder: true,
   },
   {
-    icon: Flower2,
-    title: "Йога",
-    text: "Гибкость, дыхание и глубокое восстановление — практики в светлой студии для любого уровня.",
-    image: media.services.yogaStudio,
-    imagePosition: "center 42%",
+    icon: Users,
+    title: "Групповые программы",
+    text: "Занятия в группе под руководством тренера — энергия команды, поддержка и стабильный прогресс.",
+    image: media.services.groupPrograms,
+    imagePosition: "center",
   },
   {
     icon: Shield,
@@ -95,19 +95,17 @@ const fitnessDirections: {
     imagePosition: "center 40%",
   },
   {
-    icon: Music,
-    title: "Танцы",
-    text: "Пластика, координация и драйв — групповые и индивидуальные занятия под живую энергию музыки.",
-    image: media.services.dance,
+    icon: Flower2,
+    title: "Йога",
+    text: "Гибкость, дыхание и глубокое восстановление — практики в светлой студии для любого уровня.",
+    image: media.services.yoga,
     imagePosition: "center",
   },
   {
-    icon: HeartHandshake,
-    title: "Массаж",
-    text: "Лечебный, спортивный и восстановительный массаж — перезагрузка тела после нагрузок.",
-    image: media.services.massage,
-    imagePosition: "center 18%",
-    portraitCrop: true,
+    icon: Music,
+    title: "Танцы",
+    text: "Пластика, координация и драйв — групповые и индивидуальные занятия под живую энергию музыки.",
+    imagePlaceholder: true,
   },
 ];
 
@@ -132,12 +130,13 @@ const lockerCards: {
 const vipLockers = {
   title: "VIP-раздевалки с сауной",
   text: "Премиальные VIP-раздевалки со своей сауной — максимальный комфорт после тренировок.",
-  images: [
-    media.services.vipLocker1,
-    media.services.vipSauna1,
-    media.services.vipSauna2,
-    media.services.vipSauna3,
-  ] as MediaImageSource[],
+  images: [media.services.vipLocker1, media.services.vipSauna1] as MediaImageSource[],
+};
+
+const sportsShop = {
+  title: "Спортивный магазин",
+  text: "На территории ЦТТ «Импульс» работает спортивный магазин. Здесь можно купить и взять в аренду инвентарь для всех направлений центра: большого тенниса, падела, настольного тенниса, фитнеса, йоги, танцев и других тренировок.",
+  image: media.services.sportShop,
 };
 
 /* -------------------------------------------------------------------------- */
@@ -148,7 +147,7 @@ function PhotoSoonSlot({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative aspect-[21/9] shrink-0 overflow-hidden bg-gradient-to-br from-lime-50 via-white to-emerald-50/80 ring-1 ring-inset ring-forest-900/[0.06]",
+        "relative aspect-[21/9] w-full shrink-0 overflow-hidden bg-gradient-to-br from-lime-50 via-white to-emerald-50/80 ring-1 ring-inset ring-forest-900/[0.06]",
         className
       )}
       aria-hidden
@@ -166,11 +165,13 @@ function BlockHeader({
   title,
   description,
   tone,
+  titleClassName,
 }: {
   eyebrow: string;
   title: React.ReactNode;
   description: string;
   tone: "dark" | "light";
+  titleClassName?: string;
 }) {
   const isDark = tone === "dark";
   return (
@@ -185,10 +186,14 @@ function BlockHeader({
       >
         {eyebrow}
       </span>
-          <h3
+      <h3
         className={cn(
           "heading-feature mt-4",
-          isDark ? "text-white drop-shadow-sm" : "text-forest-800"
+          titleClassName
+            ? titleClassName
+            : isDark
+              ? "text-white drop-shadow-sm"
+              : "text-forest-800"
         )}
       >
         {title}
@@ -396,7 +401,7 @@ function LockerCard({
 
 function VipLockersCard() {
   return (
-    <Reveal delay={0.1} className="h-full">
+    <Reveal delay={0.1}>
       <article className="card-infra group">
         <div className="flex flex-col px-5 pb-3 pt-5 sm:px-6 sm:pb-4 sm:pt-6">
           <div className="mb-2.5">
@@ -407,11 +412,47 @@ function VipLockersCard() {
           <h4 className="font-display text-display-sm font-semibold text-gradient-deep-salmon">
             {vipLockers.title}
           </h4>
-          <p className="mt-2 text-pretty text-sm leading-relaxed text-[#1F2E2A]/62 sm:text-[0.9375rem] sm:leading-[1.65]">
+          <p className="mt-2 max-w-3xl text-pretty text-sm leading-relaxed text-[#1F2E2A]/62 sm:text-[0.9375rem] sm:leading-[1.65]">
             {vipLockers.text}
           </p>
         </div>
         <VipPhotoGrid images={vipLockers.images} />
+      </article>
+    </Reveal>
+  );
+}
+
+function SportsShopBlock() {
+  return (
+    <Reveal delay={0.14}>
+      <article className="card-infra group overflow-hidden">
+        <div className="grid gap-0 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+          <div className="flex flex-col justify-center px-5 py-6 sm:px-6 sm:py-8 lg:px-8">
+            <div className="mb-3 flex items-center gap-3">
+              <span className="icon-wrap">
+                <ShoppingBag className="h-5 w-5" aria-hidden />
+              </span>
+              <h4 className="font-display text-display-sm font-semibold text-forest-800">
+                {sportsShop.title}
+              </h4>
+            </div>
+            <p className="text-pretty text-sm leading-relaxed text-[#1F2E2A]/62 sm:text-[0.9375rem] sm:leading-[1.7]">
+              {sportsShop.text}
+            </p>
+          </div>
+          <div className="relative aspect-[16/10] min-h-[200px] overflow-hidden lg:aspect-auto lg:min-h-full">
+            <MediaImage
+              media={sportsShop.image}
+              ratio="auto"
+              fit="cover"
+              position="center"
+              rounded={false}
+              className="absolute inset-0 h-full w-full !rounded-none"
+              imageClassName="object-cover object-center transition-transform duration-700 ease-premium group-hover:scale-[1.03]"
+              sizes="(max-width: 1024px) 100vw, 45vw"
+            />
+          </div>
+        </div>
       </article>
     </Reveal>
   );
@@ -534,8 +575,9 @@ export function Services() {
                     Залы специальной, ОФП-подготовки и групповых программ
                   </>
                 }
-                description="Тренажёрный зал, специальная подготовка, йога, каратэ, танцы и массаж — всё для тренировок и восстановления."
+                description="Тренажёрный зал, специальная подготовка, групповые программы, каратэ, йога и танцы — всё для тренировок и восстановления."
                 tone="light"
+                titleClassName="text-gradient-purple-lime"
               />
 
               <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -573,13 +615,15 @@ export function Services() {
             <h3 className="font-display text-display-md font-bold text-balance text-gradient-deep-salmon">
               Инфраструктура спортивного центра
             </h3>
-            <div className="mt-5 space-y-4">
+            <div className="mt-5 space-y-6 sm:space-y-7">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {lockerCards.map((item, i) => (
                   <LockerCard key={item.title} item={item} index={i} />
                 ))}
               </div>
               <VipLockersCard />
+              <SportsShopBlock />
+              <MassageBlock />
             </div>
           </div>
         </Reveal>

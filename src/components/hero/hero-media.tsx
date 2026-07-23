@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { media as siteMedia, type HeroMedia as HeroMediaType } from "@/lib/media";
 
 /**
- * Оверлеи под new-hero.jpg:
+ * Оверлеи под new-hero.webp:
  * — левая ~58% (здание «ЦТТ Импульс» + корты) без затемнения;
  * — мягкий градиент справа только под текст (над ангаром).
  */
@@ -53,8 +53,8 @@ export function HeroMedia({
         sizes="100vw"
         className={cn(
           "object-cover brightness-[1.14] saturate-[1.2] contrast-[1.05]",
-          /* здание слева в кадре, ангар справа — под текстовую колонку */
-          "object-[32%_40%] md:object-[34%_38%] lg:object-[36%_36%]"
+          /* центр кадра; чуть left — текст справа не перекрывает здание */
+          "object-[46%_center] md:object-[48%_center] lg:object-center"
         )}
       />
 

@@ -6,7 +6,6 @@ import { Services } from "@/components/sections/services";
 import { Booking } from "@/components/sections/booking";
 import { Pricing } from "@/components/sections/pricing";
 import { Team } from "@/components/sections/team";
-import { Gallery } from "@/components/sections/gallery";
 import { News } from "@/components/sections/news";
 import { Contacts } from "@/components/sections/contacts";
 import { Footer } from "@/components/sections/footer";

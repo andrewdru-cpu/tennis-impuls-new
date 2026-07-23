@@ -39,6 +39,7 @@ export {
   Route,
   Send,
   Shield,
+  ShoppingBag,
   ShowerHead,
   Snowflake,
   Sparkles,

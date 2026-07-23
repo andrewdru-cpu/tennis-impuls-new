@@ -63,9 +63,7 @@ public/images/**/*.jpg
 public/images/**/*.jpeg
 public/images/**/*.JPG
 # Исключения: файлы, которые реально отдаёт сайт
-!public/images/hero/new-hero.jpg
 !public/images/services/ground-court.jpg
-!public/images/services/yoga-studio.jpg
 !public/images/services/ofp-training.jpg
 !public/images/services/dance-studio.jpg
 !public/images/services/gym-hall.jpg

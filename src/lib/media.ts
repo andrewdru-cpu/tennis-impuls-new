@@ -69,8 +69,8 @@ export const media = {
   /* -------------------------------------------------------------- HERO --- */
   hero: {
     kind: "image",
-    src: "/images/hero/new-hero.jpg",
-    alt: "Главное здание ЦТТ Импульс с надписью, крытый ангар и корты на территории комплекса",
+    src: "/images/hero/new-hero.webp",
+    alt: "ЦТТ Импульс — спортивный комплекс у Лосиного Острова",
     width: 1920,
     height: 1096,
   } as HeroMedia,
@@ -133,17 +133,13 @@ export const media = {
       src: "/images/services/vip-sauna-1.webp",
       alt: "Сауна VIP-раздевалки",
     },
-    vipSauna2: {
-      src: "/images/services/vip-sauna-2.webp",
-      alt: "Сауна VIP-раздевалки",
+    yoga: {
+      src: "/images/services/yoga.webp",
+      alt: "Йога в ЦТТ Импульс",
     },
-    vipSauna3: {
-      src: "/images/services/vip-sauna-3.webp",
-      alt: "Сауна VIP-раздевалки",
-    },
-    yogaStudio: {
-      src: "/images/services/yoga-studio.jpg",
-      alt: "Студия йоги в ЦТТ Импульс",
+    groupPrograms: {
+      src: "/images/services/group-programs.webp",
+      alt: "Групповые программы в ЦТТ Импульс",
     },
     danceStudio: {
       src: "/images/services/dance-studio.JPG",
@@ -172,6 +168,10 @@ export const media = {
     massage: {
       src: "/images/team/privalov-massage.webp",
       alt: "Массаж в ЦТТ Импульс — специалист Привалов",
+    },
+    sportShop: {
+      src: "/images/services/sport-shop.webp",
+      alt: "Спортивный магазин ЦТТ Импульс — аренда и продажа инвентаря",
     },
     activities: {
       src: "/images/gallery/02.webp",
@@ -252,27 +252,6 @@ export const media = {
     privalov: {
       src: "/images/team/privalov-massage.webp",
       alt: "Привалов Роман — массажист-реабилитолог",
-    },
-    // Устаревшие ключи (совместимость)
-    coach1: {
-      src: "/images/team/coach-1.webp",
-      alt: "Тренер клуба ЦТТ Импульс на корте",
-    },
-    coach2: {
-      src: "/images/team/coach-2.webp",
-      alt: "Главный тренер клуба ЦТТ Импульс",
-    },
-    coach3: {
-      src: "/images/team/coach-3.webp",
-      alt: "Тренер клуба ЦТТ Импульс на корте",
-    },
-    coach4: {
-      src: "/images/team/coach-4.webp",
-      alt: "Тренер клуба ЦТТ Импульс на корте",
-    },
-    coach5: {
-      src: "/images/team/coach-5.webp",
-      alt: "Тренер по карате Киокушинкай",
     },
   } satisfies Record<string, MediaImageSource>,
 
