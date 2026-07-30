@@ -1,65 +1,71 @@
-import { Check, Star } from "@/lib/icons";
+import { Check, ChevronDown, Star } from "@/lib/icons";
 
 import { SectionHeading } from "@/components/section-heading";
 import { Section } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { Button } from "@/components/ui/button";
+import {
+  fullPriceSections,
+  pricingPlans,
+  type PriceTableSection,
+} from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 
-/**
- * 👉 ЦЕНЫ: чтобы добавить стоимость — заполните price и unit.
- *    Пустое price показывает заглушку «Уточняйте на ресепшене».
- */
-type PricingPlan = {
-  name: string;
-  price?: string;
-  unit?: string;
-  description: string;
-  features: string[];
-  cta: string;
-  featured?: boolean;
-};
+function PriceTable({ section }: { section: PriceTableSection }) {
+  const colCount = section.columns?.length ?? 1;
 
-const plans: PricingPlan[] = [
-  {
-    name: "Разовый визит",
-    unit: "₽ / час",
-    description: "Идеально, чтобы попробовать",
-    features: [
-      "Аренда корта 1 час",
-      "Крытый Hard или открытый грунт",
-      "Прокат ракеток",
-      "Доступ к раздевалкам",
-    ],
-    cta: "Забронировать",
-  },
-  {
-    name: "Абонемент PRO",
-    unit: "₽ / мес",
-    description: "Самый популярный формат",
-    features: [
-      "8 тренировок с тренером",
-      "Крытые корты круглый год",
-      "Запись на корты без ограничений",
-      "Зал ОФП и восстановление",
-      "Скидка 15% на турниры",
-    ],
-    cta: "Оформить абонемент",
-    featured: true,
-  },
-  {
-    name: "Детская школа по теннису",
-    unit: "₽ / мес",
-    description: "Для юных спортсменов",
-    features: [
-      "12 групповых занятий",
-      "Профессиональные детские тренеры",
-      "Участие в турнирах центра",
-      "Спортивная экипировка в подарок",
-    ],
-    cta: "Записать ребёнка",
-  },
-];
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[18rem] border-collapse text-left">
+        {section.columns && (
+          <thead>
+            <tr className="border-b border-forest-900/10">
+              <th className="pb-3 pr-3 text-xs font-bold uppercase tracking-[0.14em] text-terracotta-600">
+                Услуга
+              </th>
+              {section.columns.map((col) => (
+                <th
+                  key={col}
+                  className="pb-3 px-2 text-right text-xs font-bold uppercase tracking-[0.12em] text-terracotta-600"
+                >
+                  {col}
+                </th>
+              ))}
+            </tr>
+          </thead>
+        )}
+        <tbody>
+          {section.rows.map((row) => (
+            <tr
+              key={row.label}
+              className="border-b border-forest-900/[0.06] last:border-0"
+            >
+              <td className="py-3 pr-3 text-sm font-medium leading-snug text-forest-800 sm:text-[0.9375rem]">
+                {row.label}
+              </td>
+              {row.values.map((value, i) => (
+                <td
+                  key={`${row.label}-${i}`}
+                  className={cn(
+                    "py-3 px-2 text-right font-display text-sm font-bold tabular-nums text-forest-900 sm:text-base",
+                    colCount === 1 && "whitespace-nowrap"
+                  )}
+                >
+                  {value}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {section.note && (
+        <p className="mt-3 text-xs leading-relaxed text-[#1F2E2A]/55 sm:text-sm">
+          {section.note}
+        </p>
+      )}
+    </div>
+  );
+}
 
 export function Pricing() {
   return (
@@ -77,11 +83,11 @@ export function Pricing() {
             <span className="text-terracotta-600">без скрытых платежей</span>
           </>
         }
-        description="Актуальные цены уточняйте на ресепшене или по телефону — мы подберём формат под ваши задачи."
+        description="Актуальные цены на аренду кортов, групповые и персональные тренировки, фитнес и VIP."
       />
 
       <div className="section-inner mx-auto grid max-w-5xl grid-cols-1 items-stretch gap-6 lg:grid-cols-3 lg:gap-7">
-        {plans.map((plan, i) => (
+        {pricingPlans.map((plan, i) => (
           <Reveal key={plan.name} delay={i * 0.08} className="h-full">
             <div
               className={cn(
@@ -114,49 +120,24 @@ export function Pricing() {
               </p>
 
               <div className="mt-6 min-h-[4rem]">
-                {plan.price ? (
-                  <div className="flex items-end gap-1.5">
-                    <span
-                      className={cn(
-                        "font-display text-4xl font-extrabold tracking-tight sm:text-5xl",
-                        plan.featured ? "text-white" : "text-ctt-red"
-                      )}
-                    >
-                      {plan.price}
-                    </span>
-                    {plan.unit && (
-                      <span
-                        className={cn(
-                          "pb-1.5 text-sm font-semibold",
-                          plan.featured ? "text-lime-200" : "text-terracotta-600"
-                        )}
-                      >
-                        {plan.unit}
-                      </span>
-                    )}
-                  </div>
-                ) : (
-                  <p
+                <div className="flex flex-wrap items-end gap-1.5">
+                  <span
                     className={cn(
-                      "rounded-2xl border border-dashed px-4 py-3.5 text-sm font-semibold leading-relaxed",
-                      plan.featured
-                        ? "border-white/25 bg-white/10 text-white"
-                        : "border-terracotta/25 bg-terracotta/5 text-forest-800"
+                      "font-display text-4xl font-extrabold tracking-tight sm:text-5xl",
+                      plan.featured ? "text-white" : "text-ctt-red"
                     )}
                   >
-                    Стоимость уточняйте на ресепшене
-                    {plan.unit && (
-                      <span
-                        className={cn(
-                          "mt-1 block text-xs font-medium",
-                          plan.featured ? "text-white/70" : "text-terracotta-600"
-                        )}
-                      >
-                        Формат: {plan.unit}
-                      </span>
+                    {plan.price}
+                  </span>
+                  <span
+                    className={cn(
+                      "pb-1.5 text-sm font-semibold",
+                      plan.featured ? "text-lime-200" : "text-terracotta-600"
                     )}
-                  </p>
-                )}
+                  >
+                    {plan.unit}
+                  </span>
+                </div>
               </div>
 
               <ul className="mt-7 flex-1 space-y-3.5">
@@ -186,6 +167,17 @@ export function Pricing() {
                 ))}
               </ul>
 
+              {plan.note && (
+                <p
+                  className={cn(
+                    "mt-4 text-xs leading-relaxed sm:text-[0.8125rem]",
+                    plan.featured ? "text-white/65" : "text-[#1F2E2A]/50"
+                  )}
+                >
+                  {plan.note}
+                </p>
+              )}
+
               <Button
                 asChild
                 size="lg"
@@ -196,12 +188,67 @@ export function Pricing() {
                     "!bg-none bg-white text-forest-900 shadow-soft hover:!bg-lime hover:text-forest-950"
                 )}
               >
-                <a href="#booking">{plan.cta}</a>
+                <a href={plan.ctaHref ?? "#booking"}>{plan.cta}</a>
               </Button>
             </div>
           </Reveal>
         ))}
       </div>
+
+      {/* Полный прайс */}
+      <Reveal delay={0.2} className="section-inner mx-auto mt-12 max-w-4xl sm:mt-14">
+        <details className="group overflow-hidden rounded-[1.75rem] border border-forest-900/10 bg-white/90 shadow-soft open:shadow-elevated">
+          <summary
+            className={cn(
+              "flex cursor-pointer list-none items-center justify-between gap-4",
+              "px-5 py-5 sm:px-8 sm:py-6",
+              "marker:content-none [&::-webkit-details-marker]:hidden",
+              "transition-colors duration-300 hover:bg-lime-50/50"
+            )}
+          >
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-terracotta-600">
+                Полный прайс
+              </p>
+              <h3 className="mt-1.5 font-display text-xl font-bold text-forest-800 sm:text-2xl">
+                Смотреть полный прайс
+              </h3>
+            </div>
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-terracotta/10 text-terracotta ring-1 ring-terracotta/20 transition-transform duration-300 group-open:rotate-180">
+              <ChevronDown className="h-5 w-5" aria-hidden />
+            </span>
+          </summary>
+
+          <div className="space-y-3 border-t border-forest-900/8 px-3 pb-4 pt-3 sm:space-y-4 sm:px-5 sm:pb-6 sm:pt-4">
+            {fullPriceSections.map((section) => (
+              <details
+                key={section.id}
+                className="group/section overflow-hidden rounded-2xl border border-forest-900/[0.07] bg-gradient-to-br from-white via-cream/40 to-lime-50/30"
+              >
+                <summary
+                  className={cn(
+                    "flex cursor-pointer list-none items-center justify-between gap-3",
+                    "px-4 py-4 sm:px-5",
+                    "marker:content-none [&::-webkit-details-marker]:hidden",
+                    "transition-colors duration-300 hover:bg-white/70"
+                  )}
+                >
+                  <h4 className="font-display text-base font-bold text-forest-800 sm:text-lg">
+                    {section.title}
+                  </h4>
+                  <ChevronDown
+                    className="h-4 w-4 shrink-0 text-terracotta-600 transition-transform duration-300 group-open/section:rotate-180"
+                    aria-hidden
+                  />
+                </summary>
+                <div className="border-t border-forest-900/[0.06] px-4 pb-4 pt-2 sm:px-5 sm:pb-5">
+                  <PriceTable section={section} />
+                </div>
+              </details>
+            ))}
+          </div>
+        </details>
+      </Reveal>
     </Section>
   );
 }

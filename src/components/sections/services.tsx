@@ -78,7 +78,8 @@ const fitnessDirections: {
     icon: Activity,
     title: "Зал специальной подготовки",
     text: "Функциональный зал для ОФП и специальной подготовки — сила, выносливость и работа над формой.",
-    imagePlaceholder: true,
+    image: media.services.specialTraining,
+    imagePosition: "center",
   },
   {
     icon: Users,

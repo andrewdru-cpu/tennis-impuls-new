@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import {
   Activity,
@@ -12,6 +12,7 @@ import {
   HeartHandshake,
   Loader2,
   Music,
+  Package,
   Phone,
   Send,
   Shield,
@@ -28,7 +29,16 @@ import { Section } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { Button } from "@/components/ui/button";
 import {
+  abonementCategories,
+  findAbonement,
+  formatAbonementLabel,
+  type AbonementItem,
+} from "@/lib/abonements";
+import {
+  BOOKING_ABONEMENT_EVENT,
   BOOKING_SPECIALIST_EVENT,
+  isAbonementBookingInUrl,
+  readAbonementFromUrl,
   readSpecialistFromUrl,
 } from "@/lib/booking-deeplink";
 import {
@@ -43,7 +53,7 @@ import { cn } from "@/lib/utils";
 /*  Данные                                                                    */
 /* -------------------------------------------------------------------------- */
 
-type ServiceGroupId = "tennis" | "other";
+type BookingTabId = "tennis" | "other" | "abonement";
 
 type Service = {
   id: string;
@@ -61,24 +71,34 @@ type BookingFormValues = {
 };
 
 type BookingPayload = BookingFormValues & {
+  serviceType: "session" | "abonement";
   group: string;
   service: string;
   specialist: string;
   specialistId: string;
+  selectedAbonement?: string;
 };
 
 const ANY_SPECIALIST_ID = "any";
 
-const serviceGroups: {
-  id: ServiceGroupId;
+const bookingTabs: {
+  id: BookingTabId;
   label: string;
   icon: LucideIcon;
+}[] = [
+  { id: "tennis", label: "Теннисные виды спорта", icon: Target },
+  { id: "other", label: "Другие направления", icon: Sparkles },
+  { id: "abonement", label: "Абонементы", icon: Package },
+];
+
+const serviceGroups: {
+  id: Exclude<BookingTabId, "abonement">;
+  label: string;
   services: Service[];
 }[] = [
   {
     id: "tennis",
     label: "Теннисные виды спорта",
-    icon: Target,
     services: [
       {
         id: "ground-court",
@@ -115,7 +135,6 @@ const serviceGroups: {
   {
     id: "other",
     label: "Другие направления",
-    icon: Sparkles,
     services: [
       {
         id: "ofp",
@@ -168,9 +187,10 @@ async function submitBookingRequest(payload: BookingPayload): Promise<void> {
   }
 }
 
-function validateBookingForm(values: BookingFormValues): Partial<
-  Record<keyof BookingFormValues, string>
-> {
+function validateBookingForm(
+  values: BookingFormValues,
+  mode: "session" | "abonement"
+): Partial<Record<keyof BookingFormValues, string>> {
   const errors: Partial<Record<keyof BookingFormValues, string>> = {};
   const name = values.name.trim();
 
@@ -187,12 +207,13 @@ function validateBookingForm(values: BookingFormValues): Partial<
     errors.phone = "Введите корректный номер телефона";
   }
 
-  if (!values.date) {
-    errors.date = "Выберите предпочтительную дату";
-  }
-
-  if (!values.time) {
-    errors.time = "Выберите предпочтительное время";
+  if (mode === "session") {
+    if (!values.date) {
+      errors.date = "Выберите предпочтительную дату";
+    }
+    if (!values.time) {
+      errors.time = "Выберите предпочтительное время";
+    }
   }
 
   return errors;
@@ -242,11 +263,13 @@ function BookingSuccess({
   serviceTitle,
   groupLabel,
   specialistLabel,
+  isAbonement,
   onReset,
 }: {
   serviceTitle: string;
   groupLabel: string;
-  specialistLabel: string;
+  specialistLabel?: string;
+  isAbonement?: boolean;
   onReset: () => void;
 }) {
   return (
@@ -264,21 +287,25 @@ function BookingSuccess({
             Заявка отправлена!
           </p>
           <p className="mt-2 text-sm leading-relaxed text-bright sm:text-base">
-            Мы свяжемся с вами в ближайшее время.
+            {isAbonement
+              ? "Мы перезвоним и оформим абонемент."
+              : "Мы свяжемся с вами в ближайшее время."}
           </p>
           <p className="mt-3 text-sm text-[#1F2E2A]/60">
-            Направление:{" "}
+            {isAbonement ? "Абонемент" : "Направление"}:{" "}
             <span className="font-semibold text-terracotta-600">
               {serviceTitle}
             </span>{" "}
             <span className="text-[#1F2E2A]/45">({groupLabel})</span>
           </p>
-          <p className="mt-1 text-sm text-[#1F2E2A]/60">
-            Специалист:{" "}
-            <span className="font-semibold text-forest-800">
-              {specialistLabel}
-            </span>
-          </p>
+          {!isAbonement && specialistLabel && (
+            <p className="mt-1 text-sm text-[#1F2E2A]/60">
+              Специалист:{" "}
+              <span className="font-semibold text-forest-800">
+                {specialistLabel}
+              </span>
+            </p>
+          )}
         </div>
       </div>
       <Button
@@ -366,8 +393,9 @@ function SpecialistChip({
 
 export function Booking() {
   const formRef = useRef<HTMLFormElement>(null);
-  const [groupId, setGroupId] = useState<ServiceGroupId>("tennis");
+  const [tabId, setTabId] = useState<BookingTabId>("tennis");
   const [serviceId, setServiceId] = useState<string | null>(null);
+  const [abonementId, setAbonementId] = useState<string | null>(null);
   const [specialistId, setSpecialistId] = useState<string>(ANY_SPECIALIST_ID);
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -376,15 +404,28 @@ export function Booking() {
     Partial<Record<keyof BookingFormValues, string>>
   >({});
 
-  const activeGroup = serviceGroups.find((g) => g.id === groupId)!;
+  const isAbonementTab = tabId === "abonement";
+  const activeGroup = isAbonementTab
+    ? null
+    : serviceGroups.find((g) => g.id === tabId)!;
   const activeService =
-    activeGroup.services.find((s) => s.id === serviceId) ?? null;
-  const bookableSpecialists = getBookableSpecialists(groupId);
+    activeGroup?.services.find((s) => s.id === serviceId) ?? null;
+  const activeAbonement: AbonementItem | null = abonementId
+    ? (findAbonement(abonementId) ?? null)
+    : null;
+  const bookableSpecialists = useMemo(
+    () => (isAbonementTab ? [] : getBookableSpecialists(tabId)),
+    [isAbonementTab, tabId]
+  );
   const activeSpecialist: TeamMember | null =
     specialistId === ANY_SPECIALIST_ID
       ? null
       : (findTeamMember(specialistId) ?? null);
   const specialistLabel = activeSpecialist?.name ?? "Любой специалист";
+
+  const selectionReady = isAbonementTab
+    ? Boolean(activeAbonement)
+    : Boolean(activeService);
 
   function resetFormState() {
     setSubmitted(false);
@@ -400,26 +441,66 @@ export function Booking() {
     const bookingGroup = getBookingGroupForMember(rawId);
     if (!member || !bookingGroup) return;
 
-    setGroupId(bookingGroup);
+    setTabId(bookingGroup);
+    setAbonementId(null);
     setSpecialistId(member.id);
     setServiceId(member.id === "privalov" ? "massage" : null);
     resetFormState();
   }
 
-  useEffect(() => {
-    applySpecialistDeepLink(readSpecialistFromUrl());
+  function applyAbonementDeepLink(rawId: string | null) {
+    if (!isAbonementBookingInUrl() && !rawId) return;
+    const id = rawId ?? readAbonementFromUrl();
+    if (!id) {
+      if (isAbonementBookingInUrl()) {
+        setTabId("abonement");
+        setServiceId(null);
+        setSpecialistId(ANY_SPECIALIST_ID);
+        setAbonementId(null);
+        resetFormState();
+      }
+      return;
+    }
+    const item = findAbonement(id);
+    if (!item) return;
 
-    const onCustom = (event: Event) => {
+    setTabId("abonement");
+    setServiceId(null);
+    setSpecialistId(ANY_SPECIALIST_ID);
+    setAbonementId(item.id);
+    resetFormState();
+  }
+
+  useEffect(() => {
+    if (isAbonementBookingInUrl()) {
+      applyAbonementDeepLink(readAbonementFromUrl());
+    } else {
+      applySpecialistDeepLink(readSpecialistFromUrl());
+    }
+
+    const onSpecialist = (event: Event) => {
       const detail = (event as CustomEvent<{ specialistId?: string }>).detail;
       applySpecialistDeepLink(detail?.specialistId ?? readSpecialistFromUrl());
     };
-    const onPop = () => applySpecialistDeepLink(readSpecialistFromUrl());
+    const onAbonement = (event: Event) => {
+      const detail = (event as CustomEvent<{ abonementId?: string }>).detail;
+      applyAbonementDeepLink(detail?.abonementId ?? readAbonementFromUrl());
+    };
+    const onPop = () => {
+      if (isAbonementBookingInUrl()) {
+        applyAbonementDeepLink(readAbonementFromUrl());
+      } else {
+        applySpecialistDeepLink(readSpecialistFromUrl());
+      }
+    };
 
-    window.addEventListener(BOOKING_SPECIALIST_EVENT, onCustom);
+    window.addEventListener(BOOKING_SPECIALIST_EVENT, onSpecialist);
+    window.addEventListener(BOOKING_ABONEMENT_EVENT, onAbonement);
     window.addEventListener("popstate", onPop);
     window.addEventListener("hashchange", onPop);
     return () => {
-      window.removeEventListener(BOOKING_SPECIALIST_EVENT, onCustom);
+      window.removeEventListener(BOOKING_SPECIALIST_EVENT, onSpecialist);
+      window.removeEventListener(BOOKING_ABONEMENT_EVENT, onAbonement);
       window.removeEventListener("popstate", onPop);
       window.removeEventListener("hashchange", onPop);
     };
@@ -427,14 +508,15 @@ export function Booking() {
   }, []);
 
   useEffect(() => {
-    if (specialistId === ANY_SPECIALIST_ID) return;
+    if (isAbonementTab || specialistId === ANY_SPECIALIST_ID) return;
     const stillValid = bookableSpecialists.some((m) => m.id === specialistId);
     if (!stillValid) setSpecialistId(ANY_SPECIALIST_ID);
-  }, [bookableSpecialists, specialistId]);
+  }, [bookableSpecialists, specialistId, isAbonementTab]);
 
-  function selectGroup(id: ServiceGroupId) {
-    setGroupId(id);
+  function selectTab(id: BookingTabId) {
+    setTabId(id);
     setServiceId(null);
+    setAbonementId(null);
     setSpecialistId(ANY_SPECIALIST_ID);
     resetFormState();
   }
@@ -444,13 +526,34 @@ export function Booking() {
     resetFormState();
   }
 
+  function selectAbonement(id: string) {
+    setAbonementId(id);
+    resetFormState();
+  }
+
+  function clearFieldError(field: keyof BookingFormValues) {
+    setFieldErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!activeService) return;
 
     const form = event.currentTarget;
     const data = Object.fromEntries(new FormData(form)) as BookingFormValues;
-    const errors = validateBookingForm(data);
+    const mode = isAbonementTab ? "abonement" : "session";
+
+    if (isAbonementTab) {
+      if (!activeAbonement) return;
+    } else if (!activeService || !activeGroup) {
+      return;
+    }
+
+    const errors = validateBookingForm(data, mode);
 
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
@@ -463,14 +566,34 @@ export function Booking() {
     setIsSubmitting(true);
 
     try {
-      await submitBookingRequest({
-        group: activeGroup.label,
-        service: activeService.title,
-        specialist: specialistLabel,
-        specialistId:
-          specialistId === ANY_SPECIALIST_ID ? ANY_SPECIALIST_ID : specialistId,
-        ...data,
-      });
+      if (isAbonementTab && activeAbonement) {
+        const label = formatAbonementLabel(activeAbonement);
+        await submitBookingRequest({
+          serviceType: "abonement",
+          group: "Абонементы",
+          service: label,
+          selectedAbonement: label,
+          specialist: "",
+          specialistId: "",
+          name: data.name,
+          phone: data.phone,
+          comment: data.comment ?? "",
+          date: "",
+          time: "",
+        });
+      } else if (activeService && activeGroup) {
+        await submitBookingRequest({
+          serviceType: "session",
+          group: activeGroup.label,
+          service: activeService.title,
+          specialist: specialistLabel,
+          specialistId:
+            specialistId === ANY_SPECIALIST_ID
+              ? ANY_SPECIALIST_ID
+              : specialistId,
+          ...data,
+        });
+      }
       form.reset();
       setSubmitted(true);
     } catch {
@@ -481,6 +604,15 @@ export function Booking() {
       setIsSubmitting(false);
     }
   }
+
+  const successTitle = isAbonementTab
+    ? activeAbonement
+      ? formatAbonementLabel(activeAbonement)
+      : ""
+    : (activeService?.title ?? "");
+  const successGroup = isAbonementTab
+    ? "Абонементы"
+    : (activeGroup?.label ?? "");
 
   return (
     <Section
@@ -509,101 +641,165 @@ export function Booking() {
             <span className="text-terracotta-600">на занятие</span>
           </>
         }
-        description="Выберите направление, услугу и специалиста. Мы свяжемся с вами для подтверждения записи."
+        description="Выберите направление, услугу или абонемент. Мы свяжемся с вами для подтверждения."
       />
 
       <Reveal delay={0.1} className="section-inner mx-auto max-w-5xl">
         <div className="card-form-light p-6 sm:p-8 lg:p-10">
-          {/* ── Шаг 1 · Группа услуг ── */}
-          <div className="grid grid-cols-1 gap-2 rounded-[1.25rem] bg-forest-900/[0.03] p-2 ring-1 ring-forest-900/10 sm:grid-cols-2">
-            {serviceGroups.map((group) => {
-              const GroupIcon = group.icon;
-              const isActive = group.id === groupId;
+          {/* ── Шаг 1 · Вкладки ── */}
+          <div className="grid grid-cols-1 gap-2 rounded-[1.25rem] bg-forest-900/[0.03] p-2 ring-1 ring-forest-900/10 sm:grid-cols-3">
+            {bookingTabs.map((tab) => {
+              const TabIcon = tab.icon;
+              const isActive = tab.id === tabId;
               return (
                 <button
-                  key={group.id}
+                  key={tab.id}
                   type="button"
-                  onClick={() => selectGroup(group.id)}
+                  onClick={() => selectTab(tab.id)}
                   aria-pressed={isActive}
                   className={cn(
-                    "chip-interactive flex min-h-[72px] items-center justify-center gap-3 rounded-2xl px-5 py-4 text-sm font-bold sm:min-h-[76px] sm:text-base",
+                    "chip-interactive flex min-h-[72px] items-center justify-center gap-3 rounded-2xl px-4 py-4 text-sm font-bold sm:min-h-[76px] sm:px-5 sm:text-base",
                     isActive
                       ? "bg-gradient-to-r from-terracotta to-terracotta-500 text-white shadow-terracotta"
                       : "text-[#1F2E2A]/75 hover:bg-terracotta/10 hover:text-[#1F2E2A]"
                   )}
                 >
-                  <GroupIcon
+                  <TabIcon
                     className={cn(
                       "h-5 w-5 shrink-0",
                       !isActive && "text-terracotta"
                     )}
                     aria-hidden
                   />
-                  {group.label}
+                  <span className="text-center leading-snug">{tab.label}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* ── Шаг 2 · Услуга ── */}
-          <div className="mt-7">
-            <p className="mb-3 text-sm font-medium text-[#1F2E2A]/75">
-              Выберите услугу
-            </p>
-            <div
-              role="radiogroup"
-              aria-label={`Услуги: ${activeGroup.label}`}
-              className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3"
-            >
-              {activeGroup.services.map((service) => {
-                const ServiceIcon = service.icon;
-                const isSelected = service.id === serviceId;
-                return (
-                  <button
-                    key={service.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={isSelected}
-                    onClick={() => selectService(service.id)}
-                    className={cn(
-                      "chip-interactive group flex items-center gap-3 rounded-2xl border p-4 text-left sm:p-5",
-                      isSelected
-                        ? "border-terracotta bg-terracotta/10 shadow-[0_0_0_1px_rgba(206,88,56,0.35),0_8px_28px_-8px_rgba(206,88,56,0.35)]"
-                        : "border-forest-900/10 bg-white hover:-translate-y-0.5 hover:border-terracotta/40 hover:bg-cream/60 hover:shadow-soft"
-                    )}
+          {/* ── Шаг 2 · Услуга или абонемент ── */}
+          {isAbonementTab ? (
+            <div className="mt-7 space-y-6">
+              <p className="text-sm font-medium text-[#1F2E2A]/75">
+                Выберите абонемент
+              </p>
+              {abonementCategories.map((category) => (
+                <div key={category.id}>
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-[#1F2E2A]/45">
+                    {category.title}
+                  </p>
+                  <div
+                    role="radiogroup"
+                    aria-label={category.title}
+                    className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3"
                   >
-                    <span
+                    {category.items.map((item) => {
+                      const isSelected = item.id === abonementId;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          role="radio"
+                          aria-checked={isSelected}
+                          onClick={() => selectAbonement(item.id)}
+                          className={cn(
+                            "chip-interactive group flex items-center gap-3 rounded-2xl border p-4 text-left sm:p-5",
+                            isSelected
+                              ? "border-terracotta bg-terracotta/10 shadow-[0_0_0_1px_rgba(206,88,56,0.35),0_8px_28px_-8px_rgba(206,88,56,0.35)]"
+                              : "border-forest-900/10 bg-white hover:-translate-y-0.5 hover:border-terracotta/40 hover:bg-cream/60 hover:shadow-soft"
+                          )}
+                        >
+                          <span
+                            className={cn(
+                              "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300",
+                              isSelected
+                                ? "bg-terracotta text-white"
+                                : "bg-terracotta/10 text-terracotta"
+                            )}
+                          >
+                            <Package className="h-5 w-5" aria-hidden />
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block text-sm font-bold leading-snug text-forest-800">
+                              {item.title}
+                            </span>
+                            <span className="mt-0.5 block text-xs text-[#1F2E2A]/55">
+                              {item.price}
+                            </span>
+                          </span>
+                          {isSelected && (
+                            <Check
+                              className="ml-auto h-5 w-5 shrink-0 text-terracotta"
+                              aria-hidden
+                            />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-7">
+              <p className="mb-3 text-sm font-medium text-[#1F2E2A]/75">
+                Выберите услугу
+              </p>
+              <div
+                role="radiogroup"
+                aria-label={`Услуги: ${activeGroup!.label}`}
+                className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3"
+              >
+                {activeGroup!.services.map((service) => {
+                  const ServiceIcon = service.icon;
+                  const isSelected = service.id === serviceId;
+                  return (
+                    <button
+                      key={service.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={isSelected}
+                      onClick={() => selectService(service.id)}
                       className={cn(
-                        "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300",
+                        "chip-interactive group flex items-center gap-3 rounded-2xl border p-4 text-left sm:p-5",
                         isSelected
-                          ? "bg-terracotta text-white"
-                          : "bg-terracotta/10 text-terracotta"
+                          ? "border-terracotta bg-terracotta/10 shadow-[0_0_0_1px_rgba(206,88,56,0.35),0_8px_28px_-8px_rgba(206,88,56,0.35)]"
+                          : "border-forest-900/10 bg-white hover:-translate-y-0.5 hover:border-terracotta/40 hover:bg-cream/60 hover:shadow-soft"
                       )}
                     >
-                      <ServiceIcon className="h-5 w-5" aria-hidden />
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-sm font-bold leading-snug text-forest-800">
-                        {service.title}
+                      <span
+                        className={cn(
+                          "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300",
+                          isSelected
+                            ? "bg-terracotta text-white"
+                            : "bg-terracotta/10 text-terracotta"
+                        )}
+                      >
+                        <ServiceIcon className="h-5 w-5" aria-hidden />
                       </span>
-                      <span className="mt-0.5 block text-xs text-[#1F2E2A]/55">
-                        {service.detail}
+                      <span className="min-w-0">
+                        <span className="block text-sm font-bold leading-snug text-forest-800">
+                          {service.title}
+                        </span>
+                        <span className="mt-0.5 block text-xs text-[#1F2E2A]/55">
+                          {service.detail}
+                        </span>
                       </span>
-                    </span>
-                    {isSelected && (
-                      <Check
-                        className="ml-auto h-5 w-5 shrink-0 text-terracotta"
-                        aria-hidden
-                      />
-                    )}
-                  </button>
-                );
-              })}
+                      {isSelected && (
+                        <Check
+                          className="ml-auto h-5 w-5 shrink-0 text-terracotta"
+                          aria-hidden
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* ── Шаг 3 · Специалист (после услуги) ── */}
-          {activeService && (
+          {/* ── Шаг 3 · Специалист (только для сессий) ── */}
+          {!isAbonementTab && activeService && (
             <div className="mt-7">
               <p className="mb-1 text-sm font-medium text-[#1F2E2A]/75">
                 Выберите специалиста
@@ -638,35 +834,56 @@ export function Booking() {
           )}
 
           {/* ── Шаг 4 · Форма ── */}
-          {activeService && (
+          {selectionReady && (
             <>
               {submitted ? (
                 <BookingSuccess
-                  serviceTitle={activeService.title}
-                  groupLabel={activeGroup.label}
-                  specialistLabel={specialistLabel}
+                  serviceTitle={successTitle}
+                  groupLabel={successGroup}
+                  specialistLabel={
+                    isAbonementTab ? undefined : specialistLabel
+                  }
+                  isAbonement={isAbonementTab}
                   onReset={resetFormState}
                 />
               ) : (
                 <form
                   ref={formRef}
-                  key={activeService.id}
+                  key={
+                    isAbonementTab
+                      ? `abonement-${abonementId}`
+                      : `service-${serviceId}`
+                  }
                   onSubmit={handleSubmit}
                   noValidate
                   className="mt-8 animate-fade-up"
                 >
                   <div className="mb-5 rounded-2xl bg-lime-50 px-4 py-3 text-sm leading-relaxed text-[#1F2E2A]/75">
-                    Вы записываетесь:{" "}
-                    <span className="font-semibold text-terracotta-600">
-                      {activeService.title}
-                    </span>
-                    {" · "}
-                    <span className="font-semibold text-forest-800">
-                      {specialistLabel}
-                    </span>{" "}
-                    <span className="text-[#1F2E2A]/45">
-                      ({activeGroup.label})
-                    </span>
+                    {isAbonementTab && activeAbonement ? (
+                      <>
+                        Вы оформляете:{" "}
+                        <span className="font-semibold text-terracotta-600">
+                          {formatAbonementLabel(activeAbonement)}
+                        </span>
+                        <span className="mt-1 block text-[#1F2E2A]/55">
+                          Мы перезвоним и оформим абонемент
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        Вы записываетесь:{" "}
+                        <span className="font-semibold text-terracotta-600">
+                          {activeService!.title}
+                        </span>
+                        {" · "}
+                        <span className="font-semibold text-forest-800">
+                          {specialistLabel}
+                        </span>{" "}
+                        <span className="text-[#1F2E2A]/45">
+                          ({activeGroup!.label})
+                        </span>
+                      </>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -689,15 +906,7 @@ export function Booking() {
                           inputClass,
                           fieldErrors.name && inputErrorClass
                         )}
-                        onChange={() => {
-                          if (fieldErrors.name) {
-                            setFieldErrors((prev) => {
-                              const next = { ...prev };
-                              delete next.name;
-                              return next;
-                            });
-                          }
-                        }}
+                        onChange={() => clearFieldError("name")}
                       />
                       <FieldError
                         message={fieldErrors.name}
@@ -723,88 +932,72 @@ export function Booking() {
                           inputClass,
                           fieldErrors.phone && inputErrorClass
                         )}
-                        onChange={() => {
-                          if (fieldErrors.phone) {
-                            setFieldErrors((prev) => {
-                              const next = { ...prev };
-                              delete next.phone;
-                              return next;
-                            });
-                          }
-                        }}
+                        onChange={() => clearFieldError("phone")}
                       />
                       <FieldError
                         message={fieldErrors.phone}
                         id="booking-phone-error"
                       />
                     </div>
-                    <div>
-                      <label htmlFor="booking-date" className={labelClass}>
-                        <CalendarDays className="h-4 w-4 shrink-0 text-terracotta" />
-                        Предпочтительная дата{" "}
-                        <span className="text-terracotta">*</span>
-                      </label>
-                      <input
-                        id="booking-date"
-                        name="date"
-                        type="date"
-                        aria-invalid={Boolean(fieldErrors.date)}
-                        aria-describedby={
-                          fieldErrors.date ? "booking-date-error" : undefined
-                        }
-                        className={cn(
-                          inputClass,
-                          "focus:border-terracotta/70",
-                          fieldErrors.date && inputErrorClass
-                        )}
-                        onChange={() => {
-                          if (fieldErrors.date) {
-                            setFieldErrors((prev) => {
-                              const next = { ...prev };
-                              delete next.date;
-                              return next;
-                            });
-                          }
-                        }}
-                      />
-                      <FieldError
-                        message={fieldErrors.date}
-                        id="booking-date-error"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="booking-time" className={labelClass}>
-                        <Clock className="h-4 w-4 shrink-0 text-terracotta" />
-                        Предпочтительное время{" "}
-                        <span className="text-terracotta">*</span>
-                      </label>
-                      <input
-                        id="booking-time"
-                        name="time"
-                        type="time"
-                        aria-invalid={Boolean(fieldErrors.time)}
-                        aria-describedby={
-                          fieldErrors.time ? "booking-time-error" : undefined
-                        }
-                        className={cn(
-                          inputClass,
-                          fieldErrors.time && inputErrorClass
-                        )}
-                        onChange={() => {
-                          if (fieldErrors.time) {
-                            setFieldErrors((prev) => {
-                              const next = { ...prev };
-                              delete next.time;
-                              return next;
-                            });
-                          }
-                        }}
-                      />
-                      <FieldError
-                        message={fieldErrors.time}
-                        id="booking-time-error"
-                      />
-                    </div>
+                    {!isAbonementTab && (
+                      <>
+                        <div>
+                          <label htmlFor="booking-date" className={labelClass}>
+                            <CalendarDays className="h-4 w-4 shrink-0 text-terracotta" />
+                            Предпочтительная дата{" "}
+                            <span className="text-terracotta">*</span>
+                          </label>
+                          <input
+                            id="booking-date"
+                            name="date"
+                            type="date"
+                            aria-invalid={Boolean(fieldErrors.date)}
+                            aria-describedby={
+                              fieldErrors.date
+                                ? "booking-date-error"
+                                : undefined
+                            }
+                            className={cn(
+                              inputClass,
+                              "focus:border-terracotta/70",
+                              fieldErrors.date && inputErrorClass
+                            )}
+                            onChange={() => clearFieldError("date")}
+                          />
+                          <FieldError
+                            message={fieldErrors.date}
+                            id="booking-date-error"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="booking-time" className={labelClass}>
+                            <Clock className="h-4 w-4 shrink-0 text-terracotta" />
+                            Предпочтительное время{" "}
+                            <span className="text-terracotta">*</span>
+                          </label>
+                          <input
+                            id="booking-time"
+                            name="time"
+                            type="time"
+                            aria-invalid={Boolean(fieldErrors.time)}
+                            aria-describedby={
+                              fieldErrors.time
+                                ? "booking-time-error"
+                                : undefined
+                            }
+                            className={cn(
+                              inputClass,
+                              fieldErrors.time && inputErrorClass
+                            )}
+                            onChange={() => clearFieldError("time")}
+                          />
+                          <FieldError
+                            message={fieldErrors.time}
+                            id="booking-time-error"
+                          />
+                        </div>
+                      </>
+                    )}
                     <div className="sm:col-span-2">
                       <label htmlFor="booking-comment" className={labelClass}>
                         Комментарий
@@ -813,7 +1006,11 @@ export function Booking() {
                         id="booking-comment"
                         name="comment"
                         rows={3}
-                        placeholder="Пожелания по уровню, формату занятия или удобному времени"
+                        placeholder={
+                          isAbonementTab
+                            ? "Пожелания по абонементу или удобному времени звонка"
+                            : "Пожелания по уровню, формату занятия или удобному времени"
+                        }
                         className={cn(inputClass, "min-h-[5.5rem] resize-y")}
                       />
                     </div>
@@ -848,8 +1045,9 @@ export function Booking() {
                       )}
                     </Button>
                     <p className="text-xs leading-relaxed text-[#1F2E2A]/50 sm:max-w-sm">
-                      Нажимая кнопку, вы соглашаетесь на обратный звонок для
-                      подтверждения записи.
+                      {isAbonementTab
+                        ? "Нажимая кнопку, вы соглашаетесь на обратный звонок для оформления абонемента."
+                        : "Нажимая кнопку, вы соглашаетесь на обратный звонок для подтверждения записи."}
                     </p>
                   </div>
                 </form>

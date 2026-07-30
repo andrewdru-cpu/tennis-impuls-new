@@ -157,6 +157,10 @@ export const media = {
       src: "/images/services/ofp-training.JPG",
       alt: "Зал общей физической подготовки в ЦТТ Импульс",
     },
+    specialTraining: {
+      src: "/images/services/special-training.webp",
+      alt: "Зал специальной подготовки ЦТТ Импульс",
+    },
     ofp: {
       src: "/images/facilities/hall.webp",
       alt: "Зал общей физической подготовки в клубе",
