@@ -4,5 +4,82 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "regions": ["fra1"]
+  "regions": ["fra1"],
+  "redirects": [
+    {
+      "source": "/price",
+      "destination": "/#pricing",
+      "permanent": true
+    },
+    {
+      "source": "/price/",
+      "destination": "/#pricing",
+      "permanent": true
+    },
+    {
+      "source": "/contact",
+      "destination": "/#contacts",
+      "permanent": true
+    },
+    {
+      "source": "/contact/",
+      "destination": "/#contacts",
+      "permanent": true
+    },
+    {
+      "source": "/schedule",
+      "destination": "https://schedule.tennis-impuls.ru/schedule/",
+      "permanent": true
+    },
+    {
+      "source": "/schedule/",
+      "destination": "https://schedule.tennis-impuls.ru/schedule/",
+      "permanent": true
+    },
+    {
+      "source": "/company/news",
+      "destination": "/#news",
+      "permanent": true
+    },
+    {
+      "source": "/company/news/",
+      "destination": "/#news",
+      "permanent": true
+    },
+    {
+      "source": "/company/faq",
+      "destination": "/#about",
+      "permanent": true
+    },
+    {
+      "source": "/company/faq/",
+      "destination": "/#about",
+      "permanent": true
+    },
+    {
+      "source": "/service",
+      "destination": "/#services",
+      "permanent": true
+    },
+    {
+      "source": "/service/",
+      "destination": "/#services",
+      "permanent": true
+    },
+    {
+      "source": "/company/promo",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/company/promo/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/bitrix/:path*",
+      "destination": "/",
+      "permanent": true
+    }
+  ]
 }

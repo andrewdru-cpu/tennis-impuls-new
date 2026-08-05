@@ -41,7 +41,7 @@ const locationBadges = [
 export function ClubIntro() {
   return (
     <Section
-      id="about-preview"
+      id="about"
       className="overflow-hidden bg-gradient-to-b from-lime-50 via-cream to-white"
     >
       <div className="mx-auto max-w-4xl">
