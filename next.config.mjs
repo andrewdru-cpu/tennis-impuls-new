@@ -6,8 +6,11 @@ const nextConfig = {
     optimizePackageImports: ["lucide-react", "framer-motion"],
   },
   images: {
-    qualities: [75, 90],
-    formats: ["image/avif", "image/webp"],
+    /**
+     * Корпоративные прокси часто ломают /_next/image (400 Bad Request).
+     * unoptimized → прямые /images/...webp без ?url= optimizer.
+     */
+    unoptimized: true,
   },
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { useState } from "react";
 import { UserRound } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +10,6 @@ type TeamPhotoProps = {
   ratio?: "portrait" | "video" | "photo" | "wide";
   className?: string;
   imageClassName?: string;
-  /** Приоритет загрузки для первых карточек above the fold */
   priority?: boolean;
   sizes?: string;
 };
@@ -22,14 +21,7 @@ const ratioClass = {
   wide: "aspect-[16/10]",
 } as const;
 
-const defaultSizes = {
-  portrait: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
-  video: "(max-width: 768px) 100vw, 672px",
-  photo: "(max-width: 768px) 100vw, 50vw",
-  wide: "(max-width: 768px) 100vw, 50vw",
-} as const;
-
-/** Оптимизированный рендер фото тренера из /public/images/team/ */
+/** Прямой /images/team/... без optimizer; onError — нейтральный фон. */
 export function TeamPhoto({
   photo,
   alt,
@@ -37,9 +29,10 @@ export function TeamPhoto({
   className,
   imageClassName,
   priority = false,
-  sizes,
 }: TeamPhotoProps) {
-  if (!photo) {
+  const [failed, setFailed] = useState(false);
+
+  if (!photo || failed) {
     return (
       <div
         className={cn(
@@ -63,13 +56,19 @@ export function TeamPhoto({
         className
       )}
     >
-      <Image
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src={photo}
         alt={alt}
-        fill
-        sizes={sizes ?? defaultSizes[ratio]}
-        priority={priority}
-        className={cn("object-cover object-center", imageClassName)}
+        width={600}
+        height={800}
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
+        className={cn(
+          "absolute inset-0 h-full w-full object-cover object-center",
+          imageClassName
+        )}
+        onError={() => setFailed(true)}
       />
     </div>
   );

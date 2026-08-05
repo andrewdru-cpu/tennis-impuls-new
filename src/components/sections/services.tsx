@@ -321,7 +321,7 @@ function CompactFeature({
           <div className="min-w-0">
             <h4
               className={cn(
-                "font-display text-base font-bold tracking-tight transition-colors duration-300 sm:text-lg",
+                "font-display text-base font-bold tracking-tight transition-colors duration-300 sm:text-lg [overflow-wrap:anywhere]",
                 isDark
                   ? "text-white"
                   : "text-forest-800 group-hover:text-terracotta"
@@ -331,7 +331,7 @@ function CompactFeature({
             </h4>
             <p
               className={cn(
-                "mt-2 text-pretty text-sm leading-relaxed",
+                "mt-2 text-pretty text-sm leading-relaxed [overflow-wrap:anywhere]",
                 isDark ? "text-white/70" : "text-muted-foreground"
               )}
             >
@@ -581,7 +581,7 @@ export function Services() {
                 titleClassName="text-gradient-purple-lime"
               />
 
-              <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))]">
                 {fitnessDirections.map((item, i) => (
                   <CompactFeature
                     key={item.title}

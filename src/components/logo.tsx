@@ -40,6 +40,7 @@ export function Logo({
           alt="Эмблема ЦТТ Импульс"
           width={44}
           height={44}
+          unoptimized
           className="h-full w-full object-contain"
           priority
         />

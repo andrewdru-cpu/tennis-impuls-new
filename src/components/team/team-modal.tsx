@@ -86,6 +86,7 @@ export function TeamModal({ member, onClose }: TeamModalProps) {
                   alt={member.name}
                   fill
                   priority
+                  unoptimized
                   sizes="(max-width: 1024px) 100vw, 420px"
                   className="object-cover object-center"
                 />

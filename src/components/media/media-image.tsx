@@ -1,17 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 import type { MediaImageSource } from "@/lib/media";
 
 type AspectRatio =
   | "square"
-  | "video" // 16/9
-  | "portrait" // 3/4
-  | "photo" // 4/3
-  | "wide" // 21/9
+  | "video"
+  | "portrait"
+  | "photo"
+  | "wide"
   | "auto";
 
 const aspectMap: Record<AspectRatio, string> = {
@@ -19,44 +18,28 @@ const aspectMap: Record<AspectRatio, string> = {
   video: "aspect-video",
   portrait: "aspect-[3/4]",
   photo: "aspect-[4/3]",
-  wide: "aspect-[21/9]",
+  wide: "aspect-[16/10]",
   auto: "",
 };
 
-const FALLBACK_PLACEHOLDER = "/images/services/table-tennis-placeholder.svg";
-
 export interface MediaImageProps {
-  /** Источник из конфига media.ts ИЛИ передай src/alt напрямую */
   media?: MediaImageSource;
   src?: string;
   alt?: string;
-  /**
-   * Пропорция контейнера. Реальные фото любых размеров впишутся за счёт
-   * object-fit. По умолчанию 4/3 ("photo").
-   */
   ratio?: AspectRatio;
-  /** Как вписывать изображение: cover (по умолчанию) обрежет, contain — впишет целиком */
   fit?: "cover" | "contain";
-  /** Точка фокуса при обрезке (object-position) */
   position?: string;
   className?: string;
   imageClassName?: string;
-  /** Скругление углов */
   rounded?: boolean;
-  /** Затемняющий оверлей сверху (для текста на фото) */
   overlay?: boolean | string;
-  /** Грузить с приоритетом (для изображений на первом экране) */
   priority?: boolean;
-  /** sizes для адаптивной загрузки (next/image) */
   sizes?: string;
 }
 
 /**
- * Универсальный компонент изображения.
- *
- * 👉 Реальное фото меняется ТОЛЬКО через media.ts или через проп `src`.
- *    Здесь же ничего править не нужно — компонент сам подстроится под
- *    любые пропорции исходника благодаря `ratio` + `fit`.
+ * Прямой /images/... без /_next/image optimizer (корп. прокси → 400).
+ * onError: нейтральный фон, высота карточки сохраняется.
  */
 export function MediaImage({
   media,
@@ -70,31 +53,20 @@ export function MediaImage({
   rounded = true,
   overlay = false,
   priority = false,
-  sizes = "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw",
 }: MediaImageProps) {
   const initialSrc = media?.src ?? src ?? "";
   const finalAlt = media?.alt ?? alt ?? "";
-  const [currentSrc, setCurrentSrc] = useState(initialSrc);
   const [failed, setFailed] = useState(false);
 
   if (!initialSrc) {
     return null;
   }
 
-  const isSvg = currentSrc.toLowerCase().endsWith(".svg");
   const imageClass = cn(
-    "absolute inset-0 h-full w-full transition-transform duration-700",
+    "absolute inset-0 h-full w-full",
     fit === "cover" ? "object-cover" : "object-contain",
     imageClassName
   );
-
-  const handleError = () => {
-    if (failed) return;
-    setFailed(true);
-    if (!currentSrc.endsWith(".svg")) {
-      setCurrentSrc(FALLBACK_PLACEHOLDER);
-    }
-  };
 
   return (
     <div
@@ -105,25 +77,24 @@ export function MediaImage({
         className
       )}
     >
-      {isSvg ? (
+      {!failed ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={currentSrc}
+          src={initialSrc}
           alt={finalAlt}
+          width={1200}
+          height={900}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          fetchPriority={priority ? "high" : "auto"}
           className={imageClass}
           style={{ objectPosition: position }}
-          onError={handleError}
+          onError={() => setFailed(true)}
         />
       ) : (
-        <Image
-          src={currentSrc}
-          alt={finalAlt}
-          fill
-          sizes={sizes}
-          priority={priority}
-          className={imageClass}
-          style={{ objectPosition: position }}
-          onError={handleError}
+        <div
+          className="absolute inset-0 bg-gradient-to-br from-forest-100 via-cream to-lime-50/80"
+          aria-hidden
         />
       )}
       {overlay && (

@@ -102,6 +102,7 @@ export function GalleryModal({
                 src={item.src}
                 alt={item.alt}
                 fill
+                unoptimized
                 className="object-contain"
                 sizes="(max-width: 768px) 100vw, 896px"
                 priority

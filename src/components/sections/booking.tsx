@@ -361,6 +361,7 @@ function SpecialistChip({
             alt={photoAlt ?? label}
             width={44}
             height={44}
+            unoptimized
             className="h-full w-full object-cover object-center"
           />
         ) : (

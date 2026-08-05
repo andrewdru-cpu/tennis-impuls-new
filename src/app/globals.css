@@ -267,24 +267,17 @@
     }
   }
 
-  /* Сетка карточек — колонки не раздуваются длинным текстом */
+  /* Сетка карточек — не схлопываются на ultrawide / zoom */
   .grid-cards {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
     gap: clamp(0.75rem, 2vw, 1.25rem);
     align-items: stretch;
   }
 
-  @media (min-width: 640px) {
-    .grid-cards {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .grid-cards {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
+  .grid-cards > * {
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   /* Минимальная зона нажатия для текстовых ссылок */
