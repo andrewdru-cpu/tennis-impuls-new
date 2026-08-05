@@ -59,6 +59,13 @@
     overflow-wrap: anywhere;
   }
 
+  /* Hero: контент никогда не остаётся opacity:0 без JS */
+  #hero,
+  #hero [data-hero-content] {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
   #__next,
   main {
     overflow-x: clip;
