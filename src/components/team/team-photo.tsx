@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { UserRound } from "@/lib/icons";
+import { isWebp, jpegSibling } from "@/lib/image-fallback";
 import { cn } from "@/lib/utils";
 
 type TeamPhotoProps = {
@@ -21,7 +22,10 @@ const ratioClass = {
   wide: "aspect-[16/10]",
 } as const;
 
-/** Прямой /images/team/... без optimizer; onError — нейтральный фон. */
+/**
+ * Прямой /images/team/... без optimizer.
+ * WebP + JPEG через <picture>; onError — только после реальной ошибки JPEG.
+ */
 export function TeamPhoto({
   photo,
   alt,
@@ -31,8 +35,10 @@ export function TeamPhoto({
   priority = false,
 }: TeamPhotoProps) {
   const [failed, setFailed] = useState(false);
+  const jpg = photo ? jpegSibling(photo) : undefined;
+  const imgSrc = jpg ?? photo;
 
-  if (!photo || failed) {
+  if (!photo || !imgSrc || failed) {
     return (
       <div
         className={cn(
@@ -56,20 +62,25 @@ export function TeamPhoto({
         className
       )}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={photo}
-        alt={alt}
-        width={600}
-        height={800}
-        loading={priority ? "eager" : "lazy"}
-        decoding="async"
-        className={cn(
-          "absolute inset-0 h-full w-full object-cover object-center",
-          imageClassName
-        )}
-        onError={() => setFailed(true)}
-      />
+      <picture>
+        {isWebp(photo) && jpg ? (
+          <source type="image/webp" srcSet={photo} />
+        ) : null}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={imgSrc}
+          alt={alt}
+          width={600}
+          height={800}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          className={cn(
+            "absolute inset-0 h-full w-full object-cover object-center",
+            imageClassName
+          )}
+          onError={() => setFailed(true)}
+        />
+      </picture>
     </div>
   );
 }

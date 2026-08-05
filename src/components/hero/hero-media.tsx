@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { jpegSibling } from "@/lib/image-fallback";
 import { media as siteMedia, type HeroMedia as HeroMediaType } from "@/lib/media";
 import { HeroImage } from "@/components/hero/hero-image";
 
@@ -35,6 +36,8 @@ export function HeroMedia({
 }) {
   const src = heroImageSrc(media);
   const alt = heroImageAlt(media);
+  /** JPEG как базовый CSS-fallback (WebP часто режется корп. прокси). */
+  const cssBg = jpegSibling(src) ?? src;
 
   return (
     <div
@@ -46,7 +49,7 @@ export function HeroMedia({
         className="absolute inset-0"
         style={{
           backgroundColor: "#0A2F24",
-          backgroundImage: `url("${src}")`,
+          backgroundImage: `url("${cssBg}")`,
           backgroundSize: "cover",
           backgroundPosition: "46% center",
         }}

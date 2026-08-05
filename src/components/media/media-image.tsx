@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
+import { isWebp, jpegSibling } from "@/lib/image-fallback";
 import type { MediaImageSource } from "@/lib/media";
 
 type AspectRatio =
@@ -39,7 +40,8 @@ export interface MediaImageProps {
 
 /**
  * Прямой /images/... без /_next/image optimizer (корп. прокси → 400).
- * onError: нейтральный фон, высота карточки сохраняется.
+ * WebP + JPEG через <picture> (прокси часто режет WebP).
+ * onError — только после реальной ошибки загрузки JPEG/основного src.
  */
 export function MediaImage({
   media,
@@ -56,6 +58,8 @@ export function MediaImage({
 }: MediaImageProps) {
   const initialSrc = media?.src ?? src ?? "";
   const finalAlt = media?.alt ?? alt ?? "";
+  const jpg = jpegSibling(initialSrc);
+  const imgSrc = jpg ?? initialSrc;
   const [failed, setFailed] = useState(false);
 
   if (!initialSrc) {
@@ -78,19 +82,24 @@ export function MediaImage({
       )}
     >
       {!failed ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={initialSrc}
-          alt={finalAlt}
-          width={1200}
-          height={900}
-          loading={priority ? "eager" : "lazy"}
-          decoding="async"
-          fetchPriority={priority ? "high" : "auto"}
-          className={imageClass}
-          style={{ objectPosition: position }}
-          onError={() => setFailed(true)}
-        />
+        <picture>
+          {isWebp(initialSrc) && jpg ? (
+            <source type="image/webp" srcSet={initialSrc} />
+          ) : null}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imgSrc}
+            alt={finalAlt}
+            width={1200}
+            height={900}
+            loading={priority ? "eager" : "lazy"}
+            decoding="async"
+            fetchPriority={priority ? "high" : "auto"}
+            className={imageClass}
+            style={{ objectPosition: position }}
+            onError={() => setFailed(true)}
+          />
+        </picture>
       ) : (
         <div
           className="absolute inset-0 bg-gradient-to-br from-forest-100 via-cream to-lime-50/80"

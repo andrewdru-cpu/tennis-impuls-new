@@ -62,10 +62,16 @@ next-env.d.ts
 public/images/**/*.jpg
 public/images/**/*.jpeg
 public/images/**/*.JPG
-# Исключения: файлы, которые реально отдаёт сайт
-!public/images/services/ground-court.jpg
-!public/images/services/ofp-training.jpg
-!public/images/services/dance-studio.jpg
-!public/images/services/gym-hall.jpg
-!public/images/services/karate.jpg
+# Исключения: JPEG fallbacks для корп. прокси (WebP блокируется)
+!public/images/hero/*.jpg
+!public/images/team/*.jpg
+!public/images/news/*.jpg
+!public/images/gallery/*.jpg
+!public/images/kids/*.jpg
+!public/images/services/*.jpg
+!public/images/services/*.JPG
 !public/images/videos/**
+# сырые исходники (не для деплоя)
+public/images/kids/20230528_115740(0).jpg
+public/images/kids/IMG_0003 (5).JPG
+public/images/services/IMG_8857.jpg
