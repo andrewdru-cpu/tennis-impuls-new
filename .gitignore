@@ -70,8 +70,8 @@ public/images/**/*.JPG
 !public/images/kids/*.jpg
 !public/images/services/*.jpg
 !public/images/services/*.JPG
+!public/images/facilities/*.jpg
 !public/images/videos/**
 # сырые исходники (не для деплоя)
 public/images/kids/20230528_115740(0).jpg
 public/images/kids/IMG_0003 (5).JPG
-public/images/services/IMG_8857.jpg

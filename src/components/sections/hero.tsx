@@ -3,8 +3,8 @@ import { cn } from "@/lib/utils";
 
 /**
  * Hero — Server Component.
- * Текст слева поверх фото (как в исходном дизайне).
- * Inline-цвета: видны без Tailwind CSS.
+ * Текст справа на desktop (md+), на mobile — во всю ширину сверху.
+ * Inline-цвета: видны без Tailwind CSS даже без JS/фото.
  */
 export function Hero() {
   return (
@@ -31,10 +31,10 @@ export function Hero() {
           color: "#ffffff",
         }}
       >
-        {/* Обычный контейнер сайта — текст слева, не справа и не по центру ultrawide */}
+        {/* Контейнер сайта; на md+ блок текста прижат вправо, слева видно фото */}
         <div className="container-wide flex flex-col items-start py-6 text-left">
           <div
-            className="relative isolate flex w-full min-w-0 max-w-2xl flex-col items-start px-1 py-6 text-left sm:px-0"
+            className="relative isolate flex w-full min-w-0 max-w-2xl flex-col items-start px-4 py-6 text-left sm:px-5 md:ml-auto md:max-w-xl"
             style={{ color: "#ffffff" }}
           >
             <div

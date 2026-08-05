@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
 import {
   Activity,
   Baby,
@@ -47,6 +46,7 @@ import {
   getBookingGroupForMember,
   type TeamMember,
 } from "@/lib/team";
+import { PictureImage } from "@/components/media/picture-image";
 import { cn } from "@/lib/utils";
 
 /* -------------------------------------------------------------------------- */
@@ -356,13 +356,24 @@ function SpecialistChip({
         )}
       >
         {photo ? (
-          <Image
+          <PictureImage
             src={photo}
             alt={photoAlt ?? label}
             width={44}
             height={44}
-            unoptimized
-            className="h-full w-full object-cover object-center"
+            className="absolute inset-0 h-full w-full object-cover object-center"
+            fallback={
+              <span
+                className={cn(
+                  "absolute inset-0 flex items-center justify-center",
+                  selected
+                    ? "bg-terracotta text-white"
+                    : "bg-terracotta/10 text-terracotta"
+                )}
+              >
+                <UserRound className="h-5 w-5" aria-hidden />
+              </span>
+            }
           />
         ) : (
           <span
@@ -462,13 +473,12 @@ export function Booking() {
       }
       return;
     }
+    // Неизвестный id — всё равно открываем вкладку абонементов без предвыбора
     const item = findAbonement(id);
-    if (!item) return;
-
     setTabId("abonement");
     setServiceId(null);
     setSpecialistId(ANY_SPECIALIST_ID);
-    setAbonementId(item.id);
+    setAbonementId(item?.id ?? null);
     resetFormState();
   }
 

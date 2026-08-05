@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { UserRound } from "@/lib/icons";
-import { isWebp, jpegSibling } from "@/lib/image-fallback";
+import { PictureImage } from "@/components/media/picture-image";
 import { cn } from "@/lib/utils";
 
 type TeamPhotoProps = {
@@ -22,9 +21,33 @@ const ratioClass = {
   wide: "aspect-[16/10]",
 } as const;
 
+function PhotoFallback({
+  ratio,
+  className,
+  absolute = false,
+}: {
+  ratio: keyof typeof ratioClass;
+  className?: string;
+  absolute?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "overflow-hidden bg-gradient-to-br from-forest-100 via-lime-50/80 to-sand/20",
+        absolute ? "absolute inset-0" : cn("relative", ratioClass[ratio]),
+        className
+      )}
+    >
+      <div className="absolute inset-0 flex items-center justify-center">
+        <UserRound className="h-12 w-12 text-forest-900/20" aria-hidden />
+      </div>
+    </div>
+  );
+}
+
 /**
  * Прямой /images/team/... без optimizer.
- * WebP + JPEG через <picture>; onError — только после реальной ошибки JPEG.
+ * PictureImage: webp → jpg → нейтральная заглушка того же размера.
  */
 export function TeamPhoto({
   photo,
@@ -34,24 +57,8 @@ export function TeamPhoto({
   imageClassName,
   priority = false,
 }: TeamPhotoProps) {
-  const [failed, setFailed] = useState(false);
-  const jpg = photo ? jpegSibling(photo) : undefined;
-  const imgSrc = jpg ?? photo;
-
-  if (!photo || !imgSrc || failed) {
-    return (
-      <div
-        className={cn(
-          "relative overflow-hidden bg-gradient-to-br from-forest-100 via-lime-50/80 to-sand/20",
-          ratioClass[ratio],
-          className
-        )}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <UserRound className="h-12 w-12 text-forest-900/20" aria-hidden />
-        </div>
-      </div>
-    );
+  if (!photo) {
+    return <PhotoFallback ratio={ratio} className={className} />;
   }
 
   return (
@@ -62,25 +69,18 @@ export function TeamPhoto({
         className
       )}
     >
-      <picture>
-        {isWebp(photo) && jpg ? (
-          <source type="image/webp" srcSet={photo} />
-        ) : null}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={imgSrc}
-          alt={alt}
-          width={600}
-          height={800}
-          loading={priority ? "eager" : "lazy"}
-          decoding="async"
-          className={cn(
-            "absolute inset-0 h-full w-full object-cover object-center",
-            imageClassName
-          )}
-          onError={() => setFailed(true)}
-        />
-      </picture>
+      <PictureImage
+        src={photo}
+        alt={alt}
+        width={600}
+        height={800}
+        eager={priority}
+        className={cn(
+          "absolute inset-0 h-full w-full object-cover object-center",
+          imageClassName
+        )}
+        fallback={<PhotoFallback ratio={ratio} absolute />}
+      />
     </div>
   );
 }

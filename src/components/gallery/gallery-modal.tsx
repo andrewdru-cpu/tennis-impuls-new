@@ -3,9 +3,9 @@
 import { useEffect } from "react";
 import { X, ChevronLeft, ChevronRight } from "@/lib/icons";
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
 
 import type { GalleryItem } from "@/lib/gallery";
+import { PictureImage } from "@/components/media/picture-image";
 import { cn } from "@/lib/utils";
 
 type GalleryModalProps = {
@@ -98,14 +98,13 @@ export function GalleryModal({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative aspect-[4/3] w-full bg-forest-900 sm:aspect-video">
-              <Image
+              <PictureImage
                 src={item.src}
                 alt={item.alt}
-                fill
-                unoptimized
-                className="object-contain"
-                sizes="(max-width: 768px) 100vw, 896px"
-                priority
+                width={1200}
+                height={900}
+                eager
+                className="absolute inset-0 h-full w-full object-contain"
               />
             </div>
             <figcaption className="flex items-center justify-between gap-4 px-5 py-4 sm:px-6">

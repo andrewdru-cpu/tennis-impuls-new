@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { UserRound, X } from "@/lib/icons";
 
 import { Button } from "@/components/ui/button";
+import { PictureImage } from "@/components/media/picture-image";
 import { openBookingWithSpecialist } from "@/lib/booking-deeplink";
 import type { TeamMember } from "@/lib/team";
 import { cn } from "@/lib/utils";
@@ -81,14 +81,21 @@ export function TeamModal({ member, onClose }: TeamModalProps) {
               )}
             >
               {member.photo ? (
-                <Image
+                <PictureImage
                   src={member.photo}
                   alt={member.name}
-                  fill
-                  priority
-                  unoptimized
-                  sizes="(max-width: 1024px) 100vw, 420px"
-                  className="object-cover object-center"
+                  width={600}
+                  height={800}
+                  eager
+                  className="absolute inset-0 h-full w-full object-cover object-center"
+                  fallback={
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <UserRound
+                        className="h-16 w-16 text-forest-900/20"
+                        aria-hidden
+                      />
+                    </div>
+                  }
                 />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center">
