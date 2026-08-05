@@ -1,81 +1,41 @@
 import { HeroMedia } from "@/components/hero/hero-media";
+import { cn } from "@/lib/utils";
 
 /**
  * Hero — Server Component.
- * Текст слева в ограниченной колонке (ultrawide-safe).
+ * Текст слева поверх фото (как в исходном дизайне).
  * Inline-цвета: видны без Tailwind CSS.
  */
 export function Hero() {
   return (
     <section
       id="hero"
+      className={cn(
+        "relative isolate flex min-h-[min(100svh,56rem)] flex-col overflow-x-clip",
+        "justify-start pb-[max(2.75rem,env(safe-area-inset-bottom,0px))]",
+        "pt-[calc(5rem+env(safe-area-inset-top,0px))]"
+      )}
       style={{
-        position: "relative",
-        isolation: "isolate",
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "min(100svh, 56rem)",
-        overflowX: "clip",
         backgroundColor: "#0A2F24",
         color: "#ffffff",
-        justifyContent: "flex-start",
-        paddingTop: "calc(5rem + env(safe-area-inset-top, 0px))",
-        paddingBottom: "max(2.75rem, env(safe-area-inset-bottom, 0px))",
       }}
     >
       <HeroMedia />
 
       <div
         data-hero-content
+        className="relative z-20 flex w-full flex-1 flex-col justify-center"
         style={{
-          position: "relative",
-          zIndex: 20,
-          display: "flex",
-          width: "100%",
-          flex: 1,
-          flexDirection: "column",
-          justifyContent: "center",
-          paddingLeft: "max(1.25rem, env(safe-area-inset-left, 0px))",
-          paddingRight: "max(1.25rem, env(safe-area-inset-right, 0px))",
           opacity: 1,
           visibility: "visible",
           color: "#ffffff",
         }}
       >
-        {/* Ограниченная ширина + mx-auto — на ultrawide нет «пустой зелёной половины» */}
-        <div
-          style={{
-            position: "relative",
-            isolation: "isolate",
-            marginLeft: "auto",
-            marginRight: "auto",
-            display: "flex",
-            width: "100%",
-            maxWidth: "72rem",
-            minWidth: 0,
-            flexDirection: "column",
-            alignItems: "flex-start",
-            textAlign: "left",
-            padding: "1.5rem 0",
-            color: "#ffffff",
-            opacity: 1,
-            visibility: "visible",
-          }}
-        >
+        {/* Обычный контейнер сайта — текст слева, не справа и не по центру ultrawide */}
+        <div className="container-wide flex flex-col items-start py-6 text-left">
           <div
-            style={{
-              position: "relative",
-              isolation: "isolate",
-              display: "flex",
-              width: "100%",
-              maxWidth: "min(100%, 36rem)",
-              minWidth: 0,
-              flexDirection: "column",
-              alignItems: "flex-start",
-              textAlign: "left",
-              padding: "1.5rem 1.25rem",
-              color: "#ffffff",
-            }}
+            className="relative isolate flex w-full min-w-0 max-w-2xl flex-col items-start px-1 py-6 text-left sm:px-0"
+            style={{ color: "#ffffff" }}
           >
             <div
               aria-hidden
