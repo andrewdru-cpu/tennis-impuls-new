@@ -1,189 +1,227 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { CalendarCheck, ArrowRight, ChevronDown } from "@/lib/icons";
+
+import { Button } from "@/components/ui/button";
 import { HeroMedia } from "@/components/hero/hero-media";
 import { cn } from "@/lib/utils";
+import { fadeUpItem, staggerContainer, transitionMenu } from "@/lib/motion";
 
 /**
- * Hero — Server Component.
- * Текст справа на desktop (md+), на mobile — во всю ширину сверху.
- * Inline-цвета: видны без Tailwind CSS даже без JS/фото.
+ * Hero UI — эталон 46cb139 (текст справа, лёгкая подложка, кнопки в ряд).
+ * fadeUpItem: opacity всегда 1 (корп. сети / no-JS).
+ * Inline color на заголовке/CTA — запасной читаемый слой без CSS.
  */
 export function Hero() {
   return (
     <section
       id="hero"
       className={cn(
-        "relative isolate flex min-h-[min(100svh,56rem)] flex-col overflow-x-clip",
-        "justify-start pb-[max(2.75rem,env(safe-area-inset-bottom,0px))]",
-        "pt-[calc(5rem+env(safe-area-inset-top,0px))]"
+        "relative isolate flex min-h-[100svh] flex-col overflow-hidden text-white",
+        "justify-start pb-[max(2.75rem,env(safe-area-inset-bottom,0px))] pt-[calc(5rem+env(safe-area-inset-top,0px))]",
+        "md:justify-start md:pb-20 md:pt-[calc(5.25rem+env(safe-area-inset-top,0px))]"
       )}
-      style={{
-        backgroundColor: "#0A2F24",
-        color: "#ffffff",
-      }}
+      style={{ backgroundColor: "#0A2F24", color: "#ffffff" }}
     >
       <HeroMedia />
 
       <div
         data-hero-content
-        className="relative z-20 flex w-full flex-1 flex-col justify-center"
-        style={{
-          opacity: 1,
-          visibility: "visible",
-          color: "#ffffff",
-        }}
+        className={cn(
+          "relative z-10 flex w-full flex-1 flex-col",
+          "px-[max(1.25rem,env(safe-area-inset-left,0px))]",
+          "pr-[max(1rem,env(safe-area-inset-right,0px))]",
+          "md:justify-start md:pl-[max(1.25rem,env(safe-area-inset-left,0px))]",
+          "md:pr-[max(0.75rem,env(safe-area-inset-right,0px))]",
+          "lg:pr-[max(1.5rem,env(safe-area-inset-right,0px))]",
+          "xl:pr-[max(2.5rem,env(safe-area-inset-right,0px))]"
+        )}
+        style={{ opacity: 1, visibility: "visible", color: "#ffffff" }}
       >
-        {/* Контейнер сайта; на md+ блок текста прижат вправо, слева видно фото */}
-        <div className="container-wide flex flex-col items-start py-6 text-left">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className={cn(
+            "relative isolate ml-auto flex w-full flex-col items-end text-right",
+            /* ~38–42% ширины — фото занимает ~58–62% слева без текста */
+            "max-w-[min(100%,22rem)] sm:max-w-[23rem]",
+            "md:mt-6 md:max-w-[min(38vw,24rem)] lg:mt-8 lg:max-w-[25rem]",
+            "px-4 py-6 sm:px-5 sm:py-6 lg:px-6 lg:py-7"
+          )}
+          style={{ color: "#ffffff" }}
+        >
+          {/* Подложка только под колонку текста — над ангаром справа */}
           <div
-            className="relative isolate flex w-full min-w-0 max-w-2xl flex-col items-start px-4 py-6 text-left sm:px-5 md:ml-auto md:max-w-xl"
+            className={cn(
+              "absolute inset-0 -z-10 rounded-2xl",
+              "bg-[#0A2F24]/44 backdrop-blur-sm md:bg-[#0A2F24]/40",
+              "[mask-image:linear-gradient(to_left,#000_82%,transparent_100%)]",
+              "md:[mask-image:linear-gradient(to_left,#000_88%,transparent_100%)]"
+            )}
+            aria-hidden
+          />
+          <motion.div variants={fadeUpItem}>
+            <span
+              className={cn(
+                "inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 sm:px-4 sm:py-2",
+                "border border-red-ctt/40 bg-white/[0.12] backdrop-blur-xl",
+                "shadow-[0_8px_32px_-8px_rgba(226,54,54,0.45)]",
+                "text-[0.625rem] font-bold uppercase tracking-[0.2em] sm:text-[0.6875rem]"
+              )}
+            >
+              <span
+                className="h-1.5 w-1.5 shrink-0 rounded-full bg-red-ctt shadow-[0_0_14px_rgba(226,54,54,0.95)]"
+                aria-hidden
+              />
+              <span className="text-ctt-red" style={{ color: "#E63946" }}>
+                ЦТТ «Импульс»
+              </span>
+              <span className="text-white/30" aria-hidden>
+                ·
+              </span>
+              <span className="text-sand-100" style={{ color: "#F5E6D3" }}>
+                Лосиный Остров
+              </span>
+            </span>
+          </motion.div>
+
+          <motion.h1
+            variants={fadeUpItem}
+            className={cn(
+              "mt-5 font-display font-extrabold leading-[1.08] tracking-[-0.02em] text-balance",
+              "text-[1.875rem] sm:text-[2.5rem] lg:text-[3.125rem]",
+              "[text-shadow:0_2px_40px_rgba(0,0,0,0.55)]"
+            )}
             style={{ color: "#ffffff" }}
           >
-            <div
-              aria-hidden
-              style={{
-                position: "absolute",
-                inset: 0,
-                zIndex: -1,
-                borderRadius: "1rem",
-                backgroundColor: "rgba(10, 47, 36, 0.55)",
-              }}
-            />
-
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.6875rem",
-                fontWeight: 700,
-                letterSpacing: "0.2em",
-                textTransform: "uppercase",
-                color: "#E63946",
-                opacity: 1,
-              }}
-            >
-              ЦТТ «Импульс» · Лосиный Остров
-            </p>
-
-            <h1
-              style={{
-                margin: "1.25rem 0 0",
-                maxWidth: "100%",
-                fontSize: "clamp(1.625rem, 1.2rem + 2vw, 3.125rem)",
-                fontWeight: 800,
-                lineHeight: 1.12,
-                letterSpacing: "-0.02em",
-                color: "#ffffff",
-                textShadow: "0 2px 40px rgba(0,0,0,0.55)",
-                overflowWrap: "anywhere",
-                opacity: 1,
-                visibility: "visible",
-              }}
-            >
-              <span style={{ display: "block", color: "#ffffff" }}>
-                Теннис, фитнес
+            <span className="block whitespace-nowrap text-white" style={{ color: "#ffffff" }}>
+              Теннис, фитнес
+            </span>
+            <span className="mt-0.5 block">
+              <span className="text-white" style={{ color: "#ffffff" }}>
+                и отдых — в{" "}
               </span>
-              <span style={{ display: "block", marginTop: "0.125rem" }}>
-                <span style={{ color: "#ffffff" }}>и отдых — в </span>
-                <span style={{ color: "#E63946" }}>одном месте</span>
+              <span className="text-ctt-red" style={{ color: "#E63946" }}>
+                одном месте
               </span>
-            </h1>
+            </span>
+          </motion.h1>
 
-            <p
-              style={{
-                margin: "1rem 0 0",
-                maxWidth: "100%",
-                fontSize: "0.9375rem",
-                fontWeight: 500,
-                lineHeight: 1.6,
-                color: "#ffffff",
-                textShadow: "0 1px 3px rgba(0,0,0,0.55)",
-                overflowWrap: "anywhere",
-                opacity: 1,
-                visibility: "visible",
-              }}
-            >
-              Всё для спорта, восстановления и отдыха — в экологически чистой зоне
-              у Лосиного Острова.
-            </p>
+          <motion.p
+            variants={fadeUpItem}
+            className={cn(
+              "mt-4 text-[0.9375rem] font-medium leading-relaxed text-white/95 sm:mt-5 sm:text-base",
+              "[text-shadow:0_1px_3px_rgba(0,0,0,0.55),0_2px_24px_rgba(0,0,0,0.5)]"
+            )}
+            style={{ color: "#ffffff" }}
+          >
+            <span className="block">
+              Всё для спорта, восстановления и&nbsp;отдыха —
+            </span>
+            <span className="block">
+              в&nbsp;экологически чистой зоне у&nbsp;Лосиного&nbsp;Острова.
+            </span>
+          </motion.p>
 
-            <ul
-              style={{
-                margin: "1.25rem 0 0",
-                padding: 0,
-                listStyle: "none",
-                display: "flex",
-                flexWrap: "wrap",
-                justifyContent: "flex-start",
-                gap: "0.5rem 0.75rem",
-                fontSize: "0.8125rem",
-                fontWeight: 600,
-                color: "#F5E6D3",
-                opacity: 1,
-              }}
-            >
-              <li>В 3 минутах от Москвы</li>
-              <li>Бесплатная парковка</li>
-            </ul>
+          <motion.div
+            variants={fadeUpItem}
+            className="mt-5 h-0.5 w-12 self-end rounded-full bg-gradient-to-l from-terracotta via-lime to-sand/70 sm:mt-6 sm:w-16"
+            aria-hidden
+          />
 
-            <div
-              style={{
-                marginTop: "1.75rem",
-                display: "flex",
-                width: "100%",
-                maxWidth: "24rem",
-                flexDirection: "column",
-                gap: "0.75rem",
-                opacity: 1,
-              }}
+          <motion.ul
+            variants={fadeUpItem}
+            className={cn(
+              "mt-5 flex flex-wrap items-center justify-end gap-x-3 gap-y-2 text-[0.8125rem] font-semibold tracking-tight text-sand-100/85 sm:mt-6 sm:text-sm",
+              "[text-shadow:0_1px_16px_rgba(0,0,0,0.4)]"
+            )}
+            style={{ color: "#F5E6D3" }}
+          >
+            <li className="inline-flex items-center gap-2">
+              <span
+                className="h-1.5 w-1.5 rounded-full bg-lime shadow-[0_0_10px_rgba(180,220,66,0.9)]"
+                aria-hidden
+              />
+              В 3 минутах от Москвы
+            </li>
+            <li className="inline-flex items-center gap-2">
+              <span
+                className="h-1.5 w-1.5 rounded-full bg-terracotta shadow-[0_0_10px_rgba(206,88,56,0.9)]"
+                aria-hidden
+              />
+              Бесплатная парковка
+            </li>
+          </motion.ul>
+
+          <motion.div
+            variants={fadeUpItem}
+            className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row sm:items-center sm:justify-end sm:gap-3.5"
+          >
+            <Button
+              asChild
+              size="lg"
+              variant="primary"
+              className={cn(
+                "h-12 w-full px-6 text-[0.9375rem] font-bold text-white sm:w-auto sm:min-w-[210px]",
+                "bg-none bg-terracotta backdrop-blur-none",
+                "shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_10px_32px_-6px_rgba(206,88,56,0.65),0_3px_12px_-2px_rgba(0,0,0,0.3)]",
+                "hover:bg-terracotta-500 hover:scale-[1.03]",
+                "hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_14px_40px_-6px_rgba(206,88,56,0.75),0_4px_16px_-2px_rgba(0,0,0,0.35)]"
+              )}
             >
               <a
                 href="#booking"
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "0.5rem",
-                  minHeight: "3rem",
-                  width: "100%",
-                  padding: "0.75rem 1.5rem",
-                  borderRadius: "9999px",
-                  backgroundColor: "#E05A38",
                   color: "#ffffff",
-                  fontSize: "0.9375rem",
-                  fontWeight: 700,
-                  textDecoration: "none",
-                  boxShadow: "0 10px 32px -6px rgba(206,88,56,0.65)",
-                  opacity: 1,
-                  visibility: "visible",
+                  backgroundColor: "#E05A38",
                 }}
               >
+                <CalendarCheck className="h-[1.125rem] w-[1.125rem]" />
                 Забронировать корт
               </a>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="glass"
+              className={cn(
+                "h-12 w-full px-6 text-[0.9375rem] font-bold text-white sm:w-auto sm:min-w-[185px]",
+                "border-2 border-white/40 bg-forest-950/45 backdrop-blur-sm",
+                "shadow-[0_8px_28px_-8px_rgba(0,0,0,0.5)]",
+                "hover:border-sand/70 hover:bg-forest-950/60 hover:shadow-glow"
+              )}
+            >
               <a
                 href="#services"
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "0.5rem",
-                  minHeight: "3rem",
-                  width: "100%",
-                  padding: "0.75rem 1.5rem",
-                  borderRadius: "9999px",
-                  border: "2px solid rgba(255,255,255,0.4)",
-                  backgroundColor: "rgba(7, 31, 24, 0.55)",
                   color: "#ffffff",
-                  fontSize: "0.9375rem",
-                  fontWeight: 700,
-                  textDecoration: "none",
-                  opacity: 1,
-                  visibility: "visible",
+                  borderColor: "rgba(255,255,255,0.4)",
+                  backgroundColor: "rgba(7, 31, 24, 0.55)",
                 }}
               >
                 Услуги и цены
+                <ArrowRight className="h-[1.125rem] w-[1.125rem]" />
               </a>
-            </div>
-          </div>
-        </div>
+            </Button>
+          </motion.div>
+        </motion.div>
       </div>
+
+      <motion.a
+        href="#about-preview"
+        initial={{ opacity: 1, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2, ...transitionMenu }}
+        className="absolute bottom-[max(1rem,env(safe-area-inset-bottom,0px))] left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-1.5 text-white/50 transition-colors duration-500 ease-premium hover:text-sand sm:bottom-6 md:flex"
+        aria-label="Прокрутить вниз"
+      >
+        <span className="text-[10px] font-semibold uppercase tracking-[0.2em]">
+          Узнать больше
+        </span>
+        <ChevronDown className="h-5 w-5 animate-float-y" />
+      </motion.a>
     </section>
   );
 }
