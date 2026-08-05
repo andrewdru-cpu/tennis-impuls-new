@@ -59,11 +59,18 @@
     overflow-wrap: anywhere;
   }
 
-  /* Hero: контент никогда не остаётся opacity:0 без JS */
+  /* Hero: контент никогда не остаётся opacity:0 / visibility:hidden */
   #hero,
-  #hero [data-hero-content] {
+  #hero [data-hero-content],
+  #hero [data-hero-content] * {
     opacity: 1 !important;
     visibility: visible !important;
+  }
+
+  /* Нет глобального скрытия main/section до hydration */
+  main,
+  section {
+    visibility: visible;
   }
 
   #__next,

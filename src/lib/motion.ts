@@ -31,7 +31,8 @@ export const staggerContainer = {
 } as const;
 
 export const fadeUpItem = {
-  hidden: { opacity: 0, y: 28 },
+  /** opacity всегда 1 — нельзя оставлять контент невидимым без JS */
+  hidden: { opacity: 1, y: 16 },
   visible: {
     opacity: 1,
     y: 0,

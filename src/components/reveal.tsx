@@ -13,35 +13,44 @@ interface RevealProps {
   as?: "div" | "li" | "span" | "section";
 }
 
+/**
+ * Reveal: никогда не ставит opacity:0 на критичный контент.
+ * При reduced-motion / до JS — обычный видимый блок.
+ * Анимация только лёгкий сдвиг (opacity всегда 1).
+ */
 export function Reveal({
   children,
   className,
   delay = 0,
-  y = 20,
+  y = 16,
   as = "div",
 }: RevealProps) {
   const prefersReducedMotion = useReducedMotion();
   const MotionTag = motion[as];
 
+  if (prefersReducedMotion) {
+    const Tag = as;
+    return <Tag className={className}>{children}</Tag>;
+  }
+
   const variants: Variants = {
-    hidden: (offset: number) => ({
-      opacity: prefersReducedMotion ? 1 : 0,
-      y: prefersReducedMotion ? 0 : offset,
-    }),
+    // opacity всегда 1 — если JS оборвётся на hidden, контент всё равно виден
+    hidden: {
+      opacity: 1,
+      y,
+    },
     visible: {
       opacity: 1,
       y: 0,
-      transition: prefersReducedMotion
-        ? { duration: 0 }
-        : { ...transitionReveal, delay },
+      transition: { ...transitionReveal, delay },
     },
   };
 
   return (
     <MotionTag
       className={className}
+      style={{ opacity: 1 }}
       variants={variants}
-      custom={y}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-60px", amount: 0.15 }}
@@ -51,5 +60,4 @@ export function Reveal({
   );
 }
 
-/** Для элементов с кастомной анимацией внутри Framer Motion */
 export const revealEase = EASE_OUT_EXPO;

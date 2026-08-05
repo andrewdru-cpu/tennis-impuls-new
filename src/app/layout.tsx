@@ -39,7 +39,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className={fontVariables}>
-      <body className={`${fontSans.className} antialiased`}>{children}</body>
+      <body className={`${fontSans.className} antialiased`}>
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `#hero{background-color:#0A2F24;color:#fff}#hero [data-hero-content],#hero [data-hero-content] *{opacity:1!important;visibility:visible!important}#hero h1,#hero p,#hero a{color:#fff}`,
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
