@@ -31,7 +31,7 @@ export function Section({
       )}
     >
       {before}
-      <div className={cn("container-wide relative", innerClassName)}>
+      <div className={cn("container-wide relative min-w-0", innerClassName)}>
         {children}
       </div>
     </section>

@@ -179,24 +179,27 @@ const config: Config = {
       },
       fontSize: {
         "display-xl": [
-          "clamp(2.75rem, 7.5vw, 5.5rem)",
-          { lineHeight: "1.02", letterSpacing: "-0.035em" },
+          "clamp(2rem, 1.35rem + 3.2vw, 4rem)",
+          { lineHeight: "1.08", letterSpacing: "-0.035em" },
         ],
         "display-lg": [
-          "clamp(1.875rem, 4.2vw, 2.625rem)",
-          { lineHeight: "1.1", letterSpacing: "-0.028em" },
+          "clamp(1.5rem, 1.15rem + 1.6vw, 2.25rem)",
+          { lineHeight: "1.18", letterSpacing: "-0.028em" },
         ],
         "display-md": [
-          "clamp(1.375rem, 2.8vw, 1.75rem)",
-          { lineHeight: "1.2", letterSpacing: "-0.02em" },
+          "clamp(1.25rem, 1.05rem + 0.9vw, 1.625rem)",
+          { lineHeight: "1.25", letterSpacing: "-0.02em" },
         ],
         "display-sm": [
-          "clamp(1.0625rem, 2vw, 1.25rem)",
-          { lineHeight: "1.3", letterSpacing: "-0.015em" },
+          "clamp(1rem, 0.92rem + 0.45vw, 1.1875rem)",
+          { lineHeight: "1.35", letterSpacing: "-0.015em" },
         ],
-        body: ["1.0625rem", { lineHeight: "1.65", letterSpacing: "-0.008em" }],
+        body: [
+          "clamp(1rem, 0.96rem + 0.2vw, 1.0625rem)",
+          { lineHeight: "1.65", letterSpacing: "-0.008em" },
+        ],
         "body-lg": [
-          "1.1875rem",
+          "clamp(1.0625rem, 1rem + 0.3vw, 1.125rem)",
           { lineHeight: "1.7", letterSpacing: "-0.01em" },
         ],
         caption: ["0.8125rem", { lineHeight: "1.5", letterSpacing: "0.01em" }],

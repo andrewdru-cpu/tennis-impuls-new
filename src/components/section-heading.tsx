@@ -47,7 +47,7 @@ export function SectionHeading({
         <Reveal delay={0.1}>
           <p
             className={cn(
-              "mt-4 max-w-[42rem] text-pretty text-body sm:text-body-lg sm:leading-[1.7]",
+            "mt-4 max-w-[min(42rem,100%)] text-pretty text-body sm:text-body-lg sm:leading-[1.7]",
               isLight ? "text-white/88" : "text-bright"
             )}
           >

@@ -16,7 +16,7 @@ export function Hero() {
     <section
       id="hero"
       className={cn(
-        "relative isolate flex min-h-[100svh] flex-col overflow-hidden text-white",
+        "relative isolate flex min-h-[min(100svh,56rem)] flex-col overflow-x-clip text-white",
         "justify-start pb-[max(2.75rem,env(safe-area-inset-bottom,0px))] pt-[calc(5rem+env(safe-area-inset-top,0px))]",
         "md:justify-start md:pb-20 md:pt-[calc(5.25rem+env(safe-area-inset-top,0px))]"
       )}
