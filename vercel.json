@@ -7,6 +7,21 @@
   "regions": ["fra1"],
   "redirects": [
     {
+      "source": "/personal",
+      "destination": "/#booking",
+      "permanent": true
+    },
+    {
+      "source": "/personal/",
+      "destination": "/#booking",
+      "permanent": true
+    },
+    {
+      "source": "/personal/:path*",
+      "destination": "/#booking",
+      "permanent": true
+    },
+    {
       "source": "/price",
       "destination": "/#pricing",
       "permanent": true
@@ -57,16 +72,6 @@
       "permanent": true
     },
     {
-      "source": "/service",
-      "destination": "/#services",
-      "permanent": true
-    },
-    {
-      "source": "/service/",
-      "destination": "/#services",
-      "permanent": true
-    },
-    {
       "source": "/company/promo",
       "destination": "/",
       "permanent": true
@@ -77,7 +82,137 @@
       "permanent": true
     },
     {
+      "source": "/company",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/company/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/company/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/service",
+      "destination": "/#services",
+      "permanent": true
+    },
+    {
+      "source": "/service/",
+      "destination": "/#services",
+      "permanent": true
+    },
+    {
+      "source": "/service/:path*",
+      "destination": "/#services",
+      "permanent": true
+    },
+    {
+      "source": "/auth",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/auth/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/auth/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/login",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/login/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/register",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/register/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/catalog",
+      "destination": "/#services",
+      "permanent": true
+    },
+    {
+      "source": "/catalog/",
+      "destination": "/#services",
+      "permanent": true
+    },
+    {
+      "source": "/catalog/:path*",
+      "destination": "/#services",
+      "permanent": true
+    },
+    {
+      "source": "/basket",
+      "destination": "/#booking",
+      "permanent": true
+    },
+    {
+      "source": "/basket/",
+      "destination": "/#booking",
+      "permanent": true
+    },
+    {
+      "source": "/cart",
+      "destination": "/#booking",
+      "permanent": true
+    },
+    {
+      "source": "/cart/",
+      "destination": "/#booking",
+      "permanent": true
+    },
+    {
+      "source": "/order",
+      "destination": "/#booking",
+      "permanent": true
+    },
+    {
+      "source": "/order/",
+      "destination": "/#booking",
+      "permanent": true
+    },
+    {
+      "source": "/order/:path*",
+      "destination": "/#booking",
+      "permanent": true
+    },
+    {
+      "source": "/index.php",
+      "destination": "/",
+      "permanent": true
+    },
+    {
       "source": "/bitrix/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/local/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/upload/:path*",
       "destination": "/",
       "permanent": true
     }

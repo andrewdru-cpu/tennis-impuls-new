@@ -12,6 +12,20 @@ const nextConfig = {
      */
     unoptimized: true,
   },
+  async redirects() {
+    return [
+      {
+        source: "/personal",
+        destination: "/#booking",
+        permanent: true,
+      },
+      {
+        source: "/personal/:path*",
+        destination: "/#booking",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
