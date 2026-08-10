@@ -1,6 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, Phone } from "@/lib/icons";
 
@@ -13,8 +15,10 @@ import { transitionMenu } from "@/lib/motion";
 const NAVBAR_HEIGHT = 76;
 
 export function Navbar() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const solid = scrolled || pathname !== "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -30,43 +34,51 @@ export function Navbar() {
     };
   }, [open]);
 
+  const navLinkClass = (solidNav: boolean) =>
+    cn(
+      "whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-medium transition-[color,background-color] duration-400 ease-premium xl:px-3.5 xl:text-sm",
+      solidNav
+        ? "text-forest-800 hover:bg-forest-900/5"
+        : "text-white/85 hover:bg-white/10 hover:text-white"
+    );
+
   return (
     <>
       <header
         className={cn(
           "fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top,0px)] transition-[background-color,border-color,box-shadow,backdrop-filter] duration-650 ease-premium",
-          scrolled
+          solid
             ? "border-b border-forest-900/10 bg-white/90 shadow-sm backdrop-blur-xl"
             : "border-b border-transparent bg-transparent"
         )}
       >
         <nav className="container-wide flex h-[76px] min-w-0 items-center justify-between gap-2 sm:gap-3">
-          <a
-            href="#hero"
+          <Link
+            href="/#hero"
             className="min-w-0 shrink-0"
             aria-label={siteConfig.name}
             onClick={() => setOpen(false)}
           >
-            <Logo variant={scrolled ? "dark" : "light"} compact />
-          </a>
+            <Logo variant={solid ? "dark" : "light"} compact />
+          </Link>
 
           <ul className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 xl:flex">
             {navItems.map((item) => (
               <li key={item.href} className="min-w-0">
-                <a
-                  href={item.href}
-                  {...(item.external
-                    ? { target: "_blank", rel: "noopener noreferrer" }
-                    : {})}
-                  className={cn(
-                    "whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-medium transition-[color,background-color] duration-400 ease-premium xl:px-3.5 xl:text-sm",
-                    scrolled
-                      ? "text-forest-800 hover:bg-forest-900/5"
-                      : "text-white/85 hover:bg-white/10 hover:text-white"
-                  )}
-                >
-                  {item.label}
-                </a>
+                {item.external ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={navLinkClass(solid)}
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <Link href={item.href} className={navLinkClass(solid)}>
+                    {item.label}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
@@ -76,7 +88,7 @@ export function Navbar() {
               href={siteConfig.phoneHref}
               className={cn(
                 "inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold tracking-tight transition-[background-color,border-color,color] duration-400 ease-premium xl:text-sm",
-                scrolled
+                solid
                   ? "border-forest-900/10 bg-forest-900/[0.03] text-forest-900 hover:bg-forest-900/5"
                   : "border-white/20 bg-white/10 text-white backdrop-blur-md hover:bg-white/15"
               )}
@@ -85,7 +97,7 @@ export function Navbar() {
               {siteConfig.phone}
             </a>
             <Button asChild size="default" className="shrink-0 whitespace-nowrap">
-              <a href="#booking">Забронировать</a>
+              <Link href="/#booking">Забронировать</Link>
             </Button>
           </div>
 
@@ -97,9 +109,7 @@ export function Navbar() {
             onClick={() => setOpen((v) => !v)}
             className={cn(
               "pressable flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-[background-color,color] duration-400 ease-premium lg:hidden",
-              scrolled
-                ? "bg-forest-900/5 text-forest-900"
-                : "glass text-white"
+              solid ? "bg-forest-900/5 text-forest-900" : "glass text-white"
             )}
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -139,16 +149,25 @@ export function Navbar() {
                   <ul className="flex flex-col">
                     {navItems.map((item) => (
                       <li key={item.href}>
-                        <a
-                          href={item.href}
-                          onClick={() => setOpen(false)}
-                          {...(item.external
-                            ? { target: "_blank", rel: "noopener noreferrer" }
-                            : {})}
-                          className="flex min-h-11 items-center rounded-2xl px-4 py-3 text-base font-medium text-forest-800 transition-[background-color,color] duration-400 ease-premium hover:bg-forest-900/5 active:bg-forest-900/8"
-                        >
-                          {item.label}
-                        </a>
+                        {item.external ? (
+                          <a
+                            href={item.href}
+                            onClick={() => setOpen(false)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex min-h-11 items-center rounded-2xl px-4 py-3 text-base font-medium text-forest-800 transition-[background-color,color] duration-400 ease-premium hover:bg-forest-900/5 active:bg-forest-900/8"
+                          >
+                            {item.label}
+                          </a>
+                        ) : (
+                          <Link
+                            href={item.href}
+                            onClick={() => setOpen(false)}
+                            className="flex min-h-11 items-center rounded-2xl px-4 py-3 text-base font-medium text-forest-800 transition-[background-color,color] duration-400 ease-premium hover:bg-forest-900/5 active:bg-forest-900/8"
+                          >
+                            {item.label}
+                          </Link>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -161,9 +180,9 @@ export function Navbar() {
                       {siteConfig.phone}
                     </a>
                     <Button asChild size="lg" className="w-full">
-                      <a href="#booking" onClick={() => setOpen(false)}>
+                      <Link href="/#booking" onClick={() => setOpen(false)}>
                         Забронировать корт
-                      </a>
+                      </Link>
                     </Button>
                   </div>
                 </div>

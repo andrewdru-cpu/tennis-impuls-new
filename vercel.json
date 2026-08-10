@@ -42,16 +42,6 @@
       "permanent": true
     },
     {
-      "source": "/schedule",
-      "destination": "https://schedule.tennis-impuls.ru/schedule/",
-      "permanent": true
-    },
-    {
-      "source": "/schedule/",
-      "destination": "https://schedule.tennis-impuls.ru/schedule/",
-      "permanent": true
-    },
-    {
       "source": "/company/news",
       "destination": "/#news",
       "permanent": true

@@ -48,7 +48,9 @@ import {
   type TeamMember,
 } from "@/lib/team";
 import { PictureImage } from "@/components/media/picture-image";
+import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 /* -------------------------------------------------------------------------- */
 /*  Данные                                                                    */
@@ -668,7 +670,21 @@ export function Booking() {
         description="Выберите направление, услугу или абонемент. Мы свяжемся с вами для подтверждения."
       />
 
-      <Reveal delay={0.1} className="section-inner mx-auto max-w-5xl">
+      <div className="mt-5 flex justify-center sm:mt-6">
+        <Button
+          asChild
+          variant="outline"
+          size="lg"
+          className="border-terracotta/35 bg-white/90 font-bold text-forest-800 hover:border-terracotta hover:bg-terracotta/5 hover:text-terracotta-600"
+        >
+          <Link href={siteConfig.schedulePagePath}>
+            <CalendarDays className="h-4 w-4" />
+            Смотреть расписание
+          </Link>
+        </Button>
+      </div>
+
+      <Reveal delay={0.1} className="section-inner mx-auto mt-8 max-w-5xl sm:mt-10">
         <div className="card-form-light p-6 sm:p-8 lg:p-10">
           {/* ── Шаг 1 · Вкладки ── */}
           <div className="grid grid-cols-1 gap-2 rounded-[1.25rem] bg-forest-900/[0.03] p-2 ring-1 ring-forest-900/10 sm:grid-cols-3">

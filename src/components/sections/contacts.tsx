@@ -14,6 +14,7 @@ import { Reveal } from "@/components/reveal";
 import { Button } from "@/components/ui/button";
 import { ContactMenu } from "@/components/contact-menu";
 import { siteConfig } from "@/lib/site";
+import Link from "next/link";
 
 const contactCards = [
   {
@@ -68,14 +69,10 @@ export function Contacts() {
                   size="lg"
                   className="mt-4 w-full border-terracotta/35 bg-white font-bold text-forest-800 hover:border-terracotta hover:bg-terracotta/5 hover:text-terracotta-600"
                 >
-                  <a
-                    href={siteConfig.scheduleUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  <Link href={siteConfig.schedulePagePath}>
                     <CalendarDays className="h-4 w-4" />
-                    Онлайн-расписание
-                  </a>
+                    Смотреть расписание
+                  </Link>
                 </Button>
               </div>
             </Reveal>
@@ -151,14 +148,10 @@ export function Contacts() {
                     size="lg"
                     className="w-full border-forest-900/15 bg-white/80 font-bold sm:w-auto"
                   >
-                    <a
-                      href={siteConfig.scheduleUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <Link href={siteConfig.schedulePagePath}>
                       <CalendarDays className="h-4 w-4" />
-                      Онлайн-расписание
-                    </a>
+                      Смотреть расписание
+                    </Link>
                   </Button>
                 </div>
               </div>
