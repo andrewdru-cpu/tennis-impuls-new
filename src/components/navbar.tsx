@@ -14,6 +14,10 @@ import { transitionMenu } from "@/lib/motion";
 
 const NAVBAR_HEIGHT = 76;
 
+/**
+ * Desktop-навигация только с xl (≥1280px): на lg–xl пункты склеивались.
+ * До xl — burger-меню (как на mobile).
+ */
 export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -34,13 +38,19 @@ export function Navbar() {
     };
   }, [open]);
 
-  const navLinkClass = (solidNav: boolean) =>
-    cn(
-      "whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-medium transition-[color,background-color] duration-400 ease-premium xl:px-3.5 xl:text-sm",
-      solidNav
-        ? "text-forest-800 hover:bg-forest-900/5"
-        : "text-white/85 hover:bg-white/10 hover:text-white"
-    );
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  const navLinkClass = cn(
+    "inline-flex shrink-0 items-center whitespace-nowrap rounded-full",
+    "px-2.5 py-2 text-[12px] font-medium leading-none tracking-tight",
+    "transition-[color,background-color] duration-400 ease-premium",
+    "2xl:px-3 2xl:text-[13px]",
+    solid
+      ? "text-forest-800 hover:bg-forest-900/5"
+      : "text-white/85 hover:bg-white/10 hover:text-white"
+  );
 
   return (
     <>
@@ -62,20 +72,21 @@ export function Navbar() {
             <Logo variant={solid ? "dark" : "light"} compact />
           </Link>
 
-          <ul className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 xl:flex">
+          {/* Desktop nav: только xl+, flex-nowrap + whitespace-nowrap */}
+          <ul className="hidden min-w-0 flex-1 flex-nowrap items-center justify-center gap-0.5 overflow-x-auto xl:flex 2xl:gap-1">
             {navItems.map((item) => (
-              <li key={item.href} className="min-w-0">
+              <li key={item.href} className="shrink-0">
                 {item.external ? (
                   <a
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={navLinkClass(solid)}
+                    className={navLinkClass}
                   >
                     {item.label}
                   </a>
                 ) : (
-                  <Link href={item.href} className={navLinkClass(solid)}>
+                  <Link href={item.href} className={navLinkClass}>
                     {item.label}
                   </Link>
                 )}
@@ -83,18 +94,19 @@ export function Navbar() {
             ))}
           </ul>
 
-          <div className="hidden shrink-0 items-center gap-2 lg:flex xl:gap-3">
+          <div className="hidden shrink-0 items-center gap-2 xl:flex 2xl:gap-3">
             <a
               href={siteConfig.phoneHref}
               className={cn(
-                "inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold tracking-tight transition-[background-color,border-color,color] duration-400 ease-premium xl:text-sm",
+                "inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-3 py-2 text-[12px] font-semibold tracking-tight transition-[background-color,border-color,color] duration-400 ease-premium 2xl:px-3.5 2xl:text-[13px]",
                 solid
                   ? "border-forest-900/10 bg-forest-900/[0.03] text-forest-900 hover:bg-forest-900/5"
                   : "border-white/20 bg-white/10 text-white backdrop-blur-md hover:bg-white/15"
               )}
             >
               <Phone className="h-4 w-4 shrink-0 text-terracotta-400" />
-              {siteConfig.phone}
+              <span className="hidden 2xl:inline">{siteConfig.phone}</span>
+              <span className="2xl:hidden">Позвонить</span>
             </a>
             <Button asChild size="default" className="shrink-0 whitespace-nowrap">
               <Link href="/#booking">Забронировать</Link>
@@ -108,7 +120,7 @@ export function Navbar() {
             aria-controls="mobile-nav"
             onClick={() => setOpen((v) => !v)}
             className={cn(
-              "pressable flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-[background-color,color] duration-400 ease-premium lg:hidden",
+              "pressable flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-[background-color,color] duration-400 ease-premium xl:hidden",
               solid ? "bg-forest-900/5 text-forest-900" : "glass text-white"
             )}
           >
@@ -127,7 +139,7 @@ export function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="fixed inset-0 z-40 bg-forest-950/45 backdrop-blur-[2px] lg:hidden"
+              className="fixed inset-0 z-40 bg-forest-950/45 backdrop-blur-[2px] xl:hidden"
               onClick={() => setOpen(false)}
             />
             <motion.div
@@ -139,7 +151,7 @@ export function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={transitionMenu}
-              className="fixed inset-x-0 bottom-0 z-50 overflow-y-auto overscroll-contain lg:hidden"
+              className="fixed inset-x-0 bottom-0 z-50 overflow-y-auto overscroll-contain xl:hidden"
               style={{
                 top: `calc(${NAVBAR_HEIGHT}px + env(safe-area-inset-top, 0px))`,
               }}
