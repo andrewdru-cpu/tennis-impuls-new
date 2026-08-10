@@ -55,6 +55,9 @@ export function Navbar() {
               <li key={item.href} className="min-w-0">
                 <a
                   href={item.href}
+                  {...(item.external
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
                   className={cn(
                     "whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-medium transition-[color,background-color] duration-400 ease-premium xl:px-3.5 xl:text-sm",
                     scrolled
@@ -139,6 +142,9 @@ export function Navbar() {
                         <a
                           href={item.href}
                           onClick={() => setOpen(false)}
+                          {...(item.external
+                            ? { target: "_blank", rel: "noopener noreferrer" }
+                            : {})}
                           className="flex min-h-11 items-center rounded-2xl px-4 py-3 text-base font-medium text-forest-800 transition-[background-color,color] duration-400 ease-premium hover:bg-forest-900/5 active:bg-forest-900/8"
                         >
                           {item.label}

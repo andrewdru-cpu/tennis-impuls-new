@@ -1,4 +1,12 @@
-import { Phone, Mail, MapPin, Clock, Navigation, ParkingCircle } from "@/lib/icons";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  Navigation,
+  ParkingCircle,
+  CalendarDays,
+} from "@/lib/icons";
 
 import { SectionHeading } from "@/components/section-heading";
 import { Section } from "@/components/section";
@@ -54,6 +62,21 @@ export function Contacts() {
                   Выберите удобный способ связи — ответим быстро.
                 </p>
                 <ContactMenu className="w-full" />
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="mt-4 w-full border-terracotta/35 bg-white font-bold text-forest-800 hover:border-terracotta hover:bg-terracotta/5 hover:text-terracotta-600"
+                >
+                  <a
+                    href={siteConfig.scheduleUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <CalendarDays className="h-4 w-4" />
+                    Онлайн-расписание
+                  </a>
+                </Button>
               </div>
             </Reveal>
 
@@ -111,16 +134,33 @@ export function Contacts() {
                 <p className="mt-1 text-sm text-muted-foreground">
                   {siteConfig.address}
                 </p>
-                <Button asChild variant="primary" size="lg" className="mt-5 w-full sm:w-auto">
-                  <a
-                    href={siteConfig.mapsUrl}
-                    target="_blank"
-                    rel="noreferrer"
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <Button asChild variant="primary" size="lg" className="w-full sm:w-auto">
+                    <a
+                      href={siteConfig.mapsUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Navigation className="h-4 w-4" />
+                      Построить маршрут
+                    </a>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="lg"
+                    className="w-full border-forest-900/15 bg-white/80 font-bold sm:w-auto"
                   >
-                    <Navigation className="h-4 w-4" />
-                    Построить маршрут
-                  </a>
-                </Button>
+                    <a
+                      href={siteConfig.scheduleUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <CalendarDays className="h-4 w-4" />
+                      Онлайн-расписание
+                    </a>
+                  </Button>
+                </div>
               </div>
             </div>
           </Reveal>

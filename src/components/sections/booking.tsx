@@ -40,6 +40,7 @@ import {
   readAbonementFromUrl,
   readSpecialistFromUrl,
 } from "@/lib/booking-deeplink";
+import type { BookingLeadPayload } from "@/lib/booking-lead";
 import {
   findTeamMember,
   getBookableSpecialists,
@@ -70,14 +71,7 @@ type BookingFormValues = {
   comment: string;
 };
 
-type BookingPayload = BookingFormValues & {
-  serviceType: "session" | "abonement";
-  group: string;
-  service: string;
-  specialist: string;
-  specialistId: string;
-  selectedAbonement?: string;
-};
+type BookingPayload = BookingLeadPayload;
 
 const ANY_SPECIALIST_ID = "any";
 
@@ -171,19 +165,38 @@ const serviceGroups: {
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  Отправка (заглушка — готова к замене на API)                              */
+/*  Отправка                                                                   */
 /* -------------------------------------------------------------------------- */
 
 /**
- * 👉 INTEGRATION: замените на реальную отправку заявки.
- *    Варианты: POST на BOOKING_WEBHOOK_URL из .env, server action
- *    или CRM/YCLIENTS. Сейчас — имитация сетевого запроса.
+ * POST /api/booking:
+ * — Telegram, если TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID;
+ * — иначе mailto:info@tennis-impuls.ru (открываем почтовый клиент).
  */
 async function submitBookingRequest(payload: BookingPayload): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, 900));
+  const res = await fetch("/api/booking", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
 
-  if (process.env.NODE_ENV === "development") {
-    console.log("Заявка на запись:", payload);
+  if (!res.ok) {
+    throw new Error(`Booking submit failed: ${res.status}`);
+  }
+
+  const data = (await res.json()) as {
+    ok?: boolean;
+    method?: "telegram" | "mailto";
+    href?: string;
+  };
+
+  if (data.method === "mailto" && data.href) {
+    const link = document.createElement("a");
+    link.href = data.href;
+    link.rel = "noopener noreferrer";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   }
 }
 

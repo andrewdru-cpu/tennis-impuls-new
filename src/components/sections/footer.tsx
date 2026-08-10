@@ -48,7 +48,13 @@ export function Footer() {
             <ul className="mt-5 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
               {navItems.map((item) => (
                 <li key={item.href}>
-                  <a href={item.href} className="touch-link text-white/70 hover:text-terracotta-200">
+                  <a
+                    href={item.href}
+                    {...(item.external
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
+                    className="touch-link text-white/70 hover:text-terracotta-200"
+                  >
                     {item.label}
                   </a>
                 </li>
