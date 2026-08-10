@@ -8,10 +8,10 @@ export const siteConfig = {
   phoneHref: "tel:+74951146801",
   email: "info@tennis-impuls.ru",
   address: "Московская обл., г. Мытищи, ул. 4-я Парковая, д. 7Б",
-  /** Страница расписания на этом сайте */
+  /** Страница расписания (виджет 1С:Фитнес) */
   schedulePagePath: "/schedule",
-  /** iframe / внешний сервис 1С */
-  scheduleEmbedUrl: "https://schedule.tennis-impuls.ru/schedule/",
+  /** Личный кабинет клиента (виджет 1С:Фитнес) */
+  accountPagePath: "/account",
   // Готовый маршрут до клуба в Яндекс Картах
   mapsUrl:
     "https://yandex.ru/maps/?text=%D0%9C%D1%8B%D1%82%D0%B8%D1%89%D0%B8%2C%204-%D1%8F%20%D0%9F%D0%B0%D1%80%D0%BA%D0%BE%D0%B2%D0%B0%D1%8F%20%D1%83%D0%BB.%2C%207%D0%91",
@@ -41,6 +41,7 @@ export const navItems: readonly NavItem[] = [
   { label: "Услуги", href: "/#services" },
   { label: "Бронирование", href: "/#booking" },
   { label: "Расписание", href: siteConfig.schedulePagePath },
+  { label: "Личный кабинет", href: siteConfig.accountPagePath },
   { label: "Цены", href: "/#pricing" },
   { label: "Команда", href: "/#team" },
   { label: "Галерея", href: "/#gallery" },

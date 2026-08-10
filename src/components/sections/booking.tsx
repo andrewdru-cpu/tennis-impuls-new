@@ -175,7 +175,9 @@ const serviceGroups: {
  * — Telegram, если TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID;
  * — иначе mailto:info@tennis-impuls.ru (открываем почтовый клиент).
  */
-async function submitBookingRequest(payload: BookingPayload): Promise<void> {
+async function submitBookingRequest(
+  payload: BookingPayload
+): Promise<"telegram" | "mailto"> {
   const res = await fetch("/api/booking", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -199,7 +201,14 @@ async function submitBookingRequest(payload: BookingPayload): Promise<void> {
     document.body.appendChild(link);
     link.click();
     link.remove();
+    return "mailto";
   }
+
+  if (data.method === "telegram") {
+    return "telegram";
+  }
+
+  throw new Error("Booking API returned unknown delivery method");
 }
 
 function validateBookingForm(
@@ -279,12 +288,14 @@ function BookingSuccess({
   groupLabel,
   specialistLabel,
   isAbonement,
+  deliveryMethod,
   onReset,
 }: {
   serviceTitle: string;
   groupLabel: string;
   specialistLabel?: string;
   isAbonement?: boolean;
+  deliveryMethod: "telegram" | "mailto";
   onReset: () => void;
 }) {
   return (
@@ -299,12 +310,16 @@ function BookingSuccess({
         </span>
         <div className="mt-4 sm:mt-0 sm:ml-5">
           <p className="font-display text-xl font-bold text-forest-800 sm:text-2xl">
-            Заявка отправлена!
+            {deliveryMethod === "mailto"
+              ? "Откроется почта"
+              : "Заявка отправлена!"}
           </p>
           <p className="mt-2 text-sm leading-relaxed text-bright sm:text-base">
-            {isAbonement
-              ? "Мы перезвоним и оформим абонемент."
-              : "Мы свяжемся с вами в ближайшее время."}
+            {deliveryMethod === "mailto"
+              ? "Мы не смогли отправить заявку автоматически. Отправьте письмо из почтового клиента или позвоните нам."
+              : isAbonement
+                ? "Мы перезвоним и оформим абонемент."
+                : "Мы свяжемся с вами в ближайшее время."}
           </p>
           <p className="mt-3 text-sm text-[#1F2E2A]/60">
             {isAbonement ? "Абонемент" : "Направление"}:{" "}
@@ -426,6 +441,9 @@ export function Booking() {
   const [abonementId, setAbonementId] = useState<string | null>(null);
   const [specialistId, setSpecialistId] = useState<string>(ANY_SPECIALIST_ID);
   const [submitted, setSubmitted] = useState(false);
+  const [deliveryMethod, setDeliveryMethod] = useState<
+    "telegram" | "mailto" | null
+  >(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<
@@ -457,6 +475,7 @@ export function Booking() {
 
   function resetFormState() {
     setSubmitted(false);
+    setDeliveryMethod(null);
     setIsSubmitting(false);
     setFormError(null);
     setFieldErrors({});
@@ -593,9 +612,10 @@ export function Booking() {
     setIsSubmitting(true);
 
     try {
+      let method: "telegram" | "mailto" | null = null;
       if (isAbonementTab && activeAbonement) {
         const label = formatAbonementLabel(activeAbonement);
-        await submitBookingRequest({
+        method = await submitBookingRequest({
           serviceType: "abonement",
           group: "Абонементы",
           service: label,
@@ -609,7 +629,7 @@ export function Booking() {
           time: "",
         });
       } else if (activeService && activeGroup) {
-        await submitBookingRequest({
+        method = await submitBookingRequest({
           serviceType: "session",
           group: activeGroup.label,
           service: activeService.title,
@@ -621,7 +641,11 @@ export function Booking() {
           ...data,
         });
       }
+      if (!method) {
+        throw new Error("Nothing to submit");
+      }
       form.reset();
+      setDeliveryMethod(method);
       setSubmitted(true);
     } catch {
       setFormError(
@@ -877,7 +901,7 @@ export function Booking() {
           {/* ── Шаг 4 · Форма ── */}
           {selectionReady && (
             <>
-              {submitted ? (
+              {submitted && deliveryMethod ? (
                 <BookingSuccess
                   serviceTitle={successTitle}
                   groupLabel={successGroup}
@@ -885,6 +909,7 @@ export function Booking() {
                     isAbonementTab ? undefined : specialistLabel
                   }
                   isAbonement={isAbonementTab}
+                  deliveryMethod={deliveryMethod}
                   onReset={resetFormState}
                 />
               ) : (

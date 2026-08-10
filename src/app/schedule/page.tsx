@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Fit1cCalendar } from "@/components/fit1c/fit1c-widgets";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/sections/footer";
 import { Section } from "@/components/section";
@@ -13,7 +14,7 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = {
   title: "Онлайн-расписание",
   description:
-    "Актуальное расписание занятий ЦТТ «Импульс». Запись через форму на сайте или по телефону.",
+    "Актуальное расписание занятий ЦТТ «Импульс» из 1С:Фитнес. Запись через форму на сайте или по телефону.",
 };
 
 function BackToSiteLink({
@@ -35,7 +36,7 @@ function BackToSiteLink({
       )}
     >
       <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
-      {compact ? "На главную" : "← Вернуться на сайт"}
+      {compact ? "На главную" : "← На главную"}
     </Link>
   );
 }
@@ -61,7 +62,6 @@ export default function SchedulePage() {
             </>
           }
         >
-          {/* Кнопка назад — сразу под навбаром */}
           <div className="mb-6 sm:mb-8">
             <BackToSiteLink />
           </div>
@@ -74,8 +74,8 @@ export default function SchedulePage() {
           </h1>
 
           <p className="mt-4 max-w-[min(42rem,100%)] text-pretty text-body text-bright sm:text-body-lg sm:leading-[1.7]">
-            Актуальное расписание занятий ЦТТ «Импульс». Для записи используйте
-            форму на сайте или телефон{" "}
+            Расписание загружается из системы 1С:Фитнес клуба. Запись — через
+            форму на сайте или по телефону{" "}
             <a
               href={siteConfig.phoneHref}
               className="font-semibold text-terracotta-600 underline-offset-2 hover:underline"
@@ -83,11 +83,6 @@ export default function SchedulePage() {
               {siteConfig.phone}
             </a>
             .
-          </p>
-
-          <p className="mt-3 max-w-[min(42rem,100%)] text-pretty text-sm leading-relaxed text-[#1F2E2A]/65 sm:text-[0.9375rem]">
-            Расписание открыто внутри сайта ЦТТ Импульс. Запись — через кнопку
-            «Записаться» или по телефону.
           </p>
 
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:items-center">
@@ -115,42 +110,16 @@ export default function SchedulePage() {
         <Section tone="muted" className="pb-14 pt-0 sm:pb-20">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm font-medium text-[#1F2E2A]/60">
-              Расписание занятий
+              Расписание занятий (1С)
             </p>
             <BackToSiteLink compact />
           </div>
 
-          {/*
-            Полная очистка шапки/подвала Битрикса внутри iframe возможна только
-            на стороне schedule.tennis-impuls.ru (Help-Pro / Битрикс) —
-            нужен отдельный «голый» URL расписания без меню старого сайта.
-            Здесь: sandbox без allow-top-navigation, чтобы ссылки старого сайта
-            не уводили всю вкладку tennis-impuls.ru на bitrix-главную.
-          */}
-          <div className="overflow-hidden rounded-2xl border border-forest-900/[0.07] bg-white shadow-card ring-1 ring-forest-900/8 sm:rounded-3xl">
-            <iframe
-              src={siteConfig.scheduleEmbedUrl}
-              title="Расписание ЦТТ Импульс"
-              className="block w-full min-h-[70vh] border-0 bg-white md:min-h-[85vh]"
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-            />
+          <div className="overflow-hidden rounded-2xl border border-forest-900/[0.07] bg-white p-2 shadow-card ring-1 ring-forest-900/8 sm:rounded-3xl sm:p-4">
+            <Fit1cCalendar />
           </div>
 
           <div className="mt-5 flex flex-col items-center gap-3 text-center sm:mt-6">
-            <p className="text-sm text-[#1F2E2A]/55">
-              Не открывается расписание?{" "}
-              <a
-                href={siteConfig.scheduleEmbedUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semibold text-terracotta-600 underline-offset-2 hover:underline"
-              >
-                Открыть в новой вкладке
-              </a>
-            </p>
             <BackToSiteLink compact />
           </div>
         </Section>

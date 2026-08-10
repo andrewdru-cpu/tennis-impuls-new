@@ -8,20 +8,29 @@
   "redirects": [
     {
       "source": "/personal",
-      "destination": "/#booking",
+      "destination": "/account",
       "permanent": true
     },
     {
       "source": "/personal/",
-      "destination": "/#booking",
+      "destination": "/account",
       "permanent": true
     },
     {
       "source": "/personal/:path*",
-      "destination": "/#booking",
+      "destination": "/account",
       "permanent": true
     },
     {
+      "source": "/lk",
+      "destination": "/account",
+      "permanent": true
+    },
+    {
+      "source": "/lk/",
+      "destination": "/account",
+      "permanent": true
+    },    {
       "source": "/price",
       "destination": "/#pricing",
       "permanent": true
