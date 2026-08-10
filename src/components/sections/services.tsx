@@ -229,6 +229,7 @@ function SurfaceCard({
               alt={item.image.alt || item.label}
               width={1200}
               height={900}
+              sizes="(max-width: 768px) 100vw, 33vw"
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-premium group-hover:scale-105 saturate-[1.12]"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/40" />

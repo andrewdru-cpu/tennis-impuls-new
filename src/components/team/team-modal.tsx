@@ -87,6 +87,7 @@ export function TeamModal({ member, onClose }: TeamModalProps) {
                   width={600}
                   height={800}
                   eager
+                  sizes="(max-width: 1024px) 100vw, 420px"
                   className="absolute inset-0 h-full w-full object-cover object-center"
                   fallback={
                     <div className="absolute inset-0 flex items-center justify-center">

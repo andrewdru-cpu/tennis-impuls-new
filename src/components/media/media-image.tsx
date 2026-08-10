@@ -40,6 +40,9 @@ export interface MediaImageProps {
  * Прямой /images/... без /_next/image optimizer (корп. прокси → 400).
  * PictureImage: webp → jpg → нейтральный фон, размер карточки сохраняется.
  */
+const DEFAULT_SIZES =
+  "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
+
 export function MediaImage({
   media,
   src,
@@ -52,9 +55,12 @@ export function MediaImage({
   rounded = true,
   overlay = false,
   priority = false,
+  sizes = DEFAULT_SIZES,
 }: MediaImageProps) {
   const initialSrc = media?.src ?? src ?? "";
   const finalAlt = media?.alt ?? alt ?? "";
+  const w = media?.width ?? 1200;
+  const h = media?.height ?? 900;
 
   if (!initialSrc) {
     return null;
@@ -78,9 +84,10 @@ export function MediaImage({
       <PictureImage
         src={initialSrc}
         alt={finalAlt}
-        width={1200}
-        height={900}
+        width={w}
+        height={h}
         eager={priority}
+        sizes={sizes}
         className={imageClass}
         style={{ objectPosition: position }}
         fallback={

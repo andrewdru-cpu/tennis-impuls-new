@@ -56,6 +56,7 @@ export function TeamPhoto({
   className,
   imageClassName,
   priority = false,
+  sizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 280px",
 }: TeamPhotoProps) {
   if (!photo) {
     return <PhotoFallback ratio={ratio} className={className} />;
@@ -75,6 +76,7 @@ export function TeamPhoto({
         width={600}
         height={800}
         eager={priority}
+        sizes={sizes}
         className={cn(
           "absolute inset-0 h-full w-full object-cover object-center",
           imageClassName

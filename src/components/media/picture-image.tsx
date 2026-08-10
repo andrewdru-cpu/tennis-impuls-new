@@ -22,20 +22,40 @@ type PictureImageProps = {
   style?: CSSProperties;
   /** Что показать, если и JPEG не загрузился (null — просто убрать img) */
   fallback?: ReactNode;
+  /**
+   * Подсказка браузеру для выбора из srcset / layout.
+   * По умолчанию — карточки контента.
+   */
+  sizes?: string;
+  /**
+   * Опциональный srcSet для <img> (JPEG) — только реальные файлы.
+   * Пример: "/images/x.jpg 800w, /images/x-1200.jpg 1200w"
+   */
+  srcSet?: string;
+  /** Опциональный srcSet для WebP <source> — только существующие файлы */
+  webpSrcSet?: string;
+  /**
+   * Отдельный mobile-источник (только если файл реально есть).
+   * Не передавать выдуманные пути вроде *-mobile без файла.
+   */
+  mobileSrc?: string;
+  /** media для mobileSrc */
+  mobileMedia?: string;
 };
+
+const DEFAULT_SIZES =
+  "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
 
 /**
  * <picture> WebP + JPEG с настоящим fallback для корпоративных прокси.
  *
- * Важно: сам по себе <picture> НЕ переключается на JPEG, если браузер
- * поддерживает WebP, но прокси блокирует ответ. Поэтому onError:
- *   1-я ошибка на .webp → убираем <source>, браузер перезапрашивает JPEG;
- *   2-я ошибка (JPEG тоже недоступен) → рендерим fallback того же размера.
- * setState вызывается максимум дважды — цикла ререндеров нет.
+ * onError:
+ *   1-я ошибка на .webp → убираем <source>, браузер берёт JPEG;
+ *   2-я ошибка (JPEG) → fallback того же размера.
+ * Без циклов: setState максимум дважды.
  *
- * SSR-нюанс: для картинок выше fold ошибка загрузки может случиться ДО
- * гидрации React — onError уже не сработает. Поэтому на mount проверяем
- * `img.complete && naturalWidth === 0` и применяем ту же логику.
+ * SSR: ошибка до гидрации → на mount проверяем complete && naturalWidth === 0.
+ * Без /_next/image — прямые /images/... (optimizer в корп. сетях → 400).
  */
 export function PictureImage({
   src,
@@ -46,8 +66,17 @@ export function PictureImage({
   className,
   style,
   fallback = null,
+  sizes = DEFAULT_SIZES,
+  srcSet,
+  webpSrcSet,
+  mobileSrc,
+  mobileMedia = "(max-width: 768px)",
 }: PictureImageProps) {
-  const jpg = jpegSibling(src);
+  const jpg = jpegSibling(src) ?? (/\.jpe?g$/i.test(src) ? src : undefined);
+  const mobileJpg = mobileSrc
+    ? (jpegSibling(mobileSrc) ??
+      (/\.jpe?g$/i.test(mobileSrc) ? mobileSrc : undefined))
+    : undefined;
   const imgRef = useRef<HTMLImageElement>(null);
   const [webpBlocked, setWebpBlocked] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -61,7 +90,6 @@ export function PictureImage({
     setFailed(true);
   };
 
-  // Ошибка могла произойти до гидрации (SSR + блокирующий прокси)
   useEffect(() => {
     const el = imgRef.current;
     if (el && el.complete && el.naturalWidth === 0) {
@@ -80,6 +108,8 @@ export function PictureImage({
       alt={alt}
       width={width}
       height={height}
+      sizes={sizes}
+      srcSet={srcSet}
       loading={eager ? "eager" : "lazy"}
       fetchPriority={eager ? "high" : "auto"}
       decoding="async"
@@ -89,13 +119,27 @@ export function PictureImage({
     />
   );
 
-  if (webpBlocked || !isWebp(src) || !jpg) {
+  const useWebpSources = !webpBlocked && isWebp(src) && Boolean(jpg);
+  const useMobile =
+    Boolean(mobileSrc) &&
+    !webpBlocked &&
+    (isWebp(mobileSrc!) || Boolean(mobileJpg));
+
+  if (!useWebpSources && !useMobile) {
     return img;
   }
 
   return (
     <picture>
-      <source type="image/webp" srcSet={src} />
+      {useMobile && mobileSrc && isWebp(mobileSrc) ? (
+        <source type="image/webp" media={mobileMedia} srcSet={mobileSrc} />
+      ) : null}
+      {useMobile && mobileJpg ? (
+        <source media={mobileMedia} srcSet={mobileJpg} />
+      ) : null}
+      {useWebpSources ? (
+        <source type="image/webp" srcSet={webpSrcSet ?? src} sizes={sizes} />
+      ) : null}
       {img}
     </picture>
   );

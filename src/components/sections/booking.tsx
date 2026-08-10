@@ -376,6 +376,7 @@ function SpecialistChip({
             alt={photoAlt ?? label}
             width={44}
             height={44}
+            sizes="44px"
             className="absolute inset-0 h-full w-full object-cover object-center"
             fallback={
               <span

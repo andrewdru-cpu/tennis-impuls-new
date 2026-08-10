@@ -104,6 +104,7 @@ export function GalleryModal({
                 width={1200}
                 height={900}
                 eager
+                sizes="(max-width: 768px) 100vw, 900px"
                 className="absolute inset-0 h-full w-full object-contain"
               />
             </div>
