@@ -47,7 +47,7 @@ export function Logo({
       </span>
       {showWordmark && (
         <div className="flex min-w-0 flex-col leading-none">
-          <span className="text-ctt-red truncate font-display text-base font-extrabold tracking-tight sm:text-lg">
+          <span className="text-ctt-red truncate font-display text-base font-bold tracking-tight sm:text-lg">
             ЦТТ Импульс
           </span>
           <span

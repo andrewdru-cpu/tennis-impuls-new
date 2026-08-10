@@ -96,7 +96,7 @@ export function Pricing() {
               )}
             >
               {plan.featured && (
-                <span className="absolute -top-3 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-xs font-extrabold uppercase tracking-wider text-forest-900 shadow-[0_6px_20px_-4px_rgba(10,47,36,0.45)] ring-2 ring-lime">
+                <span className="absolute -top-3 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-forest-900 shadow-[0_6px_20px_-4px_rgba(10,47,36,0.45)] ring-2 ring-lime">
                   <Star className="h-3.5 w-3.5 fill-lime text-forest-900" />
                   Хит продаж
                 </span>
@@ -123,7 +123,7 @@ export function Pricing() {
                 <div className="flex flex-wrap items-end gap-1.5">
                   <span
                     className={cn(
-                      "font-display text-4xl font-extrabold tracking-tight sm:text-5xl",
+                      "font-display text-4xl font-bold tracking-tight sm:text-5xl",
                       plan.featured ? "text-white" : "text-ctt-red"
                     )}
                   >

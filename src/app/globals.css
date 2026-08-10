@@ -57,6 +57,13 @@
     font-feature-settings: "kern", "liga", "calt", "ss01", "cv01", "cv11";
     color: #1f2e2a;
     overflow-wrap: anywhere;
+    line-height: 1.55;
+  }
+
+  @media (min-width: 640px) {
+    body {
+      line-height: 1.65;
+    }
   }
 
   /* Hero: контент никогда не остаётся opacity:0 / visibility:hidden */
@@ -119,9 +126,9 @@
 
   /* ── Типографика ── */
 
-  /* Hero H1 */
+  /* Hero H1 — bold (700), без 800: меньше файлов Onest */
   .heading-display {
-    @apply font-display font-extrabold text-balance text-display-xl;
+    @apply font-display font-bold text-balance text-display-xl;
   }
 
   /* Секционные H2 — глубокий лесной, без чёрного и без «фиолетовой заливки» */
@@ -145,8 +152,8 @@
   /* Крупные заголовки — цвет задаётся на месте (light/dark) */
   .heading-feature {
     @apply font-display font-bold text-balance;
-    font-size: clamp(1.375rem, 1.1rem + 1.2vw, 2rem);
-    line-height: 1.2;
+    font-size: clamp(1.25rem, 1.05rem + 1.1vw, 2rem);
+    line-height: 1.22;
     letter-spacing: -0.024em;
     overflow-wrap: anywhere;
   }

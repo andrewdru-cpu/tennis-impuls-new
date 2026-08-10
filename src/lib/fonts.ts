@@ -2,10 +2,11 @@ import { Inter, Onest } from "next/font/google";
 
 /**
  * Основной текст — Inter (variable, latin + cyrillic).
- * Заголовки — Onest (latin + cyrillic): выразительная геометрия с поддержкой русского.
+ * Variable-файл уже содержит 400–700 без отдельных static weight.
+ * preload: true — единственный critical font для LCP/FOIT.
  */
 export const fontSans = Inter({
-  subsets: ["latin", "cyrillic"],
+  subsets: ["cyrillic", "latin"],
   variable: "--font-sans",
   display: "swap",
   preload: true,
@@ -20,11 +21,14 @@ export const fontSans = Inter({
   ],
 });
 
-/** Акцидентный шрифт для заголовков. preload: false — не конкурирует с Inter за LCP. */
+/**
+ * Заголовки — Onest: только реально используемые 600/700.
+ * preload: false — не конкурирует с Inter; display:swap → нет FOIT.
+ */
 export const fontDisplay = Onest({
-  subsets: ["latin", "cyrillic"],
+  subsets: ["cyrillic", "latin"],
   variable: "--font-display",
-  weight: ["600", "700", "800"],
+  weight: ["600", "700"],
   display: "swap",
   preload: false,
   adjustFontFallback: true,

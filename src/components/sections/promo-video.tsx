@@ -47,7 +47,7 @@ export function PromoVideo() {
                 aria-hidden
               >
                 <span
-                  className="text-ctt-red font-display text-lg font-extrabold tracking-[0.04em] sm:text-xl lg:text-2xl"
+                  className="text-ctt-red font-display text-lg font-bold tracking-[0.04em] sm:text-xl lg:text-2xl"
                   style={{
                     textShadow:
                       "0 1px 2px rgba(255,255,255,0.95), 0 2px 12px rgba(255,255,255,0.55), 0 0 24px rgba(255,255,255,0.35)",

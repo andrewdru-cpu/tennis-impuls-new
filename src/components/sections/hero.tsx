@@ -90,13 +90,14 @@ export function Hero() {
           <motion.h1
             variants={fadeUpItem}
             className={cn(
-              "mt-5 font-display font-extrabold leading-[1.08] tracking-[-0.02em] text-balance",
-              "text-[1.875rem] sm:text-[2.5rem] lg:text-[3.125rem]",
+              "mt-5 font-display font-bold leading-[1.1] tracking-[-0.02em] text-balance",
+              "text-[clamp(1.5rem,1.1rem+3.2vw,3.125rem)]",
+              "[overflow-wrap:anywhere]",
               "[text-shadow:0_2px_40px_rgba(0,0,0,0.55)]"
             )}
             style={{ color: "#ffffff" }}
           >
-            <span className="block whitespace-nowrap text-white" style={{ color: "#ffffff" }}>
+            <span className="block text-white sm:whitespace-nowrap" style={{ color: "#ffffff" }}>
               Теннис, фитнес
             </span>
             <span className="mt-0.5 block">

@@ -178,29 +178,31 @@ const config: Config = {
         ],
       },
       fontSize: {
+        /* 320–390: min не раздувает экран; рост через vw до desktop */
         "display-xl": [
-          "clamp(2rem, 1.35rem + 3.2vw, 4rem)",
-          { lineHeight: "1.08", letterSpacing: "-0.035em" },
+          "clamp(1.75rem, 1.15rem + 3vw, 4rem)",
+          { lineHeight: "1.1", letterSpacing: "-0.035em" },
         ],
         "display-lg": [
-          "clamp(1.5rem, 1.15rem + 1.6vw, 2.25rem)",
-          { lineHeight: "1.18", letterSpacing: "-0.028em" },
+          "clamp(1.375rem, 1.05rem + 1.5vw, 2.25rem)",
+          { lineHeight: "1.2", letterSpacing: "-0.028em" },
         ],
         "display-md": [
-          "clamp(1.25rem, 1.05rem + 0.9vw, 1.625rem)",
-          { lineHeight: "1.25", letterSpacing: "-0.02em" },
+          "clamp(1.1875rem, 1rem + 0.85vw, 1.625rem)",
+          { lineHeight: "1.28", letterSpacing: "-0.02em" },
         ],
         "display-sm": [
-          "clamp(1rem, 0.92rem + 0.45vw, 1.1875rem)",
+          "clamp(1rem, 0.94rem + 0.35vw, 1.1875rem)",
           { lineHeight: "1.35", letterSpacing: "-0.015em" },
         ],
+        /* Mobile ~15px, sm+ ~16–17px */
         body: [
-          "clamp(1rem, 0.96rem + 0.2vw, 1.0625rem)",
-          { lineHeight: "1.65", letterSpacing: "-0.008em" },
+          "clamp(0.9375rem, 0.9rem + 0.28vw, 1.0625rem)",
+          { lineHeight: "1.55", letterSpacing: "-0.008em" },
         ],
         "body-lg": [
-          "clamp(1.0625rem, 1rem + 0.3vw, 1.125rem)",
-          { lineHeight: "1.7", letterSpacing: "-0.01em" },
+          "clamp(1rem, 0.95rem + 0.3vw, 1.125rem)",
+          { lineHeight: "1.65", letterSpacing: "-0.01em" },
         ],
         caption: ["0.8125rem", { lineHeight: "1.5", letterSpacing: "0.01em" }],
       },
