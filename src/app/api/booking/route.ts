@@ -25,6 +25,25 @@ function isValidPayload(body: unknown): body is BookingLeadPayload {
   );
 }
 
+function failResponse(status: number, err?: unknown) {
+  const body: { error: string; debug?: string } = {
+    error: SEND_FAIL_MESSAGE,
+  };
+  if (process.env.NODE_ENV !== "production" && err != null) {
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "object" &&
+            err !== null &&
+            "message" in err &&
+            typeof (err as { message: unknown }).message === "string"
+          ? (err as { message: string }).message
+          : String(err);
+    body.debug = message;
+  }
+  return NextResponse.json(body, { status });
+}
+
 /**
  * POST /api/booking — отправка заявки через Resend (email).
  * Требует RESEND_API_KEY. Без ключа → 503.
@@ -42,39 +61,41 @@ export async function POST(request: Request) {
   }
 
   const apiKey = process.env.RESEND_API_KEY?.trim();
-  if (!apiKey) {
-    console.error("RESEND_API_KEY is not set");
-    return NextResponse.json(
-      { error: SEND_FAIL_MESSAGE },
-      { status: 503 }
-    );
-  }
-
   const from =
     process.env.BOOKING_FROM_EMAIL?.trim() || "onboarding@resend.dev";
   const to = process.env.BOOKING_TO_EMAIL?.trim() || "info@tennis-impuls.ru";
+
+  console.error("[booking]", {
+    hasKey: Boolean(apiKey),
+    from: process.env.BOOKING_FROM_EMAIL,
+    to: process.env.BOOKING_TO_EMAIL,
+  });
+
+  if (!apiKey) {
+    console.error("[booking] RESEND_API_KEY is not set");
+    return failResponse(503, new Error("RESEND_API_KEY is not set"));
+  }
+
   const text = formatBookingLeadText(payload);
 
   try {
     const resend = new Resend(apiKey);
-    const { error } = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from,
-      to,
+      to: [to],
       subject: "Заявка с сайта ЦТТ Импульс",
       text,
     });
 
     if (error) {
-      console.error("Resend emails.send error:", error);
-      return NextResponse.json(
-        { error: SEND_FAIL_MESSAGE },
-        { status: 502 }
-      );
+      console.error("[booking] resend error", error);
+      return failResponse(502, error);
     }
 
+    console.error("[booking] sent", { id: data?.id ?? null });
     return NextResponse.json({ ok: true, method: "email" as const });
   } catch (err) {
-    console.error("Resend request error:", err);
-    return NextResponse.json({ error: SEND_FAIL_MESSAGE }, { status: 502 });
+    console.error("[booking] resend error", err);
+    return failResponse(502, err);
   }
 }
