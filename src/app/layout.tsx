@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { YandexMetrika } from "@/components/analytics/yandex-metrika";
 import { fontSans, fontVariables } from "@/lib/fonts";
 import { siteConfig } from "@/lib/site";
 
@@ -45,6 +46,7 @@ export default function RootLayout({
             __html: `#hero{background-color:#0A2F24;color:#fff}#hero [data-hero-content],#hero [data-hero-content] *{opacity:1!important;visibility:visible!important}#hero h1,#hero p,#hero a{color:#fff}`,
           }}
         />
+        <YandexMetrika />
         {children}
       </body>
     </html>
