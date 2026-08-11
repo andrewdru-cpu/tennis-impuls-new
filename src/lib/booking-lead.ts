@@ -19,7 +19,7 @@ export function formatBookingLeadText(payload: BookingLeadPayload): string {
     "",
     `Тип: ${payload.serviceType === "abonement" ? "Абонемент" : "Запись"}`,
     `Группа: ${payload.group}`,
-    `Услуга: ${payload.service}`,
+    `Услуга / направление: ${payload.service}`,
   ];
 
   if (payload.selectedAbonement) {
@@ -36,13 +36,4 @@ export function formatBookingLeadText(payload: BookingLeadPayload): string {
   }
 
   return lines.join("\n");
-}
-
-export function buildBookingMailtoHref(payload: BookingLeadPayload): string {
-  const subject =
-    payload.serviceType === "abonement"
-      ? `Заявка на абонемент — ${payload.service}`
-      : `Заявка на запись — ${payload.service}`;
-  const body = formatBookingLeadText(payload);
-  return `mailto:info@tennis-impuls.ru?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }

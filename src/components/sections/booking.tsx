@@ -171,44 +171,35 @@ const serviceGroups: {
 /* -------------------------------------------------------------------------- */
 
 /**
- * POST /api/booking:
- * — Telegram, если TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID;
- * — иначе mailto:info@tennis-impuls.ru (открываем почтовый клиент).
+ * POST /api/booking — заявка уходит на email через Resend.
  */
 async function submitBookingRequest(
   payload: BookingPayload
-): Promise<"telegram" | "mailto"> {
+): Promise<"email"> {
   const res = await fetch("/api/booking", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
-  if (!res.ok) {
-    throw new Error(`Booking submit failed: ${res.status}`);
-  }
-
-  const data = (await res.json()) as {
+  const data = (await res.json().catch(() => ({}))) as {
     ok?: boolean;
-    method?: "telegram" | "mailto";
-    href?: string;
+    method?: "email";
+    error?: string;
   };
 
-  if (data.method === "mailto" && data.href) {
-    const link = document.createElement("a");
-    link.href = data.href;
-    link.rel = "noopener noreferrer";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    return "mailto";
+  if (!res.ok) {
+    throw new Error(
+      data.error ||
+        "Не удалось отправить. Позвоните +7 (495) 114-68-01"
+    );
   }
 
-  if (data.method === "telegram") {
-    return "telegram";
+  if (data.method !== "email") {
+    throw new Error("Booking API returned unknown delivery method");
   }
 
-  throw new Error("Booking API returned unknown delivery method");
+  return "email";
 }
 
 function validateBookingForm(
@@ -288,14 +279,12 @@ function BookingSuccess({
   groupLabel,
   specialistLabel,
   isAbonement,
-  deliveryMethod,
   onReset,
 }: {
   serviceTitle: string;
   groupLabel: string;
   specialistLabel?: string;
   isAbonement?: boolean;
-  deliveryMethod: "telegram" | "mailto";
   onReset: () => void;
 }) {
   return (
@@ -310,16 +299,11 @@ function BookingSuccess({
         </span>
         <div className="mt-4 sm:mt-0 sm:ml-5">
           <p className="font-display text-xl font-bold text-forest-800 sm:text-2xl">
-            {deliveryMethod === "mailto"
-              ? "Откроется почта"
-              : "Заявка отправлена!"}
+            Заявка отправлена!
           </p>
           <p className="mt-2 text-sm leading-relaxed text-bright sm:text-base">
-            {deliveryMethod === "mailto"
-              ? "Мы не смогли отправить заявку автоматически. Отправьте письмо из почтового клиента или позвоните нам."
-              : isAbonement
-                ? "Мы перезвоним и оформим абонемент."
-                : "Мы свяжемся с вами в ближайшее время."}
+            Мы свяжемся с вами.
+            {isAbonement ? " Оформим абонемент по телефону." : ""}
           </p>
           <p className="mt-3 text-sm text-[#1F2E2A]/60">
             {isAbonement ? "Абонемент" : "Направление"}:{" "}
@@ -441,9 +425,6 @@ export function Booking() {
   const [abonementId, setAbonementId] = useState<string | null>(null);
   const [specialistId, setSpecialistId] = useState<string>(ANY_SPECIALIST_ID);
   const [submitted, setSubmitted] = useState(false);
-  const [deliveryMethod, setDeliveryMethod] = useState<
-    "telegram" | "mailto" | null
-  >(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<
@@ -475,7 +456,6 @@ export function Booking() {
 
   function resetFormState() {
     setSubmitted(false);
-    setDeliveryMethod(null);
     setIsSubmitting(false);
     setFormError(null);
     setFieldErrors({});
@@ -612,10 +592,9 @@ export function Booking() {
     setIsSubmitting(true);
 
     try {
-      let method: "telegram" | "mailto" | null = null;
       if (isAbonementTab && activeAbonement) {
         const label = formatAbonementLabel(activeAbonement);
-        method = await submitBookingRequest({
+        await submitBookingRequest({
           serviceType: "abonement",
           group: "Абонементы",
           service: label,
@@ -629,7 +608,7 @@ export function Booking() {
           time: "",
         });
       } else if (activeService && activeGroup) {
-        method = await submitBookingRequest({
+        await submitBookingRequest({
           serviceType: "session",
           group: activeGroup.label,
           service: activeService.title,
@@ -640,16 +619,16 @@ export function Booking() {
               : specialistId,
           ...data,
         });
-      }
-      if (!method) {
+      } else {
         throw new Error("Nothing to submit");
       }
       form.reset();
-      setDeliveryMethod(method);
       setSubmitted(true);
-    } catch {
+    } catch (err) {
       setFormError(
-        "Не удалось отправить заявку. Попробуйте ещё раз или свяжитесь с нами по телефону."
+        err instanceof Error && err.message
+          ? err.message
+          : "Не удалось отправить. Позвоните +7 (495) 114-68-01"
       );
     } finally {
       setIsSubmitting(false);
@@ -901,7 +880,7 @@ export function Booking() {
           {/* ── Шаг 4 · Форма ── */}
           {selectionReady && (
             <>
-              {submitted && deliveryMethod ? (
+              {submitted ? (
                 <BookingSuccess
                   serviceTitle={successTitle}
                   groupLabel={successGroup}
@@ -909,7 +888,6 @@ export function Booking() {
                     isAbonementTab ? undefined : specialistLabel
                   }
                   isAbonement={isAbonementTab}
-                  deliveryMethod={deliveryMethod}
                   onReset={resetFormState}
                 />
               ) : (

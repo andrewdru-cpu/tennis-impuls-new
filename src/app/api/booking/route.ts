@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
+import { Resend } from "resend";
 
 import {
-  buildBookingMailtoHref,
   formatBookingLeadText,
   type BookingLeadPayload,
 } from "@/lib/booking-lead";
 
 export const runtime = "nodejs";
+
+const PHONE_HINT = "+7 (495) 114-68-01";
+const SEND_FAIL_MESSAGE = `Не удалось отправить. Позвоните ${PHONE_HINT}`;
 
 function isValidPayload(body: unknown): body is BookingLeadPayload {
   if (!body || typeof body !== "object") return false;
@@ -23,9 +26,8 @@ function isValidPayload(body: unknown): body is BookingLeadPayload {
 }
 
 /**
- * POST /api/booking
- * — если TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID → сообщение в Telegram;
- * — иначе → клиенту отдаём mailto: на info@tennis-impuls.ru.
+ * POST /api/booking — отправка заявки через Resend (email).
+ * Требует RESEND_API_KEY. Без ключа → 503.
  */
 export async function POST(request: Request) {
   let payload: unknown;
@@ -39,47 +41,40 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
 
-  const token = process.env.TELEGRAM_BOT_TOKEN?.trim();
-  const chatId = process.env.TELEGRAM_CHAT_ID?.trim();
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  if (!apiKey) {
+    console.error("RESEND_API_KEY is not set");
+    return NextResponse.json(
+      { error: SEND_FAIL_MESSAGE },
+      { status: 503 }
+    );
+  }
 
-  if (token && chatId) {
-    const text = formatBookingLeadText(payload);
-    try {
-      const tgRes = await fetch(
-        `https://api.telegram.org/bot${token}/sendMessage`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text,
-            disable_web_page_preview: true,
-          }),
-        }
-      );
+  const from =
+    process.env.BOOKING_FROM_EMAIL?.trim() || "onboarding@resend.dev";
+  const to = process.env.BOOKING_TO_EMAIL?.trim() || "info@tennis-impuls.ru";
+  const text = formatBookingLeadText(payload);
 
-      if (!tgRes.ok) {
-        const errText = await tgRes.text().catch(() => "");
-        console.error("Telegram sendMessage failed:", tgRes.status, errText);
-        return NextResponse.json(
-          { error: "Telegram delivery failed" },
-          { status: 502 }
-        );
-      }
+  try {
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({
+      from,
+      to,
+      subject: "Заявка с сайта ЦТТ Импульс",
+      text,
+    });
 
-      return NextResponse.json({ ok: true, method: "telegram" as const });
-    } catch (err) {
-      console.error("Telegram request error:", err);
+    if (error) {
+      console.error("Resend emails.send error:", error);
       return NextResponse.json(
-        { error: "Telegram delivery failed" },
+        { error: SEND_FAIL_MESSAGE },
         { status: 502 }
       );
     }
-  }
 
-  return NextResponse.json({
-    ok: true,
-    method: "mailto" as const,
-    href: buildBookingMailtoHref(payload),
-  });
+    return NextResponse.json({ ok: true, method: "email" as const });
+  } catch (err) {
+    console.error("Resend request error:", err);
+    return NextResponse.json({ error: SEND_FAIL_MESSAGE }, { status: 502 });
+  }
 }
