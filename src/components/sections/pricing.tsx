@@ -6,8 +6,9 @@ import { Reveal } from "@/components/reveal";
 import { Button } from "@/components/ui/button";
 import {
   fullPriceSections,
-  pricingPlans,
+  pricingPlans as defaultPricingPlans,
   type PriceTableSection,
+  type PricingPlan,
 } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 
@@ -67,7 +68,11 @@ function PriceTable({ section }: { section: PriceTableSection }) {
   );
 }
 
-export function Pricing() {
+export function Pricing({
+  plans = defaultPricingPlans,
+}: {
+  plans?: PricingPlan[];
+}) {
   return (
     <Section
       id="pricing"
@@ -87,7 +92,7 @@ export function Pricing() {
       />
 
       <div className="section-inner mx-auto grid max-w-5xl grid-cols-1 items-stretch gap-6 lg:grid-cols-3 lg:gap-7">
-        {pricingPlans.map((plan, i) => (
+        {plans.map((plan, i) => (
           <Reveal key={plan.name} delay={i * 0.08} className="h-full">
             <div
               className={cn(

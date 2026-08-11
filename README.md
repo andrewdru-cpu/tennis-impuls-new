@@ -73,6 +73,56 @@ GitHub не принимает пароль при `git push` — нужен **P
 
 ---
 
+## Sanity CMS (цены, новости, Studio)
+
+Контент редактируется в **Sanity Studio**, встроенной в сайт:
+
+**https://tennis-impuls.ru/studio**  
+(локально: http://localhost:3000/studio)
+
+### Вход
+
+1. Откройте `/studio`.
+2. Войдите через аккаунт Sanity (приглашение высылает администратор проекта `vck1yb4o`).
+3. В [manage.sanity.io](https://www.sanity.io/manage) для проекта добавьте CORS-origin:
+   - `https://tennis-impuls.ru`
+   - `http://localhost:3000` (для разработки)
+   - Allow credentials: **да**
+
+### Переменные окружения
+
+В `.env.local` и на Vercel:
+
+```
+NEXT_PUBLIC_SANITY_PROJECT_ID=vck1yb4o
+NEXT_PUBLIC_SANITY_DATASET=production
+```
+
+### Как опубликовать цены
+
+1. Studio → **Тарифы (карточки)**.
+2. Добавьте/правьте элементы: название, цена (`priceLabel`), подзаголовок, «хит», порядок.
+3. Нажмите **Publish**.
+4. Через ~1 минуту карточки на главной (`/#pricing`) обновятся (revalidate 60 с).  
+   Если документов нет — сайт показывает локальные цены из кода (не ломается).
+
+### Как опубликовать новость
+
+1. Studio → **Новости** → Create.
+2. Заполните заголовок, slug (Generate), дату, краткое описание, обложку.
+3. **Publish**.
+4. Новость появится в блоке «Новости» на главной.  
+   Пустой CMS → локальные новости из кода.
+
+### Схемы (foundation)
+
+- `pricing` — singleton карточек тарифов  
+- `newsArticle` — новости  
+- `teamMember` — команда (пока без вывода на сайт, схема готова)  
+- `siteSettings` — телефон, email, адрес (singleton)
+
+---
+
 ## Деплой на Vercel
 
 Vercel — бесплатный хостинг для Next.js. После настройки **каждый `git push` в ветку `main`
@@ -83,7 +133,7 @@ Vercel — бесплатный хостинг для Next.js. После нас
 - `vercel.json` — Next.js, `npm install`, сборка `npm run build`, регион **fra1** (Франкфурт)
 - `package.json` → скрипты `"build": "next build"` и `"start": "next start"`
 - `.vercelignore` — служебные файлы и секреты не попадают в деплой
-- `.env.example` — шаблон переменных на будущее (YCLIENTS, webhook заявок)
+- `.env.example` — шаблон переменных (Sanity, Resend, YCLIENTS)
 
 ### 1. Подключить репозиторий
 
@@ -100,10 +150,8 @@ Vercel — бесплатный хостинг для Next.js. После нас
 
 ### 2. Переменные окружения (когда понадобятся)
 
-Сейчас проект работает **без** переменных окружения — для первого деплоя ничего
-добавлять не нужно.
-
-Когда появятся интеграции (YCLIENTS, отправка заявок и т.д.):
+Сейчас для работы сайта достаточно публичных переменных Sanity (см. выше).
+Resend и прочие секреты — по необходимости.
 
 1. Скопируйте `.env.example` → `.env.local` и заполните локально.
 2. В Vercel откройте **Project → Settings → Environment Variables**.
@@ -186,4 +234,4 @@ public/
 
 ## Технологии
 
-Next.js 15 (App Router) · TypeScript · Tailwind CSS · Framer Motion · lucide-react.
+Next.js 15 (App Router) · TypeScript · Tailwind CSS · Framer Motion · Sanity CMS · lucide-react.

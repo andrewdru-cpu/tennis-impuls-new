@@ -9,8 +9,14 @@ import { Team } from "@/components/sections/team";
 import { News } from "@/components/sections/news";
 import { Contacts } from "@/components/sections/contacts";
 import { Footer } from "@/components/sections/footer";
+import { getNewsArticles, getPricingPlans } from "@/lib/sanity.content";
 
-export default function Home() {
+export default async function Home() {
+  const [pricingPlans, newsArticles] = await Promise.all([
+    getPricingPlans(),
+    getNewsArticles(),
+  ]);
+
   return (
     <>
       <Navbar />
@@ -20,9 +26,9 @@ export default function Home() {
         <PromoVideo />
         <Services />
         <Booking />
-        <Pricing />
+        <Pricing plans={pricingPlans} />
         <Team />
-        <News />
+        <News articles={newsArticles} />
         <Contacts />
       </main>
       <Footer />

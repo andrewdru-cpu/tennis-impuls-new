@@ -9,7 +9,7 @@ import { Reveal } from "@/components/reveal";
 import { MediaImage } from "@/components/media/media-image";
 import { NewsModal } from "@/components/news/news-modal";
 import { Card } from "@/components/ui/card";
-import { newsArticles, isRecentNews, type NewsArticle } from "@/lib/news";
+import { newsArticles as defaultNews, isRecentNews, type NewsArticle } from "@/lib/news";
 import { cn } from "@/lib/utils";
 
 function NewsCard({
@@ -75,7 +75,11 @@ function NewsCard({
   );
 }
 
-export function News() {
+export function News({
+  articles = defaultNews,
+}: {
+  articles?: NewsArticle[];
+}) {
   const [activeArticle, setActiveArticle] = useState<NewsArticle | null>(null);
 
   return (
@@ -91,7 +95,7 @@ export function News() {
         />
 
         <div className="section-inner mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:gap-6">
-          {newsArticles.map((article, i) => (
+          {articles.map((article, i) => (
             <NewsCard
               key={article.id}
               article={article}
