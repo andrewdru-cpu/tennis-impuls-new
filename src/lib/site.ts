@@ -39,7 +39,6 @@ export type NavItem = {
 export const navItems: readonly NavItem[] = [
   { label: "Главная", href: "/#hero" },
   { label: "Услуги", href: "/#services" },
-  { label: "Бронирование", href: "/#booking" },
   { label: "Расписание", href: siteConfig.schedulePagePath },
   { label: "Личный кабинет", href: siteConfig.accountPagePath },
   { label: "Цены", href: "/#pricing" },

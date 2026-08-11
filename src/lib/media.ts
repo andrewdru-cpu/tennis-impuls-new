@@ -170,7 +170,7 @@ export const media = {
       alt: "Секция каратэ в ЦТТ Импульс",
     },
     massage: {
-      src: "/images/team/privalov-massage.webp",
+      src: "/images/team/privalov-massage.jpg",
       alt: "Массаж в ЦТТ Импульс — специалист Привалов",
     },
     sportShop: {
@@ -186,7 +186,8 @@ export const media = {
   /* -------------------------------------------------------- FACILITIES --- */
   facilities: {
     indoor: {
-      src: "/images/facilities/indoor.webp",
+      /** JPEG: стабильнее на desktop в корп. сетях (WebP часто блокируют) */
+      src: "/images/facilities/indoor.jpg",
       alt: "Крытые корты клуба с профессиональным покрытием",
     },
     hall: {
@@ -254,7 +255,7 @@ export const media = {
       alt: "Костанян Аркадий — тренер каратэ киокушинкай",
     },
     privalov: {
-      src: "/images/team/privalov-massage.webp",
+      src: "/images/team/privalov-massage.jpg",
       alt: "Привалов Роман — массажист-реабилитолог",
     },
   } satisfies Record<string, MediaImageSource>,

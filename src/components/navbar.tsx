@@ -109,7 +109,7 @@ export function Navbar() {
               <span className="2xl:hidden">Позвонить</span>
             </a>
             <Button asChild size="default" className="shrink-0 whitespace-nowrap">
-              <Link href="/#booking">Забронировать</Link>
+              <Link href={siteConfig.schedulePagePath}>Забронировать</Link>
             </Button>
           </div>
 
@@ -192,7 +192,10 @@ export function Navbar() {
                       {siteConfig.phone}
                     </a>
                     <Button asChild size="lg" className="w-full">
-                      <Link href="/#booking" onClick={() => setOpen(false)}>
+                      <Link
+                        href={siteConfig.schedulePagePath}
+                        onClick={() => setOpen(false)}
+                      >
                         Забронировать корт
                       </Link>
                     </Button>

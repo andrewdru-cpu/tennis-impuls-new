@@ -39,6 +39,7 @@ function mapSanityPlans(doc: SanityPricingDoc | null): PricingPlan[] | null {
         description: p.subtitle?.trim() || "",
         features: [],
         cta: "Забронировать",
+        ctaHref: "/schedule",
         featured: Boolean(p.featured),
       } satisfies PricingPlan;
     });

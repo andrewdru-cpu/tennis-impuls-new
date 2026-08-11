@@ -16,7 +16,7 @@ const PRIVALOV_FALLBACK: TeamMember = {
   id: "privalov",
   name: "Привалов Роман",
   category: "Массажист-реабилитолог",
-  photo: "/images/team/privalov-massage.webp",
+  photo: "/images/team/privalov-massage.jpg",
   bio: [
     "Специалист по массажу с медицинским образованием.",
     "Имеет Первую категорию по медицинскому массажу.",
@@ -42,13 +42,13 @@ export function MassageBlock() {
         <article className="card-infra group overflow-hidden">
           <div className="grid gap-0 lg:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] lg:items-stretch">
             {/* Портретный кадр: лицо + плечи, не wide-полоска */}
-            <div className="relative aspect-[3/4] w-full overflow-hidden sm:aspect-[4/5] lg:aspect-auto lg:min-h-[320px]">
+            <div className="relative aspect-[3/4] w-full overflow-hidden sm:aspect-[4/5] lg:aspect-auto lg:h-full lg:min-h-[320px]">
               <TeamPhoto
                 photo={member.photo}
                 alt={member.name}
                 ratio="portrait"
-                className="absolute inset-0 h-full w-full !aspect-auto"
-                imageClassName="object-cover object-[center_15%] transition-transform duration-700 ease-premium group-hover:scale-[1.03]"
+                className="!aspect-auto h-full min-h-[inherit] w-full rounded-none"
+                imageClassName="object-cover object-[center_18%] transition-transform duration-700 ease-premium group-hover:scale-[1.03]"
                 sizes="(max-width: 1024px) 100vw, 42vw"
               />
             </div>

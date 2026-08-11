@@ -193,7 +193,7 @@ export function Pricing({
                     "!bg-none bg-white text-forest-900 shadow-soft hover:!bg-lime hover:text-forest-950"
                 )}
               >
-                <a href={plan.ctaHref ?? "#booking"}>{plan.cta}</a>
+                <a href={plan.ctaHref ?? "/schedule"}>{plan.cta}</a>
               </Button>
             </div>
           </Reveal>

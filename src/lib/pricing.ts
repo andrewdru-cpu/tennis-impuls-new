@@ -13,7 +13,7 @@ export type PricingPlan = {
   /** Мелкая приписка под пунктами */
   note?: string;
   cta: string;
-  /** Ссылка CTA — по умолчанию #booking */
+  /** Ссылка CTA — по умолчанию расписание (бронь корта) */
   ctaHref?: string;
   featured?: boolean;
 };
@@ -42,6 +42,7 @@ export const pricingPlans: PricingPlan[] = [
       "Доступ к раздевалкам",
     ],
     cta: "Забронировать",
+    ctaHref: "/schedule",
   },
   {
     name: "Абонемент PRO",

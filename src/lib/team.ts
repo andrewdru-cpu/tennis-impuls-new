@@ -130,7 +130,7 @@ export const teamGroups: TeamGroup[] = [
         id: "privalov",
         name: "Привалов Роман",
         category: "Массажист-реабилитолог",
-        photo: "/images/team/privalov-massage.webp",
+        photo: "/images/team/privalov-massage.jpg",
         bio: [
           "Специалист по массажу с медицинским образованием.",
           "Имеет Первую категорию по медицинскому массажу.",

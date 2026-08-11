@@ -46,7 +46,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: "g07",
-    src: "/images/facilities/indoor.webp",
+    src: "/images/facilities/indoor.jpg",
     alt: "Крытые корты с профессиональным покрытием",
     caption: "Крытые корты",
   },

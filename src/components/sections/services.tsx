@@ -19,7 +19,9 @@ import { MassageBlock } from "@/components/services/massage-block";
 import { Button } from "@/components/ui/button";
 import { PictureImage } from "@/components/media/picture-image";
 import { media, type MediaImageSource } from "@/lib/media";
+import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 /* -------------------------------------------------------------------------- */
 /*  Данные                                                                    */
@@ -32,7 +34,8 @@ const courtSurfaces = [
     surface: "Полумягкий хард",
     detail:
       "Стандартная и детская площадки на полумягком харде — стабильный отскок и комфортная игра круглый год.",
-    image: media.services.rental,
+    /** JPEG primary: WebP часто режется корп. прокси на desktop */
+    image: media.facilities.indoor,
   },
   {
     label: "Падел",
@@ -537,10 +540,10 @@ export function Services() {
 
               <div className="flex justify-start">
                 <Button asChild variant="primary" size="lg">
-                  <a href="#booking">
+                  <Link href={siteConfig.schedulePagePath}>
                     Забронировать корт
                     <ArrowUpRight className="h-4 w-4" />
-                  </a>
+                  </Link>
                 </Button>
               </div>
             </div>

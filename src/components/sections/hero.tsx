@@ -173,7 +173,7 @@ export function Hero() {
               )}
             >
               <a
-                href="#booking"
+                href="/schedule"
                 style={{
                   color: "#ffffff",
                   backgroundColor: "#E05A38",
