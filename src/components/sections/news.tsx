@@ -95,14 +95,20 @@ export function News({
         />
 
         <div className="section-inner mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:gap-6">
-          {articles.map((article, i) => (
-            <NewsCard
-              key={article.id}
-              article={article}
-              index={i}
-              onOpen={setActiveArticle}
-            />
-          ))}
+          {articles.length === 0 ? (
+            <p className="col-span-full rounded-3xl border border-forest-900/10 bg-white px-6 py-12 text-center text-body text-[#1F2E2A]/65">
+              Скоро здесь появятся новости клуба
+            </p>
+          ) : (
+            articles.map((article, i) => (
+              <NewsCard
+                key={article.id}
+                article={article}
+                index={i}
+                onOpen={setActiveArticle}
+              />
+            ))
+          )}
         </div>
 
       <NewsModal

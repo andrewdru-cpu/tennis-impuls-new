@@ -160,9 +160,26 @@ export function findTeamGroupForMember(
 }
 
 /**
- * Специалисты для формы записи.
- * tennis → только теннисные тренеры
- * other → фитнес / ОФП / групповые + массаж (Привалов)
+ * Специалисты для записи к тренеру (плоский список).
+ * Без массажиста — массаж идёт отдельным типом занятия.
+ */
+export function getCoachSpecialists(): TeamMember[] {
+  const tennis =
+    teamGroups.find((group) => group.id === "tennis")?.members ?? [];
+  const fitness =
+    teamGroups.find((group) => group.id === "fitness")?.members ?? [];
+  return [...tennis, ...fitness];
+}
+
+/** Массажист (отдельный тип «Массаж») */
+export function getMassageSpecialist(): TeamMember | undefined {
+  return teamGroups
+    .find((group) => group.id === "massage")
+    ?.members.find((m) => m.id === "privalov");
+}
+
+/**
+ * @deprecated используйте getCoachSpecialists / getMassageSpecialist
  */
 export function getBookableSpecialists(
   bookingGroup: "tennis" | "other"
@@ -170,12 +187,11 @@ export function getBookableSpecialists(
   if (bookingGroup === "tennis") {
     return teamGroups.find((group) => group.id === "tennis")?.members ?? [];
   }
-
-  const fitness =
-    teamGroups.find((group) => group.id === "fitness")?.members ?? [];
-  const massage =
-    teamGroups.find((group) => group.id === "massage")?.members ?? [];
-  return [...fitness, ...massage];
+  return getCoachSpecialists().filter((m) =>
+    teamGroups
+      .find((g) => g.id === "fitness")
+      ?.members.some((f) => f.id === m.id)
+  );
 }
 
 /** Какая вкладка Booking соответствует специалисту */

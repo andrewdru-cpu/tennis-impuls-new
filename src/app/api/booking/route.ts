@@ -14,8 +14,10 @@ const SEND_FAIL_MESSAGE = `Не удалось отправить. Позвон�
 function isValidPayload(body: unknown): body is BookingLeadPayload {
   if (!body || typeof body !== "object") return false;
   const p = body as Record<string, unknown>;
+  const types = new Set(["personal", "group", "abonement", "massage"]);
   return (
-    (p.serviceType === "session" || p.serviceType === "abonement") &&
+    typeof p.serviceType === "string" &&
+    types.has(p.serviceType) &&
     typeof p.name === "string" &&
     p.name.trim().length >= 2 &&
     typeof p.phone === "string" &&

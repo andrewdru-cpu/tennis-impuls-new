@@ -1,7 +1,15 @@
 /** Общий тип заявки формы #booking (клиент ↔ API). */
+export type BookingServiceType =
+  | "personal"
+  | "group"
+  | "abonement"
+  | "massage";
+
 export type BookingLeadPayload = {
-  serviceType: "session" | "abonement";
+  serviceType: BookingServiceType;
+  /** Человекочитаемый тип / группа */
   group: string;
+  /** Краткое название услуги */
   service: string;
   specialist: string;
   specialistId: string;
@@ -13,13 +21,20 @@ export type BookingLeadPayload = {
   comment: string;
 };
 
+const TYPE_LABELS: Record<BookingServiceType, string> = {
+  personal: "Персональное занятие",
+  group: "Групповое занятие",
+  abonement: "Абонемент",
+  massage: "Массаж",
+};
+
 export function formatBookingLeadText(payload: BookingLeadPayload): string {
   const lines = [
     "Новая заявка с сайта tennis-impuls.ru",
     "",
-    `Тип: ${payload.serviceType === "abonement" ? "Абонемент" : "Запись"}`,
+    `Тип: ${TYPE_LABELS[payload.serviceType] ?? payload.serviceType}`,
     `Группа: ${payload.group}`,
-    `Услуга / направление: ${payload.service}`,
+    `Услуга: ${payload.service}`,
   ];
 
   if (payload.selectedAbonement) {
@@ -27,6 +42,9 @@ export function formatBookingLeadText(payload: BookingLeadPayload): string {
   }
   if (payload.specialist) {
     lines.push(`Специалист: ${payload.specialist}`);
+  }
+  if (payload.specialistId) {
+    lines.push(`ID специалиста: ${payload.specialistId}`);
   }
   lines.push(`Имя: ${payload.name}`, `Телефон: ${payload.phone}`);
   if (payload.date) lines.push(`Дата: ${payload.date}`);

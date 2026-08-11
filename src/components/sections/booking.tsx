@@ -1,25 +1,18 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import {
-  Activity,
-  Baby,
   CalendarDays,
   Check,
   Clock,
-  Flower2,
   HeartHandshake,
   Loader2,
-  Music,
   Package,
   Phone,
   Send,
-  Shield,
-  Sparkles,
-  Table2,
-  Target,
-  Trees,
   UserRound,
+  Users,
   type LucideIcon,
 } from "@/lib/icons";
 
@@ -27,6 +20,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { Section } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { Button } from "@/components/ui/button";
+import { PictureImage } from "@/components/media/picture-image";
 import {
   abonementCategories,
   findAbonement,
@@ -40,30 +34,25 @@ import {
   readAbonementFromUrl,
   readSpecialistFromUrl,
 } from "@/lib/booking-deeplink";
-import type { BookingLeadPayload } from "@/lib/booking-lead";
+import type {
+  BookingLeadPayload,
+  BookingServiceType,
+} from "@/lib/booking-lead";
 import {
   findTeamMember,
-  getBookableSpecialists,
-  getBookingGroupForMember,
+  getCoachSpecialists,
+  getMassageSpecialist,
   type TeamMember,
 } from "@/lib/team";
-import { PictureImage } from "@/components/media/picture-image";
 import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 
-/* -------------------------------------------------------------------------- */
-/*  Данные                                                                    */
-/* -------------------------------------------------------------------------- */
+const ANY_SPECIALIST_ID = "any";
 
-type BookingTabId = "tennis" | "other" | "abonement";
+const COMMENT_PLACEHOLDER =
+  "Укажите пожелания: вид занятия (теннис, падел, йога, фитнес…), формат, удобное время, другие пожелания";
 
-type Service = {
-  id: string;
-  icon: LucideIcon;
-  title: string;
-  detail: string;
-};
+type LessonTypeId = "personal" | "group" | "massage" | "abonement";
 
 type BookingFormValues = {
   name: string;
@@ -73,108 +62,40 @@ type BookingFormValues = {
   comment: string;
 };
 
-type BookingPayload = BookingLeadPayload;
-
-const ANY_SPECIALIST_ID = "any";
-
-const bookingTabs: {
-  id: BookingTabId;
+const lessonTypes: {
+  id: LessonTypeId;
   label: string;
+  hint: string;
   icon: LucideIcon;
 }[] = [
-  { id: "tennis", label: "Теннисные виды спорта", icon: Target },
-  { id: "other", label: "Другие направления", icon: Sparkles },
-  { id: "abonement", label: "Абонементы", icon: Package },
-];
-
-const serviceGroups: {
-  id: Exclude<BookingTabId, "abonement">;
-  label: string;
-  services: Service[];
-}[] = [
   {
-    id: "tennis",
-    label: "Теннисные виды спорта",
-    services: [
-      {
-        id: "ground-court",
-        icon: Trees,
-        title: "Открытый грунтовый корт",
-        detail: "Покрытие Tennisit",
-      },
-      {
-        id: "indoor-court",
-        icon: Target,
-        title: "Крытый корт",
-        detail: "Полумягкий хард",
-      },
-      {
-        id: "kids-court",
-        icon: Baby,
-        title: "Детская площадка",
-        detail: "Полумягкий хард",
-      },
-      {
-        id: "padel-court",
-        icon: Activity,
-        title: "Падел-корт",
-        detail: "Полумягкий хард",
-      },
-      {
-        id: "table-tennis",
-        icon: Table2,
-        title: "Настольный теннис",
-        detail: "4 профессиональных стола",
-      },
-    ],
+    id: "personal",
+    label: "Персональное занятие",
+    hint: "1:1 с тренером",
+    icon: UserRound,
   },
   {
-    id: "other",
-    label: "Другие направления",
-    services: [
-      {
-        id: "ofp",
-        icon: Activity,
-        title: "Залы ОФП и специальной подготовки",
-        detail: "Сила и функциональная база",
-      },
-      {
-        id: "yoga",
-        icon: Flower2,
-        title: "Йога",
-        detail: "Гибкость и восстановление",
-      },
-      {
-        id: "karate",
-        icon: Shield,
-        title: "Каратэ",
-        detail: "Для детей и взрослых",
-      },
-      {
-        id: "dance",
-        icon: Music,
-        title: "Танцы",
-        detail: "Групповые и индивидуальные",
-      },
-      {
-        id: "massage",
-        icon: HeartHandshake,
-        title: "Массаж",
-        detail: "Спортивный / восстановительный",
-      },
-    ],
+    id: "group",
+    label: "Групповое занятие",
+    hint: "В группе",
+    icon: Users,
+  },
+  {
+    id: "massage",
+    label: "Массаж",
+    hint: "Спортивный / восстановительный",
+    icon: HeartHandshake,
+  },
+  {
+    id: "abonement",
+    label: "Абонемент",
+    hint: "Пакет занятий",
+    icon: Package,
   },
 ];
 
-/* -------------------------------------------------------------------------- */
-/*  Отправка                                                                   */
-/* -------------------------------------------------------------------------- */
-
-/**
- * POST /api/booking — заявка уходит на email через Resend.
- */
 async function submitBookingRequest(
-  payload: BookingPayload
+  payload: BookingLeadPayload
 ): Promise<"email"> {
   const res = await fetch("/api/booking", {
     method: "POST",
@@ -190,8 +111,7 @@ async function submitBookingRequest(
 
   if (!res.ok) {
     throw new Error(
-      data.error ||
-        "Не удалось отправить. Позвоните +7 (495) 114-68-01"
+      data.error || "Не удалось отправить. Позвоните +7 (495) 114-68-01"
     );
   }
 
@@ -203,8 +123,7 @@ async function submitBookingRequest(
 }
 
 function validateBookingForm(
-  values: BookingFormValues,
-  mode: "session" | "abonement"
+  values: BookingFormValues
 ): Partial<Record<keyof BookingFormValues, string>> {
   const errors: Partial<Record<keyof BookingFormValues, string>> = {};
   const name = values.name.trim();
@@ -222,15 +141,6 @@ function validateBookingForm(
     errors.phone = "Введите корректный номер телефона";
   }
 
-  if (mode === "session") {
-    if (!values.date) {
-      errors.date = "Выберите предпочтительную дату";
-    }
-    if (!values.time) {
-      errors.time = "Выберите предпочтительное время";
-    }
-  }
-
   return errors;
 }
 
@@ -240,10 +150,6 @@ function shortCategory(category: string): string {
     .replace(/^Тренер\s+/i, "")
     .trim();
 }
-
-/* -------------------------------------------------------------------------- */
-/*  UI                                                                        */
-/* -------------------------------------------------------------------------- */
 
 const inputClass = cn(
   "w-full rounded-xl border border-forest-900/12 bg-white px-4 py-3.5 text-sm text-[#1F2E2A]",
@@ -259,13 +165,7 @@ const inputErrorClass =
 const labelClass =
   "mb-2 flex items-center gap-2 text-sm font-medium text-[#1F2E2A]/75";
 
-function FieldError({
-  message,
-  id,
-}: {
-  message?: string;
-  id?: string;
-}) {
+function FieldError({ message, id }: { message?: string; id?: string }) {
   if (!message) return null;
   return (
     <p id={id} className="mt-1.5 text-xs font-medium text-red-600" role="alert">
@@ -276,13 +176,11 @@ function FieldError({
 
 function BookingSuccess({
   serviceTitle,
-  groupLabel,
   specialistLabel,
   isAbonement,
   onReset,
 }: {
   serviceTitle: string;
-  groupLabel: string;
   specialistLabel?: string;
   isAbonement?: boolean;
   onReset: () => void;
@@ -306,11 +204,10 @@ function BookingSuccess({
             {isAbonement ? " Оформим абонемент по телефону." : ""}
           </p>
           <p className="mt-3 text-sm text-[#1F2E2A]/60">
-            {isAbonement ? "Абонемент" : "Направление"}:{" "}
+            {isAbonement ? "Абонемент" : "Тип"}:{" "}
             <span className="font-semibold text-terracotta-600">
               {serviceTitle}
-            </span>{" "}
-            <span className="text-[#1F2E2A]/45">({groupLabel})</span>
+            </span>
           </p>
           {!isAbonement && specialistLabel && (
             <p className="mt-1 text-sm text-[#1F2E2A]/60">
@@ -357,15 +254,15 @@ function SpecialistChip({
       aria-checked={selected}
       onClick={onSelect}
       className={cn(
-        "chip-interactive group flex min-w-[11.5rem] flex-1 items-center gap-3 rounded-2xl border p-3 text-left sm:min-w-0 sm:p-3.5",
+        "flex w-full items-center gap-3 rounded-2xl border p-3 text-left transition-[border-color,background-color,box-shadow] duration-300 sm:p-3.5",
         selected
-          ? "border-terracotta bg-terracotta/10 shadow-[0_0_0_1px_rgba(206,88,56,0.35),0_8px_28px_-8px_rgba(206,88,56,0.35)]"
-          : "border-forest-900/10 bg-white hover:-translate-y-0.5 hover:border-terracotta/40 hover:bg-cream/60 hover:shadow-soft"
+          ? "border-terracotta bg-terracotta/10 shadow-[0_0_0_1px_rgba(206,88,56,0.35)]"
+          : "border-forest-900/10 bg-white hover:border-terracotta/40 hover:bg-cream/60"
       )}
     >
       <span
         className={cn(
-          "relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 transition-colors duration-300",
+          "relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2",
           selected ? "ring-terracotta/50" : "ring-forest-900/8"
         )}
       >
@@ -420,8 +317,7 @@ function SpecialistChip({
 
 export function Booking() {
   const formRef = useRef<HTMLFormElement>(null);
-  const [tabId, setTabId] = useState<BookingTabId>("tennis");
-  const [serviceId, setServiceId] = useState<string | null>(null);
+  const [lessonType, setLessonType] = useState<LessonTypeId>("personal");
   const [abonementId, setAbonementId] = useState<string | null>(null);
   const [specialistId, setSpecialistId] = useState<string>(ANY_SPECIALIST_ID);
   const [submitted, setSubmitted] = useState(false);
@@ -431,28 +327,30 @@ export function Booking() {
     Partial<Record<keyof BookingFormValues, string>>
   >({});
 
-  const isAbonementTab = tabId === "abonement";
-  const activeGroup = isAbonementTab
-    ? null
-    : serviceGroups.find((g) => g.id === tabId)!;
-  const activeService =
-    activeGroup?.services.find((s) => s.id === serviceId) ?? null;
+  const coaches = useMemo(() => getCoachSpecialists(), []);
+  const massageSpecialist = useMemo(() => getMassageSpecialist(), []);
+  const isAbonement = lessonType === "abonement";
+  const isMassage = lessonType === "massage";
+  const showCoachPicker = lessonType === "personal" || lessonType === "group";
+
   const activeAbonement: AbonementItem | null = abonementId
     ? (findAbonement(abonementId) ?? null)
     : null;
-  const bookableSpecialists = useMemo(
-    () => (isAbonementTab ? [] : getBookableSpecialists(tabId)),
-    [isAbonementTab, tabId]
-  );
-  const activeSpecialist: TeamMember | null =
-    specialistId === ANY_SPECIALIST_ID
+
+  const activeSpecialist: TeamMember | null = isMassage
+    ? (massageSpecialist ?? null)
+    : specialistId === ANY_SPECIALIST_ID
       ? null
       : (findTeamMember(specialistId) ?? null);
-  const specialistLabel = activeSpecialist?.name ?? "Любой специалист";
 
-  const selectionReady = isAbonementTab
-    ? Boolean(activeAbonement)
-    : Boolean(activeService);
+  const specialistLabel = isMassage
+    ? (massageSpecialist?.name ?? "Массажист")
+    : specialistId === ANY_SPECIALIST_ID
+      ? "Любой специалист"
+      : (activeSpecialist?.name ?? "Любой специалист");
+
+  const typeLabel =
+    lessonTypes.find((t) => t.id === lessonType)?.label ?? lessonType;
 
   function resetFormState() {
     setSubmitted(false);
@@ -465,43 +363,33 @@ export function Booking() {
   function applySpecialistDeepLink(rawId: string | null) {
     if (!rawId) return;
     const member = findTeamMember(rawId);
-    const bookingGroup = getBookingGroupForMember(rawId);
-    if (!member || !bookingGroup) return;
+    if (!member) return;
 
-    setTabId(bookingGroup);
-    setAbonementId(null);
-    setSpecialistId(member.id);
-    setServiceId(member.id === "privalov" ? "massage" : null);
-    resetFormState();
+    if (member.id === "privalov") {
+      setLessonType("massage");
+      setAbonementId(null);
+      setSpecialistId(member.id);
+    } else {
+      setLessonType("personal");
+      setAbonementId(null);
+      setSpecialistId(member.id);
+    }
+    setSubmitted(false);
+    setFormError(null);
   }
 
   function applyAbonementDeepLink(rawId: string | null) {
-    if (!isAbonementBookingInUrl() && !rawId) return;
-    const id = rawId ?? readAbonementFromUrl();
-    if (!id) {
-      if (isAbonementBookingInUrl()) {
-        setTabId("abonement");
-        setServiceId(null);
-        setSpecialistId(ANY_SPECIALIST_ID);
-        setAbonementId(null);
-        resetFormState();
-      }
-      return;
-    }
-    // Неизвестный id — всё равно открываем вкладку абонементов без предвыбора
-    const item = findAbonement(id);
-    setTabId("abonement");
-    setServiceId(null);
+    setLessonType("abonement");
+    setAbonementId(rawId && findAbonement(rawId) ? rawId : null);
     setSpecialistId(ANY_SPECIALIST_ID);
-    setAbonementId(item?.id ?? null);
-    resetFormState();
+    setSubmitted(false);
+    setFormError(null);
   }
 
   useEffect(() => {
+    applySpecialistDeepLink(readSpecialistFromUrl());
     if (isAbonementBookingInUrl()) {
       applyAbonementDeepLink(readAbonementFromUrl());
-    } else {
-      applySpecialistDeepLink(readSpecialistFromUrl());
     }
 
     const onSpecialist = (event: Event) => {
@@ -512,75 +400,32 @@ export function Booking() {
       const detail = (event as CustomEvent<{ abonementId?: string }>).detail;
       applyAbonementDeepLink(detail?.abonementId ?? readAbonementFromUrl());
     };
-    const onPop = () => {
-      if (isAbonementBookingInUrl()) {
-        applyAbonementDeepLink(readAbonementFromUrl());
-      } else {
-        applySpecialistDeepLink(readSpecialistFromUrl());
-      }
-    };
 
     window.addEventListener(BOOKING_SPECIALIST_EVENT, onSpecialist);
     window.addEventListener(BOOKING_ABONEMENT_EVENT, onAbonement);
-    window.addEventListener("popstate", onPop);
-    window.addEventListener("hashchange", onPop);
     return () => {
       window.removeEventListener(BOOKING_SPECIALIST_EVENT, onSpecialist);
       window.removeEventListener(BOOKING_ABONEMENT_EVENT, onAbonement);
-      window.removeEventListener("popstate", onPop);
-      window.removeEventListener("hashchange", onPop);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount listeners once
   }, []);
 
-  useEffect(() => {
-    if (isAbonementTab || specialistId === ANY_SPECIALIST_ID) return;
-    const stillValid = bookableSpecialists.some((m) => m.id === specialistId);
-    if (!stillValid) setSpecialistId(ANY_SPECIALIST_ID);
-  }, [bookableSpecialists, specialistId, isAbonementTab]);
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const data: BookingFormValues = {
+      name: String(fd.get("name") ?? ""),
+      phone: String(fd.get("phone") ?? ""),
+      date: String(fd.get("date") ?? ""),
+      time: String(fd.get("time") ?? ""),
+      comment: String(fd.get("comment") ?? ""),
+    };
 
-  function selectTab(id: BookingTabId) {
-    setTabId(id);
-    setServiceId(null);
-    setAbonementId(null);
-    setSpecialistId(ANY_SPECIALIST_ID);
-    resetFormState();
-  }
-
-  function selectService(id: string) {
-    setServiceId(id);
-    resetFormState();
-  }
-
-  function selectAbonement(id: string) {
-    setAbonementId(id);
-    resetFormState();
-  }
-
-  function clearFieldError(field: keyof BookingFormValues) {
-    setFieldErrors((prev) => {
-      if (!prev[field]) return prev;
-      const next = { ...prev };
-      delete next[field];
-      return next;
-    });
-  }
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    const form = event.currentTarget;
-    const data = Object.fromEntries(new FormData(form)) as BookingFormValues;
-    const mode = isAbonementTab ? "abonement" : "session";
-
-    if (isAbonementTab) {
-      if (!activeAbonement) return;
-    } else if (!activeService || !activeGroup) {
+    if (isAbonement && !activeAbonement) {
+      setFormError("Выберите абонемент");
       return;
     }
 
-    const errors = validateBookingForm(data, mode);
-
+    const errors = validateBookingForm(data);
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       setFormError("Заполните обязательные поля, чтобы отправить заявку.");
@@ -592,37 +437,49 @@ export function Booking() {
     setIsSubmitting(true);
 
     try {
-      if (isAbonementTab && activeAbonement) {
+      const serviceType: BookingServiceType = lessonType;
+      let group = typeLabel;
+      let service = typeLabel;
+      let selectedAbonement: string | undefined;
+      let specialist = "";
+      let specId = "";
+
+      if (isAbonement && activeAbonement) {
         const label = formatAbonementLabel(activeAbonement);
-        await submitBookingRequest({
-          serviceType: "abonement",
-          group: "Абонементы",
-          service: label,
-          selectedAbonement: label,
-          specialist: "",
-          specialistId: "",
-          name: data.name,
-          phone: data.phone,
-          comment: data.comment ?? "",
-          date: "",
-          time: "",
-        });
-      } else if (activeService && activeGroup) {
-        await submitBookingRequest({
-          serviceType: "session",
-          group: activeGroup.label,
-          service: activeService.title,
-          specialist: specialistLabel,
-          specialistId:
-            specialistId === ANY_SPECIALIST_ID
-              ? ANY_SPECIALIST_ID
-              : specialistId,
-          ...data,
-        });
+        group = "Абонементы";
+        service = label;
+        selectedAbonement = label;
+      } else if (isMassage) {
+        group = "Массаж";
+        service = "Массаж";
+        specialist = specialistLabel;
+        specId = massageSpecialist?.id ?? "privalov";
       } else {
-        throw new Error("Nothing to submit");
+        group =
+          lessonType === "personal"
+            ? "Персональные занятия"
+            : "Групповые занятия";
+        service = typeLabel;
+        specialist = specialistLabel;
+        specId =
+          specialistId === ANY_SPECIALIST_ID ? ANY_SPECIALIST_ID : specialistId;
       }
-      form.reset();
+
+      await submitBookingRequest({
+        serviceType,
+        group,
+        service,
+        specialist,
+        specialistId: specId,
+        selectedAbonement,
+        name: data.name,
+        phone: data.phone,
+        date: data.date,
+        time: data.time,
+        comment: data.comment ?? "",
+      });
+
+      formRef.current?.reset();
       setSubmitted(true);
     } catch (err) {
       setFormError(
@@ -635,234 +492,162 @@ export function Booking() {
     }
   }
 
-  const successTitle = isAbonementTab
-    ? activeAbonement
+  const successTitle =
+    isAbonement && activeAbonement
       ? formatAbonementLabel(activeAbonement)
-      : ""
-    : (activeService?.title ?? "");
-  const successGroup = isAbonementTab
-    ? "Абонементы"
-    : (activeGroup?.label ?? "");
+      : typeLabel;
 
   return (
-    <Section
-      id="booking"
-      className="relative overflow-hidden bg-gradient-to-b from-lime-50 via-cream to-white py-16 sm:py-24 lg:py-28"
-      before={
-        <>
-          <div
-            className="absolute -right-40 top-0 h-[420px] w-[420px] rounded-full bg-terracotta/12 blur-[120px]"
-            aria-hidden
-          />
-          <div
-            className="absolute -left-32 bottom-0 h-[320px] w-[320px] rounded-full bg-lime/20 blur-[110px]"
-            aria-hidden
-          />
-        </>
-      }
-    >
+    <Section id="booking" tone="muted" className="overflow-hidden">
       <SectionHeading
-        align="center"
-        className="mx-auto"
-        eyebrow="Запись на услуги"
+        eyebrow="Запись"
         title={
           <>
-            Записаться{" "}
-            <span className="text-terracotta-600">на занятие</span>
+            Запишитесь на{" "}
+            <span className="text-terracotta-600">занятие</span>
           </>
         }
-        description="Выберите направление, услугу или абонемент. Мы свяжемся с вами для подтверждения."
+        description="Оставьте заявку на персональное или групповое занятие. Направление и детали — в комментарии. Мы перезвоним и уточним запись."
       />
 
-      <div className="mt-5 flex justify-center sm:mt-6">
-        <Button
-          asChild
-          variant="outline"
-          size="lg"
-          className="border-terracotta/35 bg-white/90 font-bold text-forest-800 hover:border-terracotta hover:bg-terracotta/5 hover:text-terracotta-600"
-        >
-          <Link href={siteConfig.schedulePagePath}>
-            <CalendarDays className="h-4 w-4" />
-            Смотреть расписание
-          </Link>
-        </Button>
-      </div>
-
-      <Reveal delay={0.1} className="section-inner mx-auto mt-8 max-w-5xl sm:mt-10">
-        <div className="card-form-light p-6 sm:p-8 lg:p-10">
-          {/* ── Шаг 1 · Вкладки ── */}
-          <div className="grid grid-cols-1 gap-2 rounded-[1.25rem] bg-forest-900/[0.03] p-2 ring-1 ring-forest-900/10 sm:grid-cols-3">
-            {bookingTabs.map((tab) => {
-              const TabIcon = tab.icon;
-              const isActive = tab.id === tabId;
+      <Reveal className="section-inner mx-auto max-w-3xl">
+        <div className="rounded-[1.75rem] border border-forest-900/10 bg-white p-5 shadow-soft sm:p-8">
+          {/* Шаг 1 · Тип */}
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-terracotta-600">
+            Шаг 1 · Тип занятия
+          </p>
+          <div
+            className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2"
+            role="radiogroup"
+            aria-label="Тип занятия"
+          >
+            {lessonTypes.map((type) => {
+              const Icon = type.icon;
+              const selected = lessonType === type.id;
               return (
                 <button
-                  key={tab.id}
+                  key={type.id}
                   type="button"
-                  onClick={() => selectTab(tab.id)}
-                  aria-pressed={isActive}
+                  role="radio"
+                  aria-checked={selected}
+                  onClick={() => {
+                    setLessonType(type.id);
+                    setSubmitted(false);
+                    setFormError(null);
+                    if (type.id === "massage") {
+                      setSpecialistId(
+                        massageSpecialist?.id ?? ANY_SPECIALIST_ID
+                      );
+                    } else if (type.id !== "abonement") {
+                      /* keep specialist if coach still valid */
+                    } else {
+                      setSpecialistId(ANY_SPECIALIST_ID);
+                    }
+                  }}
                   className={cn(
-                    "chip-interactive flex min-h-[72px] items-center justify-center gap-3 rounded-2xl px-4 py-4 text-sm font-bold sm:min-h-[76px] sm:px-5 sm:text-base",
-                    isActive
-                      ? "bg-gradient-to-r from-terracotta to-terracotta-500 text-white shadow-terracotta"
-                      : "text-[#1F2E2A]/75 hover:bg-terracotta/10 hover:text-[#1F2E2A]"
+                    "flex items-center gap-3 rounded-2xl border px-4 py-3.5 text-left transition-colors duration-300",
+                    selected
+                      ? "border-terracotta bg-terracotta/10"
+                      : "border-forest-900/10 bg-cream/40 hover:border-terracotta/35 hover:bg-cream"
                   )}
                 >
-                  <TabIcon
+                  <span
                     className={cn(
-                      "h-5 w-5 shrink-0",
-                      !isActive && "text-terracotta"
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
+                      selected
+                        ? "bg-terracotta text-white"
+                        : "bg-white text-terracotta"
                     )}
-                    aria-hidden
-                  />
-                  <span className="text-center leading-snug">{tab.label}</span>
+                  >
+                    <Icon className="h-5 w-5" aria-hidden />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-sm font-bold text-forest-800">
+                      {type.label}
+                    </span>
+                    <span className="mt-0.5 block text-xs text-[#1F2E2A]/55">
+                      {type.hint}
+                    </span>
+                  </span>
                 </button>
               );
             })}
           </div>
 
-          {/* ── Шаг 2 · Услуга или абонемент ── */}
-          {isAbonementTab ? (
-            <div className="mt-7 space-y-6">
-              <p className="text-sm font-medium text-[#1F2E2A]/75">
+          {/* Абонементы */}
+          {isAbonement && (
+            <div className="mt-8">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-terracotta-600">
                 Выберите абонемент
               </p>
-              {abonementCategories.map((category) => (
-                <div key={category.id}>
-                  <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-[#1F2E2A]/45">
-                    {category.title}
-                  </p>
-                  <div
-                    role="radiogroup"
-                    aria-label={category.title}
-                    className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3"
-                  >
-                    {category.items.map((item) => {
-                      const isSelected = item.id === abonementId;
-                      return (
-                        <button
-                          key={item.id}
-                          type="button"
-                          role="radio"
-                          aria-checked={isSelected}
-                          onClick={() => selectAbonement(item.id)}
-                          className={cn(
-                            "chip-interactive group flex items-center gap-3 rounded-2xl border p-4 text-left sm:p-5",
-                            isSelected
-                              ? "border-terracotta bg-terracotta/10 shadow-[0_0_0_1px_rgba(206,88,56,0.35),0_8px_28px_-8px_rgba(206,88,56,0.35)]"
-                              : "border-forest-900/10 bg-white hover:-translate-y-0.5 hover:border-terracotta/40 hover:bg-cream/60 hover:shadow-soft"
-                          )}
-                        >
-                          <span
+              <div className="mt-3 space-y-4">
+                {abonementCategories.map((category) => (
+                  <div key={category.id}>
+                    <p className="mb-2 text-sm font-semibold text-forest-800">
+                      {category.title}
+                    </p>
+                    <div
+                      className="grid grid-cols-1 gap-2 sm:grid-cols-2"
+                      role="radiogroup"
+                      aria-label={category.title}
+                    >
+                      {category.items.map((item) => {
+                        const selected = item.id === abonementId;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            role="radio"
+                            aria-checked={selected}
+                            onClick={() => {
+                              setAbonementId(item.id);
+                              setSubmitted(false);
+                            }}
                             className={cn(
-                              "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300",
-                              isSelected
-                                ? "bg-terracotta text-white"
-                                : "bg-terracotta/10 text-terracotta"
+                              "rounded-2xl border p-4 text-left transition-colors",
+                              selected
+                                ? "border-terracotta bg-terracotta/10"
+                                : "border-forest-900/10 bg-cream/30 hover:border-terracotta/35"
                             )}
                           >
-                            <Package className="h-5 w-5" aria-hidden />
-                          </span>
-                          <span className="min-w-0">
-                            <span className="block text-sm font-bold leading-snug text-forest-800">
-                              {item.title}
+                            <span className="block text-sm font-bold text-forest-800">
+                              {formatAbonementLabel(item)}
                             </span>
-                            <span className="mt-0.5 block text-xs text-[#1F2E2A]/55">
-                              {item.price}
-                            </span>
-                          </span>
-                          {isSelected && (
-                            <Check
-                              className="ml-auto h-5 w-5 shrink-0 text-terracotta"
-                              aria-hidden
-                            />
-                          )}
-                        </button>
-                      );
-                    })}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="mt-7">
-              <p className="mb-3 text-sm font-medium text-[#1F2E2A]/75">
-                Выберите услугу
-              </p>
-              <div
-                role="radiogroup"
-                aria-label={`Услуги: ${activeGroup!.label}`}
-                className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3"
-              >
-                {activeGroup!.services.map((service) => {
-                  const ServiceIcon = service.icon;
-                  const isSelected = service.id === serviceId;
-                  return (
-                    <button
-                      key={service.id}
-                      type="button"
-                      role="radio"
-                      aria-checked={isSelected}
-                      onClick={() => selectService(service.id)}
-                      className={cn(
-                        "chip-interactive group flex items-center gap-3 rounded-2xl border p-4 text-left sm:p-5",
-                        isSelected
-                          ? "border-terracotta bg-terracotta/10 shadow-[0_0_0_1px_rgba(206,88,56,0.35),0_8px_28px_-8px_rgba(206,88,56,0.35)]"
-                          : "border-forest-900/10 bg-white hover:-translate-y-0.5 hover:border-terracotta/40 hover:bg-cream/60 hover:shadow-soft"
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300",
-                          isSelected
-                            ? "bg-terracotta text-white"
-                            : "bg-terracotta/10 text-terracotta"
-                        )}
-                      >
-                        <ServiceIcon className="h-5 w-5" aria-hidden />
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block text-sm font-bold leading-snug text-forest-800">
-                          {service.title}
-                        </span>
-                        <span className="mt-0.5 block text-xs text-[#1F2E2A]/55">
-                          {service.detail}
-                        </span>
-                      </span>
-                      {isSelected && (
-                        <Check
-                          className="ml-auto h-5 w-5 shrink-0 text-terracotta"
-                          aria-hidden
-                        />
-                      )}
-                    </button>
-                  );
-                })}
+                ))}
               </div>
             </div>
           )}
 
-          {/* ── Шаг 3 · Специалист (только для сессий) ── */}
-          {!isAbonementTab && activeService && (
-            <div className="mt-7">
-              <p className="mb-1 text-sm font-medium text-[#1F2E2A]/75">
-                Выберите специалиста
+          {/* Шаг 2 · Специалист */}
+          {showCoachPicker && (
+            <div className="mt-8">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-terracotta-600">
+                Шаг 2 · Специалист
+                <span className="ml-1 font-medium normal-case tracking-normal text-[#1F2E2A]/45">
+                  (необязательно)
+                </span>
               </p>
-              <p className="mb-3 text-xs text-[#1F2E2A]/50">
-                Необязательно — можно оставить «Любой специалист»
+              <p className="mt-2 text-sm text-[#1F2E2A]/60">
+                Выберите тренера или оставьте «Любой специалист». Вид занятия
+                (теннис, падел, йога…) укажите в комментарии.
               </p>
               <div
+                className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2"
                 role="radiogroup"
                 aria-label="Специалист"
-                className="-mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3"
               >
                 <SpecialistChip
                   selected={specialistId === ANY_SPECIALIST_ID}
                   onSelect={() => setSpecialistId(ANY_SPECIALIST_ID)}
                   label="Любой специалист"
-                  detail="Подберём за вас"
+                  detail="Подберём подходящего тренера"
                 />
-                {bookableSpecialists.map((member) => (
+                {coaches.map((member) => (
                   <SpecialistChip
                     key={member.id}
                     selected={specialistId === member.id}
@@ -877,226 +662,175 @@ export function Booking() {
             </div>
           )}
 
-          {/* ── Шаг 4 · Форма ── */}
-          {selectionReady && (
-            <>
-              {submitted ? (
-                <BookingSuccess
-                  serviceTitle={successTitle}
-                  groupLabel={successGroup}
-                  specialistLabel={
-                    isAbonementTab ? undefined : specialistLabel
-                  }
-                  isAbonement={isAbonementTab}
-                  onReset={resetFormState}
-                />
-              ) : (
-                <form
-                  ref={formRef}
-                  key={
-                    isAbonementTab
-                      ? `abonement-${abonementId}`
-                      : `service-${serviceId}`
-                  }
-                  onSubmit={handleSubmit}
-                  noValidate
-                  className="mt-8 animate-fade-up"
+          {isMassage && massageSpecialist && (
+            <div className="mt-8 rounded-2xl border border-forest-900/10 bg-cream/50 p-4">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-terracotta-600">
+                Специалист
+              </p>
+              <p className="mt-2 font-display text-lg font-bold text-forest-800">
+                {massageSpecialist.name}
+              </p>
+              <p className="mt-0.5 text-sm text-[#1F2E2A]/60">
+                {massageSpecialist.category}
+              </p>
+            </div>
+          )}
+
+          {/* Форма */}
+          {submitted ? (
+            <BookingSuccess
+              serviceTitle={successTitle}
+              specialistLabel={isAbonement ? undefined : specialistLabel}
+              isAbonement={isAbonement}
+              onReset={resetFormState}
+            />
+          ) : (
+            <form
+              ref={formRef}
+              onSubmit={handleSubmit}
+              noValidate
+              className="mt-8"
+            >
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-terracotta-600">
+                {showCoachPicker || isMassage ? "Шаг 3" : "Шаг 2"} · Контакты
+              </p>
+
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="sm:col-span-1">
+                  <label htmlFor="booking-name" className={labelClass}>
+                    Имя <span className="text-terracotta">*</span>
+                  </label>
+                  <input
+                    id="booking-name"
+                    name="name"
+                    type="text"
+                    autoComplete="name"
+                    required
+                    aria-invalid={Boolean(fieldErrors.name)}
+                    aria-describedby={
+                      fieldErrors.name ? "booking-name-error" : undefined
+                    }
+                    className={cn(
+                      inputClass,
+                      fieldErrors.name && inputErrorClass
+                    )}
+                    placeholder="Как к вам обращаться"
+                  />
+                  <FieldError
+                    id="booking-name-error"
+                    message={fieldErrors.name}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="booking-phone" className={labelClass}>
+                    <Phone className="h-3.5 w-3.5 text-terracotta" aria-hidden />
+                    Телефон <span className="text-terracotta">*</span>
+                  </label>
+                  <input
+                    id="booking-phone"
+                    name="phone"
+                    type="tel"
+                    autoComplete="tel"
+                    required
+                    aria-invalid={Boolean(fieldErrors.phone)}
+                    aria-describedby={
+                      fieldErrors.phone ? "booking-phone-error" : undefined
+                    }
+                    className={cn(
+                      inputClass,
+                      fieldErrors.phone && inputErrorClass
+                    )}
+                    placeholder="+7 (___) ___-__-__"
+                  />
+                  <FieldError
+                    id="booking-phone-error"
+                    message={fieldErrors.phone}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="booking-date" className={labelClass}>
+                    <CalendarDays
+                      className="h-3.5 w-3.5 text-terracotta"
+                      aria-hidden
+                    />
+                    Предпочтительная дата
+                  </label>
+                  <input
+                    id="booking-date"
+                    name="date"
+                    type="date"
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="booking-time" className={labelClass}>
+                    <Clock
+                      className="h-3.5 w-3.5 text-terracotta"
+                      aria-hidden
+                    />
+                    Предпочтительное время
+                  </label>
+                  <input
+                    id="booking-time"
+                    name="time"
+                    type="time"
+                    className={inputClass}
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label htmlFor="booking-comment" className={labelClass}>
+                    Комментарий
+                  </label>
+                  <textarea
+                    id="booking-comment"
+                    name="comment"
+                    rows={4}
+                    className={cn(inputClass, "min-h-[7rem] resize-y")}
+                    placeholder={COMMENT_PLACEHOLDER}
+                  />
+                </div>
+              </div>
+
+              {formError && (
+                <p
+                  className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+                  role="alert"
                 >
-                  <div className="mb-5 rounded-2xl bg-lime-50 px-4 py-3 text-sm leading-relaxed text-[#1F2E2A]/75">
-                    {isAbonementTab && activeAbonement ? (
-                      <>
-                        Вы оформляете:{" "}
-                        <span className="font-semibold text-terracotta-600">
-                          {formatAbonementLabel(activeAbonement)}
-                        </span>
-                        <span className="mt-1 block text-[#1F2E2A]/55">
-                          Мы перезвоним и оформим абонемент
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        Вы записываетесь:{" "}
-                        <span className="font-semibold text-terracotta-600">
-                          {activeService!.title}
-                        </span>
-                        {" · "}
-                        <span className="font-semibold text-forest-800">
-                          {specialistLabel}
-                        </span>{" "}
-                        <span className="text-[#1F2E2A]/45">
-                          ({activeGroup!.label})
-                        </span>
-                      </>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div>
-                      <label htmlFor="booking-name" className={labelClass}>
-                        <UserRound className="h-4 w-4 shrink-0 text-terracotta" />
-                        Имя <span className="text-terracotta">*</span>
-                      </label>
-                      <input
-                        id="booking-name"
-                        name="name"
-                        type="text"
-                        autoComplete="name"
-                        placeholder="Как к вам обращаться"
-                        aria-invalid={Boolean(fieldErrors.name)}
-                        aria-describedby={
-                          fieldErrors.name ? "booking-name-error" : undefined
-                        }
-                        className={cn(
-                          inputClass,
-                          fieldErrors.name && inputErrorClass
-                        )}
-                        onChange={() => clearFieldError("name")}
-                      />
-                      <FieldError
-                        message={fieldErrors.name}
-                        id="booking-name-error"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="booking-phone" className={labelClass}>
-                        <Phone className="h-4 w-4 shrink-0 text-terracotta" />
-                        Телефон <span className="text-terracotta">*</span>
-                      </label>
-                      <input
-                        id="booking-phone"
-                        name="phone"
-                        type="tel"
-                        autoComplete="tel"
-                        placeholder="+7 (___) ___-__-__"
-                        aria-invalid={Boolean(fieldErrors.phone)}
-                        aria-describedby={
-                          fieldErrors.phone ? "booking-phone-error" : undefined
-                        }
-                        className={cn(
-                          inputClass,
-                          fieldErrors.phone && inputErrorClass
-                        )}
-                        onChange={() => clearFieldError("phone")}
-                      />
-                      <FieldError
-                        message={fieldErrors.phone}
-                        id="booking-phone-error"
-                      />
-                    </div>
-                    {!isAbonementTab && (
-                      <>
-                        <div>
-                          <label htmlFor="booking-date" className={labelClass}>
-                            <CalendarDays className="h-4 w-4 shrink-0 text-terracotta" />
-                            Предпочтительная дата{" "}
-                            <span className="text-terracotta">*</span>
-                          </label>
-                          <input
-                            id="booking-date"
-                            name="date"
-                            type="date"
-                            aria-invalid={Boolean(fieldErrors.date)}
-                            aria-describedby={
-                              fieldErrors.date
-                                ? "booking-date-error"
-                                : undefined
-                            }
-                            className={cn(
-                              inputClass,
-                              "focus:border-terracotta/70",
-                              fieldErrors.date && inputErrorClass
-                            )}
-                            onChange={() => clearFieldError("date")}
-                          />
-                          <FieldError
-                            message={fieldErrors.date}
-                            id="booking-date-error"
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor="booking-time" className={labelClass}>
-                            <Clock className="h-4 w-4 shrink-0 text-terracotta" />
-                            Предпочтительное время{" "}
-                            <span className="text-terracotta">*</span>
-                          </label>
-                          <input
-                            id="booking-time"
-                            name="time"
-                            type="time"
-                            aria-invalid={Boolean(fieldErrors.time)}
-                            aria-describedby={
-                              fieldErrors.time
-                                ? "booking-time-error"
-                                : undefined
-                            }
-                            className={cn(
-                              inputClass,
-                              fieldErrors.time && inputErrorClass
-                            )}
-                            onChange={() => clearFieldError("time")}
-                          />
-                          <FieldError
-                            message={fieldErrors.time}
-                            id="booking-time-error"
-                          />
-                        </div>
-                      </>
-                    )}
-                    <div className="sm:col-span-2">
-                      <label htmlFor="booking-comment" className={labelClass}>
-                        Комментарий
-                      </label>
-                      <textarea
-                        id="booking-comment"
-                        name="comment"
-                        rows={3}
-                        placeholder={
-                          isAbonementTab
-                            ? "Пожелания по абонементу или удобному времени звонка"
-                            : "Пожелания по уровню, формату занятия или удобному времени"
-                        }
-                        className={cn(inputClass, "min-h-[5.5rem] resize-y")}
-                      />
-                    </div>
-                  </div>
-
-                  {formError && (
-                    <p
-                      className="mt-4 text-sm font-medium text-red-600"
-                      role="alert"
-                    >
-                      {formError}
-                    </p>
-                  )}
-
-                  <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <Button
-                      type="submit"
-                      size="lg"
-                      disabled={isSubmitting}
-                      className="w-full sm:w-auto"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Отправляем…
-                        </>
-                      ) : (
-                        <>
-                          <Send className="h-4 w-4" />
-                          Отправить заявку
-                        </>
-                      )}
-                    </Button>
-                    <p className="text-xs leading-relaxed text-[#1F2E2A]/50 sm:max-w-sm">
-                      {isAbonementTab
-                        ? "Нажимая кнопку, вы соглашаетесь на обратный звонок для оформления абонемента."
-                        : "Нажимая кнопку, вы соглашаетесь на обратный звонок для подтверждения записи."}
-                    </p>
-                  </div>
-                </form>
+                  {formError}
+                </p>
               )}
-            </>
+
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="min-h-12 w-full sm:w-auto"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Отправка…
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4" />
+                      Отправить заявку
+                    </>
+                  )}
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="min-h-12 w-full border-forest-900/12 sm:w-auto"
+                >
+                  <Link href={siteConfig.schedulePagePath}>
+                    Смотреть расписание
+                  </Link>
+                </Button>
+              </div>
+            </form>
           )}
         </div>
       </Reveal>

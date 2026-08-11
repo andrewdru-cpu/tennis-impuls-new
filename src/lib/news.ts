@@ -33,6 +33,10 @@ export function formatNewsDate(dateISO: string): string {
   return `${d} ${MONTHS_RU[m - 1]} ${y}`;
 }
 
+/**
+ * Только актуальные новости с корректными фото.
+ * Удалены: Чусова, Гагарина/Лебедев, Глушакова (неверные фото / устаревшее).
+ */
 const newsSource: Omit<NewsArticle, "date">[] = [
   {
     id: "padel-rental-may-2026",
@@ -52,30 +56,6 @@ const newsSource: Omit<NewsArticle, "date">[] = [
     excerpt: "Поздравляем спортсменку центра с победой на турнире.",
     body: ["Поздравляем спортсменку центра с победой на турнире."],
     image: media.news.podkopaeva,
-  },
-  {
-    id: "victory-gagarina-lebedev-2025",
-    dateISO: "2025-10-11",
-    title: "Поздравляем с победой! Гагарина Елизавета и Лебедев Артём",
-    excerpt: "Отличные результаты наших спортсменов.",
-    body: ["Отличные результаты наших спортсменов."],
-    image: media.news.tournament,
-  },
-  {
-    id: "victory-glushakova-2025",
-    dateISO: "2025-10-11",
-    title: "Поздравляем с победой! Глушакова Теона",
-    excerpt: "Поздравляем с победой на турнире.",
-    body: ["Поздравляем с победой на турнире."],
-    image: media.news.junior,
-  },
-  {
-    id: "victory-chusova-2025",
-    dateISO: "2025-10-04",
-    title: "Поздравляем с победой! Чусова Елизавета",
-    excerpt: "Поздравляем с победой на турнире.",
-    body: ["Поздравляем с победой на турнире."],
-    image: media.news.family,
   },
 ];
 
