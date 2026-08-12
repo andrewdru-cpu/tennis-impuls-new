@@ -17,32 +17,56 @@ import {
   type SanityPricingDoc,
 } from "@/lib/sanity.queries";
 
-function mapSanityPlans(doc: SanityPricingDoc | null): PricingPlan[] | null {
-  const plans = doc?.plans?.filter((p) => p?.title && p?.priceLabel);
-  if (!plans?.length) return null;
+/** «от 2 500 ₽ / час» → { price, unit } для вёрстки карточки */
+function parsePriceLabel(label: string): { price: string; unit: string } {
+  const trimmed = label.trim();
+  const unitMatch = trimmed.match(/\s*(₽.*)$/);
+  if (!unitMatch) {
+    return { price: trimmed, unit: "" };
+  }
+  return {
+    price: trimmed.slice(0, trimmed.length - unitMatch[1].length).trim(),
+    unit: unitMatch[1].trim(),
+  };
+}
 
-  return [...plans]
-    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-    .map((p) => {
-      const label = p.priceLabel!.trim();
-      // «от 2 500 ₽ / час» → price + unit (грубый разбор для вёрстки)
-      const unitMatch = label.match(/\s*(₽.*)$/);
-      const price = unitMatch
-        ? label.slice(0, label.length - unitMatch[1].length).trim()
-        : label;
-      const unit = unitMatch ? unitMatch[1].trim() : "";
+/**
+ * Локальный pricing.ts = UI-структура (features, CTA, note, featured-база).
+ * Sanity перекрывает только подписи: title, priceLabel, subtitle, featured —
+ * по индексу order (0…n), без замены карточек целиком.
+ * Пустой CMS / ошибка → 100% локальный вид.
+ */
+function mergePricingWithSanity(doc: SanityPricingDoc | null): PricingPlan[] {
+  const remote = doc?.plans?.filter(
+    (p) => Boolean(p?.title?.trim() || p?.priceLabel?.trim())
+  );
+  if (!remote?.length) {
+    return localPricing;
+  }
 
-      return {
-        name: p.title!,
-        price,
-        unit,
-        description: p.subtitle?.trim() || "",
-        features: [],
-        cta: "Забронировать",
-        ctaHref: "/schedule",
-        featured: Boolean(p.featured),
-      } satisfies PricingPlan;
-    });
+  const sorted = [...remote].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+  return localPricing.map((local, index) => {
+    const s = sorted[index];
+    if (!s) return local;
+
+    const fromLabel = s.priceLabel?.trim()
+      ? parsePriceLabel(s.priceLabel)
+      : null;
+
+    return {
+      ...local,
+      name: s.title?.trim() || local.name,
+      description: s.subtitle?.trim() || local.description,
+      price: fromLabel?.price || local.price,
+      unit:
+        fromLabel && s.priceLabel?.trim()
+          ? fromLabel.unit || local.unit
+          : local.unit,
+      featured:
+        typeof s.featured === "boolean" ? s.featured : local.featured,
+    };
+  });
 }
 
 function mapSanityNews(docs: SanityNewsDoc[] | null): NewsArticle[] | null {
@@ -81,8 +105,7 @@ function mapSanityNews(docs: SanityNewsDoc[] | null): NewsArticle[] | null {
 }
 
 /**
- * Карточки тарифов: Sanity → иначе локальный fallback.
- * Ошибка сети / пустой CMS не ломает сайт.
+ * Карточки тарифов: локальный UI + опциональные подписи из Sanity.
  */
 export async function getPricingPlans(): Promise<PricingPlan[]> {
   try {
@@ -91,7 +114,7 @@ export async function getPricingPlans(): Promise<PricingPlan[]> {
       {},
       { next: { revalidate: 60 } }
     );
-    return mapSanityPlans(doc) ?? localPricing;
+    return mergePricingWithSanity(doc);
   } catch (err) {
     console.error("[sanity] pricing fetch failed, using local fallback", err);
     return localPricing;
