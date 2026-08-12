@@ -6,7 +6,7 @@ import { Reveal } from "@/components/reveal";
 import { Button } from "@/components/ui/button";
 import {
   fullPriceSections,
-  pricingPlans as defaultPricingPlans,
+  pricingPlans as LOCAL_PRICING_CARDS,
   type PriceTableSection,
   type PricingPlan,
 } from "@/lib/pricing";
@@ -68,11 +68,34 @@ function PriceTable({ section }: { section: PriceTableSection }) {
   );
 }
 
-export function Pricing({
-  plans = defaultPricingPlans,
-}: {
-  plans?: PricingPlan[];
-}) {
+/**
+ * Дизайн карточек всегда из LOCAL_PRICING_CARDS.
+ * props.plans может только подменить name / price / unit / description.
+ * features, cta, ctaHref, note, featured — только local.
+ */
+function resolvePlans(overlay?: PricingPlan[]): PricingPlan[] {
+  return LOCAL_PRICING_CARDS.map((base, index) => {
+    const o = overlay?.[index];
+    if (!o) {
+      return { ...base, features: [...base.features] };
+    }
+    return {
+      name: o.name?.trim() || base.name,
+      price: o.price?.trim() || base.price,
+      unit: o.unit?.trim() || base.unit,
+      description: o.description?.trim() || base.description,
+      features: [...base.features],
+      note: base.note,
+      cta: base.cta,
+      ctaHref: base.ctaHref,
+      featured: base.featured,
+    };
+  });
+}
+
+export function Pricing({ plans }: { plans?: PricingPlan[] }) {
+  const resolved = resolvePlans(plans);
+
   return (
     <Section
       id="pricing"
@@ -92,8 +115,8 @@ export function Pricing({
       />
 
       <div className="section-inner mx-auto grid max-w-5xl grid-cols-1 items-stretch gap-6 lg:grid-cols-3 lg:gap-7">
-        {plans.map((plan, i) => (
-          <Reveal key={plan.name} delay={i * 0.08} className="h-full">
+        {resolved.map((plan, i) => (
+          <Reveal key={`${plan.name}-${i}`} delay={i * 0.08} className="h-full">
             <div
               className={cn(
                 "h-full",
