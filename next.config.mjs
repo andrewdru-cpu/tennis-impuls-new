@@ -13,11 +13,23 @@ const nextConfig = {
     unoptimized: true,
   },
   /**
-   * CSP на проекте нет — не добавляем жёсткий default (ломает inline/фреймы).
-   * Виджеты 1С: config.js с reservi.ru грузится через next/script без блокировок.
-   * Если появится CSP — разрешить script-src/frame-src/connect-src для
-   * https://reservi.ru https://*.reservi.ru https://fitness1c.ru https://*.fitness1c.ru
+   * CSP намеренно НЕ задаём: style-src/default-src ломают Tailwind + inline critical CSS
+   * и дают «текстовый» сайт. Не добавлять Content-Security-Policy без style-src 'unsafe-inline'
+   * и разрешения /_next/static.
    */
+  async headers() {
+    return [
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {

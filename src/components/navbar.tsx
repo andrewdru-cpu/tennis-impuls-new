@@ -55,12 +55,18 @@ export function Navbar() {
   return (
     <>
       <header
+        data-site-header
         className={cn(
           "fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top,0px)] transition-[background-color,border-color,box-shadow,backdrop-filter] duration-650 ease-premium",
           solid
             ? "border-b border-forest-900/10 bg-white/90 shadow-sm backdrop-blur-xl"
             : "border-b border-transparent bg-transparent"
         )}
+        style={
+          solid
+            ? { backgroundColor: "rgba(255,255,255,0.94)", color: "#1F2E2A" }
+            : { color: "#ffffff" }
+        }
       >
         <nav className="container-wide flex h-[76px] min-w-0 items-center justify-between gap-2 sm:gap-3">
           <Link

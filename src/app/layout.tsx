@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { YandexMetrika } from "@/components/analytics/yandex-metrika";
+import { CRITICAL_CSS } from "@/lib/critical-css";
 import { fontSans, fontVariables } from "@/lib/fonts";
 import { siteConfig } from "@/lib/site";
 
@@ -33,6 +34,11 @@ export const viewport: Viewport = {
   themeColor: "#0A2F24",
 };
 
+/**
+ * globals.css — всегда через import (SSR <link rel="stylesheet"> в document).
+ * CRITICAL_CSS — inline fallback, если chunk /_next/static/css/* не загрузился.
+ * CSP не используем (не блокируем style-src).
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,11 +46,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className={fontVariables}>
-      <body className={`${fontSans.className} antialiased`}>
+      <body
+        className={`${fontSans.className} antialiased`}
+        style={{
+          backgroundColor: "#F8F5F0",
+          color: "#1F2E2A",
+          margin: 0,
+        }}
+      >
         <style
-          dangerouslySetInnerHTML={{
-            __html: `#hero{background-color:#0A2F24;color:#fff}#hero [data-hero-content],#hero [data-hero-content] *{opacity:1!important;visibility:visible!important}#hero h1,#hero p,#hero a{color:#fff}`,
-          }}
+          id="critical-css"
+          dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }}
         />
         <YandexMetrika />
         {children}
