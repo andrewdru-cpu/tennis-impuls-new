@@ -56,6 +56,11 @@ const nextConfig = {
         destination: "/account",
         permanent: true,
       },
+      {
+        source: "/offer",
+        destination: "/oferta",
+        permanent: false,
+      },
     ];
   },
 };

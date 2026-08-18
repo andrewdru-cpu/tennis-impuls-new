@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Phone, Mail, Send } from "@/lib/icons";
 
 import { Logo } from "@/components/logo";
@@ -82,6 +83,14 @@ export function Footer() {
               </li>
               <li className="py-2 leading-relaxed">{siteConfig.address}</li>
               <li className="py-2 leading-relaxed">Ежедневно, 07:00 – 23:00</li>
+              <li className="pt-2">
+                <Link
+                  href="/oferta"
+                  className="touch-link hover:text-terracotta-200"
+                >
+                  Публичная оферта
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

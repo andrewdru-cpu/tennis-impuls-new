@@ -23,6 +23,7 @@ export {
   Clock,
   Coffee,
   Crown,
+  Download,
   Dumbbell,
   HeartHandshake,
   Layers,
