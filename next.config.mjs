@@ -57,6 +57,16 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: "/price",
+        destination: "/#pricing",
+        permanent: true,
+      },
+      {
+        source: "/contact",
+        destination: "/#contacts",
+        permanent: true,
+      },
+      {
         source: "/offer",
         destination: "/oferta",
         permanent: false,

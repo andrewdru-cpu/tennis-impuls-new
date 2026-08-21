@@ -43,7 +43,6 @@ export const navItems: readonly NavItem[] = [
   { label: "Личный кабинет", href: siteConfig.accountPagePath },
   { label: "Цены", href: "/#pricing" },
   { label: "Команда", href: "/#team" },
-  { label: "Галерея", href: "/#gallery" },
   { label: "Новости", href: "/#news" },
   { label: "Контакты", href: "/#contacts" },
 ];
