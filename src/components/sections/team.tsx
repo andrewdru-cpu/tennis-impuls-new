@@ -95,11 +95,26 @@ export function Team() {
         {visibleGroups.map((group, groupIndex) => (
           <div key={group.id}>
             <Reveal delay={groupIndex * 0.06}>
-              <div className="max-w-3xl">
+              <div className="max-w-3xl min-w-0">
                 <h3 className="heading-subsection text-balance">{group.title}</h3>
                 {group.description && (
                   <p className="mt-2 max-w-2xl text-pretty text-sm leading-relaxed text-bright sm:text-base">
                     {group.description}
+                  </p>
+                )}
+                {group.id === "tennis" && (
+                  <p className="mt-3.5 max-w-3xl min-w-0 text-pretty text-balance font-display text-[1.05rem] font-bold leading-snug text-forest-800 [overflow-wrap:anywhere] sm:text-xl sm:leading-snug">
+                    Тренировки{" "}
+                    <span className="text-terracotta-600">персональные</span>
+                    ,{" "}
+                    <span className="text-gradient-purple-lime box-decoration-clone pb-0.5">
+                      Сплит
+                    </span>
+                    ,{" "}
+                    <span className="text-terracotta-600">
+                      группы для детей и взрослых
+                    </span>
+                    .
                   </p>
                 )}
               </div>
