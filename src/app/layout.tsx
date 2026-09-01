@@ -6,11 +6,15 @@ import { fontSans, fontVariables } from "@/lib/fonts";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} — теннисный клуб в Мытищах`,
+    default: `${siteConfig.name} — теннис, падел и фитнес в Мытищах`,
     template: `%s — ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  alternates: {
+    canonical: "/",
+  },
   keywords: [
     "теннис",
     "теннисный клуб",
@@ -21,8 +25,9 @@ export const metadata: Metadata = {
     "ЦТТ Импульс",
   ],
   openGraph: {
-    title: `${siteConfig.name} — теннисный клуб в Мытищах`,
+    title: `${siteConfig.name} — теннис, падел и фитнес в Мытищах`,
     description: siteConfig.description,
+    url: siteConfig.url,
     locale: "ru_RU",
     type: "website",
   },

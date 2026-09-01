@@ -503,8 +503,8 @@ export function Booking() {
         eyebrow="Запись"
         title={
           <>
-            Запишитесь на{" "}
-            <span className="text-terracotta-600">занятие</span>
+            Записаться к{" "}
+            <span className="text-terracotta-600">тренеру</span>
           </>
         }
         description="Оставьте заявку на персональное или групповое занятие. Направление и детали — в комментарии. Мы перезвоним и уточним запись."

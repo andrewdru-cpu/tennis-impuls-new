@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CalendarCheck, ArrowRight, ChevronDown } from "@/lib/icons";
+import { CalendarCheck, ChevronDown } from "@/lib/icons";
 
 import { Button } from "@/components/ui/button";
 import { HeroMedia } from "@/components/hero/hero-media";
@@ -180,30 +180,7 @@ export function Hero() {
                 }}
               >
                 <CalendarCheck className="h-[1.125rem] w-[1.125rem]" />
-                Забронировать корт
-              </a>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="glass"
-              className={cn(
-                "h-12 w-full px-6 text-[0.9375rem] font-bold text-white sm:w-auto sm:min-w-[185px]",
-                "border-2 border-white/40 bg-forest-950/45 backdrop-blur-sm",
-                "shadow-[0_8px_28px_-8px_rgba(0,0,0,0.5)]",
-                "hover:border-sand/70 hover:bg-forest-950/60 hover:shadow-glow"
-              )}
-            >
-              <a
-                href="#services"
-                style={{
-                  color: "#ffffff",
-                  borderColor: "rgba(255,255,255,0.4)",
-                  backgroundColor: "rgba(7, 31, 24, 0.55)",
-                }}
-              >
                 Услуги и цены
-                <ArrowRight className="h-[1.125rem] w-[1.125rem]" />
               </a>
             </Button>
           </motion.div>

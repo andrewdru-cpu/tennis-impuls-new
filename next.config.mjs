@@ -41,6 +41,16 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      /**
+       * www → апекс. HTTP → HTTPS выполняет сам Vercel на уровне домена,
+       * здесь его дублировать нельзя (в проде запрос уже приходит по https).
+       */
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.tennis-impuls.ru" }],
+        destination: "https://tennis-impuls.ru/:path*",
+        permanent: true,
+      },
       {
         source: "/personal",
         destination: "/account",

@@ -89,7 +89,7 @@ export default function SchedulePage() {
             <Button asChild size="lg" className="min-h-11 w-full sm:w-auto">
               <Link href="/#booking">
                 <CalendarDays className="h-4 w-4" />
-                Записаться
+                Записаться к тренеру
               </Link>
             </Button>
             <Button
