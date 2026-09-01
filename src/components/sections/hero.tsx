@@ -188,7 +188,7 @@ export function Hero() {
       </div>
 
       <motion.a
-        href="#about-preview"
+        href="#services"
         initial={{ opacity: 1, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, ...transitionMenu }}
