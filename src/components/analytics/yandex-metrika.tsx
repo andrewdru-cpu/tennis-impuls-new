@@ -2,25 +2,37 @@
 
 import Script from "next/script";
 
-import { YANDEX_METRIKA_ID } from "@/lib/yandex-metrika";
+import {
+  YANDEX_METRIKA_ADS_ID,
+  YANDEX_METRIKA_ID,
+} from "@/lib/yandex-metrika";
 
 /**
- * Яндекс.Метрика — один Script + noscript-пиксель, без дублей.
+ * Яндекс.Метрика — один tag.js, два ym init, два noscript-пикселя.
+ * Счётчики: 111489660 (основной) и 46954113 (реклама / legacy).
  */
 export function YandexMetrika() {
-  const id = YANDEX_METRIKA_ID;
+  const primaryId = YANDEX_METRIKA_ID;
+  const adsId = YANDEX_METRIKA_ADS_ID;
 
   return (
     <>
       <Script
         id="yandex-metrika"
         strategy="afterInteractive"
-        src={`https://mc.yandex.ru/metrika/tag.js?id=${id}`}
+        src={`https://mc.yandex.ru/metrika/tag.js?id=${primaryId}`}
         onLoad={() => {
-          window.ym?.(id, "init", {
+          window.ym?.(primaryId, "init", {
             ssr: true,
             webvisor: true,
             clickmap: true,
+            accurateTrackBounce: true,
+            trackLinks: true,
+          });
+          window.ym?.(adsId, "init", {
+            clickmap: true,
+            referrer: document.referrer,
+            url: location.href,
             accurateTrackBounce: true,
             trackLinks: true,
           });
@@ -30,7 +42,13 @@ export function YandexMetrika() {
         <div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={`https://mc.yandex.ru/watch/${id}`}
+            src={`https://mc.yandex.ru/watch/${primaryId}`}
+            style={{ position: "absolute", left: "-9999px" }}
+            alt=""
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`https://mc.yandex.ru/watch/${adsId}`}
             style={{ position: "absolute", left: "-9999px" }}
             alt=""
           />
