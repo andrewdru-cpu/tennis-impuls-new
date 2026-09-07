@@ -34,6 +34,10 @@ import {
   readAbonementFromUrl,
   readSpecialistFromUrl,
 } from "@/lib/booking-deeplink";
+import {
+  collectBookingAttribution,
+  persistUtmFromLocation,
+} from "@/lib/booking-attribution";
 import type {
   BookingLeadPayload,
   BookingServiceType,
@@ -387,6 +391,7 @@ export function Booking() {
   }
 
   useEffect(() => {
+    persistUtmFromLocation();
     applySpecialistDeepLink(readSpecialistFromUrl());
     if (isAbonementBookingInUrl()) {
       applyAbonementDeepLink(readAbonementFromUrl());
@@ -477,6 +482,7 @@ export function Booking() {
         date: data.date,
         time: data.time,
         comment: data.comment ?? "",
+        ...collectBookingAttribution(),
       });
 
       formRef.current?.reset();

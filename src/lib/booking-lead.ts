@@ -19,6 +19,29 @@ export type BookingLeadPayload = {
   date: string;
   time: string;
   comment: string;
+  email?: string;
+  pageUrl?: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_term?: string;
+  utm_content?: string;
+  ym_cid?: string;
+};
+
+/** Контракт webhook 1С:Фитнес (cloud.1c.fitness lead). */
+export type Fit1cLeadPayload = {
+  name: string;
+  last_name: string;
+  phone: string;
+  email: string;
+  comment: string;
+  utm_source: string;
+  utm_medium: string;
+  utm_campaign: string;
+  utm_term: string;
+  utm_content: string;
+  ym_cid: string;
 };
 
 const TYPE_LABELS: Record<BookingServiceType, string> = {
@@ -54,4 +77,51 @@ export function formatBookingLeadText(payload: BookingLeadPayload): string {
   }
 
   return lines.join("\n");
+}
+
+function asTrimmed(value: string | undefined): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+/** 8XXXXXXXXXX → 7XXXXXXXXXX; только цифры. */
+export function normalizeLeadPhone(phone: string): string {
+  let digits = phone.replace(/\D/g, "");
+  if (digits.length === 11 && digits.startsWith("8")) {
+    digits = `7${digits.slice(1)}`;
+  }
+  return digits;
+}
+
+/** Первое слово — имя, остальное — фамилия (если есть). */
+export function splitLeadName(fullName: string): {
+  name: string;
+  last_name: string;
+} {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return { name: "", last_name: "" };
+  if (parts.length === 1) return { name: parts[0], last_name: "" };
+  return { name: parts[0], last_name: parts.slice(1).join(" ") };
+}
+
+export function toFit1cLead(payload: BookingLeadPayload): Fit1cLeadPayload {
+  const { name, last_name } = splitLeadName(payload.name);
+  const commentLines = [formatBookingLeadText(payload)];
+  const pageUrl = asTrimmed(payload.pageUrl);
+  if (pageUrl) {
+    commentLines.push("", `URL: ${pageUrl}`);
+  }
+
+  return {
+    name,
+    last_name,
+    phone: normalizeLeadPhone(payload.phone),
+    email: asTrimmed(payload.email),
+    comment: commentLines.join("\n"),
+    utm_source: asTrimmed(payload.utm_source),
+    utm_medium: asTrimmed(payload.utm_medium),
+    utm_campaign: asTrimmed(payload.utm_campaign),
+    utm_term: asTrimmed(payload.utm_term),
+    utm_content: asTrimmed(payload.utm_content),
+    ym_cid: asTrimmed(payload.ym_cid),
+  };
 }

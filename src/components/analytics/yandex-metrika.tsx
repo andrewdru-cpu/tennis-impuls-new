@@ -30,6 +30,7 @@ export function YandexMetrika() {
             trackLinks: true,
           });
           window.ym?.(adsId, "init", {
+            webvisor: true,
             clickmap: true,
             referrer: document.referrer,
             url: location.href,

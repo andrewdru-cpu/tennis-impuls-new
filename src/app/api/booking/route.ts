@@ -3,6 +3,7 @@ import { Resend } from "resend";
 
 import {
   formatBookingLeadText,
+  toFit1cLead,
   type BookingLeadPayload,
 } from "@/lib/booking-lead";
 
@@ -47,8 +48,8 @@ function failResponse(status: number, err?: unknown) {
 }
 
 /**
- * POST /api/booking — отправка заявки через Resend (email).
- * Требует RESEND_API_KEY. Без ключа → 503.
+ * POST /api/booking — заявка: Resend (обязательный канал) + webhook 1С (best-effort).
+ * Требует RESEND_API_KEY. Без ключа → 503. URL webhook клиенту не отдаём.
  */
 export async function POST(request: Request) {
   let payload: unknown;
@@ -66,9 +67,11 @@ export async function POST(request: Request) {
   const from =
     process.env.BOOKING_FROM_EMAIL?.trim() || "onboarding@resend.dev";
   const to = process.env.BOOKING_TO_EMAIL?.trim() || "info@tennis-impuls.ru";
+  const webhookUrl = process.env.FIT1C_LEAD_WEBHOOK_URL?.trim();
 
   console.error("[booking]", {
     hasKey: Boolean(apiKey),
+    hasWebhook: Boolean(webhookUrl),
     from: process.env.BOOKING_FROM_EMAIL,
     to: process.env.BOOKING_TO_EMAIL,
   });
@@ -80,6 +83,7 @@ export async function POST(request: Request) {
 
   const text = formatBookingLeadText(payload);
 
+  let resendOk = false;
   try {
     const resend = new Resend(apiKey);
     const { data, error } = await resend.emails.send({
@@ -91,13 +95,36 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error("[booking] resend error", error);
-      return failResponse(502, error);
+    } else {
+      resendOk = true;
+      console.error("[booking] sent", { id: data?.id ?? null });
     }
-
-    console.error("[booking] sent", { id: data?.id ?? null });
-    return NextResponse.json({ ok: true, method: "email" as const });
   } catch (err) {
     console.error("[booking] resend error", err);
-    return failResponse(502, err);
   }
+
+  if (webhookUrl) {
+    try {
+      const lead = toFit1cLead(payload);
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(lead),
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!response.ok) {
+        console.error("[booking] 1c webhook failed", {
+          status: response.status,
+        });
+      }
+    } catch (err) {
+      console.error("[booking] 1c webhook error", err);
+    }
+  }
+
+  if (!resendOk) {
+    return failResponse(502, new Error("Resend send failed"));
+  }
+
+  return NextResponse.json({ ok: true, method: "email" as const });
 }
