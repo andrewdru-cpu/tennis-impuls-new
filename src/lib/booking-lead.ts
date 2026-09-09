@@ -110,13 +110,14 @@ export function toFit1cLead(payload: BookingLeadPayload): Fit1cLeadPayload {
   if (pageUrl) {
     commentLines.push("", `URL: ${pageUrl}`);
   }
+  const comment = commentLines.join("\n").trim() || "Заявка с сайта tennis-impuls.ru";
 
   return {
     name,
     last_name,
     phone: normalizeLeadPhone(payload.phone),
     email: asTrimmed(payload.email),
-    comment: commentLines.join("\n"),
+    comment,
     utm_source: asTrimmed(payload.utm_source),
     utm_medium: asTrimmed(payload.utm_medium),
     utm_campaign: asTrimmed(payload.utm_campaign),

@@ -47,6 +47,49 @@ function failResponse(status: number, err?: unknown) {
   return NextResponse.json(body, { status });
 }
 
+function webhookHost(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return "(invalid-url)";
+  }
+}
+
+async function postFit1cLead(
+  webhookUrl: string,
+  payload: BookingLeadPayload
+): Promise<{ ok: boolean; emailNote: string }> {
+  const host = webhookHost(webhookUrl);
+  try {
+    const lead = toFit1cLead(payload);
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(lead),
+      signal: AbortSignal.timeout(8000),
+    });
+    const bodySnippet = (await response.text()).slice(0, 300);
+    console.error("[booking] webhook", {
+      host,
+      status: response.status,
+      statusText: response.statusText,
+      body: bodySnippet,
+    });
+    if (!response.ok) {
+      const statusLine = `${response.status} ${response.statusText}`.trim();
+      return {
+        ok: false,
+        emailNote: `1С webhook: ошибка HTTP ${statusLine}`,
+      };
+    }
+    return { ok: true, emailNote: "" };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[booking] 1c webhook error", { host, message });
+    return { ok: false, emailNote: "1С webhook: ошибка сети/таймаут" };
+  }
+}
+
 /**
  * POST /api/booking — заявка: Resend (обязательный канал) + webhook 1С (best-effort).
  * Требует RESEND_API_KEY. Без ключа → 503. URL webhook клиенту не отдаём.
@@ -81,9 +124,19 @@ export async function POST(request: Request) {
     return failResponse(503, new Error("RESEND_API_KEY is not set"));
   }
 
-  const text = formatBookingLeadText(payload);
+  let webhookNote = "";
+  if (!webhookUrl) {
+    console.error("[booking] webhook skipped: env empty");
+    webhookNote = "1С webhook: не настроен (нет env)";
+  } else {
+    const result = await postFit1cLead(webhookUrl, payload);
+    webhookNote = result.emailNote;
+  }
 
-  let resendOk = false;
+  const text = [formatBookingLeadText(payload), webhookNote]
+    .filter((line) => line.trim())
+    .join("\n\n");
+
   try {
     const resend = new Resend(apiKey);
     const { data, error } = await resend.emails.send({
@@ -95,36 +148,13 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error("[booking] resend error", error);
-    } else {
-      resendOk = true;
-      console.error("[booking] sent", { id: data?.id ?? null });
+      return failResponse(502, error);
     }
+
+    console.error("[booking] sent", { id: data?.id ?? null });
+    return NextResponse.json({ ok: true, method: "email" as const });
   } catch (err) {
     console.error("[booking] resend error", err);
+    return failResponse(502, err);
   }
-
-  if (webhookUrl) {
-    try {
-      const lead = toFit1cLead(payload);
-      const response = await fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(lead),
-        signal: AbortSignal.timeout(8000),
-      });
-      if (!response.ok) {
-        console.error("[booking] 1c webhook failed", {
-          status: response.status,
-        });
-      }
-    } catch (err) {
-      console.error("[booking] 1c webhook error", err);
-    }
-  }
-
-  if (!resendOk) {
-    return failResponse(502, new Error("Resend send failed"));
-  }
-
-  return NextResponse.json({ ok: true, method: "email" as const });
 }
