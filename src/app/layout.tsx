@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { YandexMetrika } from "@/components/analytics/yandex-metrika";
+import {
+  YANDEX_METRIKA_HEAD_SCRIPT,
+  YandexMetrikaNoscript,
+} from "@/components/analytics/yandex-metrika";
 import { CRITICAL_CSS } from "@/lib/critical-css";
 import { fontSans, fontVariables } from "@/lib/fonts";
 import { siteConfig } from "@/lib/site";
@@ -51,6 +54,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className={fontVariables}>
+      <head>
+        {/* eslint-disable-next-line @next/next/no-sync-scripts -- официальный сниппет Метрики должен быть в View Source */}
+        <script
+          id="yandex-metrika-46954113"
+          type="text/javascript"
+          dangerouslySetInnerHTML={{ __html: YANDEX_METRIKA_HEAD_SCRIPT }}
+        />
+        <YandexMetrikaNoscript />
+      </head>
       <body
         className={`${fontSans.className} antialiased`}
         style={{
@@ -63,7 +75,6 @@ export default function RootLayout({
           id="critical-css"
           dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }}
         />
-        <YandexMetrika />
         {children}
       </body>
     </html>
