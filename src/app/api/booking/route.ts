@@ -24,7 +24,8 @@ function isValidPayload(body: unknown): body is BookingLeadPayload {
     typeof p.phone === "string" &&
     p.phone.replace(/\D/g, "").length >= 10 &&
     typeof p.service === "string" &&
-    typeof p.group === "string"
+    typeof p.group === "string" &&
+    p.consent === true
   );
 }
 

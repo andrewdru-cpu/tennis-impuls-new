@@ -327,6 +327,7 @@ export function Booking() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [consent, setConsent] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof BookingFormValues, string>>
   >({});
@@ -361,6 +362,7 @@ export function Booking() {
     setIsSubmitting(false);
     setFormError(null);
     setFieldErrors({});
+    setConsent(false);
     formRef.current?.reset();
   }
 
@@ -430,6 +432,11 @@ export function Booking() {
       return;
     }
 
+    if (!consent) {
+      setFormError("Подтвердите согласие на обработку персональных данных.");
+      return;
+    }
+
     const errors = validateBookingForm(data);
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
@@ -482,10 +489,12 @@ export function Booking() {
         date: data.date,
         time: data.time,
         comment: data.comment ?? "",
+        consent: true,
         ...collectBookingAttribution(),
       });
 
       formRef.current?.reset();
+      setConsent(false);
       setSubmitted(true);
     } catch (err) {
       setFormError(
@@ -806,12 +815,37 @@ export function Booking() {
                 </p>
               )}
 
+              <label
+                htmlFor="booking-consent"
+                className="mt-6 flex cursor-pointer items-start gap-3 rounded-xl border border-forest-900/12 bg-cream/60 px-4 py-3.5"
+              >
+                <input
+                  id="booking-consent"
+                  name="consent"
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  className="mt-1 h-4 w-4 shrink-0 accent-terracotta"
+                />
+                <span className="text-pretty text-sm leading-relaxed text-forest-800 sm:text-[0.9375rem]">
+                  Согласен на обработку персональных данных.{" "}
+                  <a
+                    href="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-terracotta-600 underline-offset-2 hover:underline"
+                  >
+                    Политика конфиденциальности
+                  </a>
+                </span>
+              </label>
+
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Button
                   type="submit"
                   size="lg"
                   className="min-h-12 w-full sm:w-auto"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !consent}
                 >
                   {isSubmitting ? (
                     <>

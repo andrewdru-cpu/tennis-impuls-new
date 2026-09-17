@@ -81,6 +81,11 @@ const nextConfig = {
         destination: "/oferta",
         permanent: false,
       },
+      {
+        source: "/personal-data",
+        destination: "/privacy",
+        permanent: true,
+      },
     ];
   },
 };

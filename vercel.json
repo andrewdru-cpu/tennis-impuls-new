@@ -51,6 +51,16 @@
       "permanent": true
     },
     {
+      "source": "/personal-data",
+      "destination": "/privacy",
+      "permanent": true
+    },
+    {
+      "source": "/personal-data/",
+      "destination": "/privacy",
+      "permanent": true
+    },
+    {
       "source": "/company/news",
       "destination": "/#news",
       "permanent": true

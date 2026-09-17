@@ -66,6 +66,12 @@ export function CookieNotice() {
               Понятно
             </Button>
             <Link
+              href="/privacy"
+              className="inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-terracotta-600 underline-offset-4 hover:underline"
+            >
+              Политика конфиденциальности
+            </Link>
+            <Link
               href="/oferta"
               className="inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-terracotta-600 underline-offset-4 hover:underline"
             >

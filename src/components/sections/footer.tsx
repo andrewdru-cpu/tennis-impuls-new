@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Phone, Mail, Send } from "@/lib/icons";
 
 import { Logo } from "@/components/logo";
+import { legalEntity } from "@/lib/legal";
 import { navItems, siteConfig } from "@/lib/site";
 
 export function Footer() {
@@ -91,7 +92,23 @@ export function Footer() {
                   Публичная оферта
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/privacy"
+                  className="touch-link hover:text-terracotta-200"
+                >
+                  Политика конфиденциальности
+                </Link>
+              </li>
             </ul>
+            <div className="mt-6 space-y-1 text-[0.75rem] leading-relaxed text-white/55">
+              <p className="font-semibold text-white/70">{legalEntity.shortName}</p>
+              <p>
+                ИНН {legalEntity.inn}, КПП {legalEntity.kpp}, ОГРН{" "}
+                {legalEntity.ogrn}
+              </p>
+              <p>{legalEntity.footerAddress}</p>
+            </div>
           </div>
         </div>
 

@@ -19,6 +19,7 @@ export type BookingLeadPayload = {
   date: string;
   time: string;
   comment: string;
+  consent?: boolean;
   email?: string;
   pageUrl?: string;
   utm_source?: string;
@@ -74,6 +75,9 @@ export function formatBookingLeadText(payload: BookingLeadPayload): string {
   if (payload.time) lines.push(`Время: ${payload.time}`);
   if (payload.comment?.trim()) {
     lines.push(`Комментарий: ${payload.comment.trim()}`);
+  }
+  if (payload.consent) {
+    lines.push("Согласие на обработку ПДн: да");
   }
 
   return lines.join("\n");
