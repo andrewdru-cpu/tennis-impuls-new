@@ -4,6 +4,7 @@ import {
   YANDEX_METRIKA_HEAD_SCRIPT,
   YandexMetrikaNoscript,
 } from "@/components/analytics/yandex-metrika";
+import { CookieNotice } from "@/components/cookie-notice";
 import { CRITICAL_CSS } from "@/lib/critical-css";
 import { fontSans, fontVariables } from "@/lib/fonts";
 import { siteConfig } from "@/lib/site";
@@ -76,6 +77,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }}
         />
         {children}
+        <CookieNotice />
       </body>
     </html>
   );
