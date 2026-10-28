@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   title: "Онлайн-расписание",
   description:
     "Актуальное расписание занятий ЦТТ «Импульс» из 1С:Фитнес. Запись через форму на сайте или по телефону.",
+  alternates: { canonical: "/schedule" },
 };
 
 function BackToSiteLink({

@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   description:
     "Личный кабинет клиента ЦТТ «Импульс»: занятия, абонементы и бронирования.",
   robots: { index: false, follow: false },
+  alternates: { canonical: "/account" },
 };
 
 /**

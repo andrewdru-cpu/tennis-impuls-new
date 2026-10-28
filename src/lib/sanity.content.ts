@@ -8,6 +8,10 @@ import {
   pricingPlans as LOCAL_PRICING_CARDS,
   type PricingPlan,
 } from "@/lib/pricing";
+import {
+  applyPricingOverlay,
+  type PricingPlanOverlay,
+} from "@/lib/pricing-overlay";
 import { sanityClient } from "@/lib/sanity.client";
 import { urlForImage } from "@/lib/sanity.image";
 import {
@@ -32,8 +36,10 @@ function parsePriceLabel(label: string): { price: string; unit: string } {
 
 /**
  * База UI = LOCAL_PRICING_CARDS (features, cta, ctaHref, note, featured).
- * Sanity по order 0,1,2 может перекрыть ТОЛЬКО:
+ * Sanity по order 0,1,2 может предложить ТОЛЬКО:
  *   name, price/unit (из priceLabel), description (subtitle).
+ * Применяется через applyPricingOverlay: цена не ниже локальной,
+ * description карточки аренды корта и любой текст про грунт — игнорируются.
  * featured / badge / features / cta — никогда из Sanity.
  */
 function mergePricingLabelsOnly(
@@ -50,37 +56,19 @@ function mergePricingLabelsOnly(
 
   return LOCAL_PRICING_CARDS.map((base, index) => {
     const s = sorted[index];
-    const card: PricingPlan = {
-      name: base.name,
-      price: base.price,
-      unit: base.unit,
-      description: base.description,
-      features: [...base.features],
-      note: base.note,
-      cta: base.cta,
-      ctaHref: base.ctaHref,
-      featured: base.featured,
+    if (!s) return applyPricingOverlay(base, undefined, index);
+
+    const overlay: PricingPlanOverlay = {
+      name: s.title,
+      description: s.subtitle,
     };
-
-    if (!s) return card;
-
-    if (s.title?.trim()) card.name = s.title.trim();
-    if (s.subtitle?.trim()) card.description = s.subtitle.trim();
     if (s.priceLabel?.trim()) {
       const parsed = parsePriceLabel(s.priceLabel);
-      if (parsed.price) card.price = parsed.price;
-      if (parsed.unit) card.unit = parsed.unit;
+      overlay.price = parsed.price;
+      overlay.unit = parsed.unit;
     }
 
-    // Защита: если features вдруг пустые — вернуть local целиком
-    if (!card.features.length) {
-      return {
-        ...base,
-        features: [...base.features],
-      };
-    }
-
-    return card;
+    return applyPricingOverlay(base, overlay, index);
   });
 }
 

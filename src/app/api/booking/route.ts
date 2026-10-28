@@ -12,6 +12,23 @@ export const runtime = "nodejs";
 const PHONE_HINT = "+7 (495) 114-68-01";
 const SEND_FAIL_MESSAGE = `Не удалось отправить. Позвоните ${PHONE_HINT}`;
 
+/** Лимиты длины полей: защита письма / webhook от мусорных мегабайтных строк. */
+const MAX_LEN = {
+  name: 120,
+  phone: 32,
+  short: 200,
+  comment: 2000,
+  url: 2048,
+} as const;
+
+function isShortString(value: unknown, max: number): value is string {
+  return typeof value === "string" && value.length <= max;
+}
+
+function isOptionalString(value: unknown, max: number): boolean {
+  return value === undefined || value === null || isShortString(value, max);
+}
+
 function isValidPayload(body: unknown): body is BookingLeadPayload {
   if (!body || typeof body !== "object") return false;
   const p = body as Record<string, unknown>;
@@ -19,12 +36,26 @@ function isValidPayload(body: unknown): body is BookingLeadPayload {
   return (
     typeof p.serviceType === "string" &&
     types.has(p.serviceType) &&
-    typeof p.name === "string" &&
+    isShortString(p.name, MAX_LEN.name) &&
     p.name.trim().length >= 2 &&
-    typeof p.phone === "string" &&
+    isShortString(p.phone, MAX_LEN.phone) &&
     p.phone.replace(/\D/g, "").length >= 10 &&
-    typeof p.service === "string" &&
-    typeof p.group === "string" &&
+    isShortString(p.service, MAX_LEN.short) &&
+    isShortString(p.group, MAX_LEN.short) &&
+    isOptionalString(p.specialist, MAX_LEN.short) &&
+    isOptionalString(p.specialistId, MAX_LEN.short) &&
+    isOptionalString(p.selectedAbonement, MAX_LEN.short) &&
+    isOptionalString(p.date, MAX_LEN.short) &&
+    isOptionalString(p.time, MAX_LEN.short) &&
+    isOptionalString(p.comment, MAX_LEN.comment) &&
+    isOptionalString(p.email, MAX_LEN.short) &&
+    isOptionalString(p.pageUrl, MAX_LEN.url) &&
+    isOptionalString(p.utm_source, MAX_LEN.short) &&
+    isOptionalString(p.utm_medium, MAX_LEN.short) &&
+    isOptionalString(p.utm_campaign, MAX_LEN.short) &&
+    isOptionalString(p.utm_term, MAX_LEN.short) &&
+    isOptionalString(p.utm_content, MAX_LEN.short) &&
+    isOptionalString(p.ym_cid, MAX_LEN.short) &&
     p.consent === true
   );
 }
@@ -116,8 +147,8 @@ export async function POST(request: Request) {
   console.error("[booking]", {
     hasKey: Boolean(apiKey),
     hasWebhook: Boolean(webhookUrl),
-    from: process.env.BOOKING_FROM_EMAIL,
-    to: process.env.BOOKING_TO_EMAIL,
+    hasCustomFrom: Boolean(process.env.BOOKING_FROM_EMAIL?.trim()),
+    hasCustomTo: Boolean(process.env.BOOKING_TO_EMAIL?.trim()),
   });
 
   if (!apiKey) {

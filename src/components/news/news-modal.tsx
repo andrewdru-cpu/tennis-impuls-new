@@ -16,6 +16,7 @@ type NewsModalProps = {
 
 export function NewsModal({ article, onClose }: NewsModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!article) return;
@@ -27,6 +28,7 @@ export function NewsModal({ article, onClose }: NewsModalProps) {
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
+    closeBtnRef.current?.focus();
 
     return () => {
       document.body.style.overflow = prev;
@@ -74,6 +76,7 @@ export function NewsModal({ article, onClose }: NewsModalProps) {
                 sizes="(max-width: 768px) 100vw, 672px"
               />
               <button
+                ref={closeBtnRef}
                 type="button"
                 onClick={onClose}
                 className="absolute right-4 top-4 flex h-11 min-h-11 w-11 items-center justify-center rounded-full bg-forest-900/80 text-white backdrop-blur-sm transition-colors hover:bg-forest-900"

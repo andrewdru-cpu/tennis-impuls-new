@@ -10,6 +10,7 @@ import {
   type PriceTableSection,
   type PricingPlan,
 } from "@/lib/pricing";
+import { applyPricingOverlay } from "@/lib/pricing-overlay";
 import { cn } from "@/lib/utils";
 
 function PriceTable({ section }: { section: PriceTableSection }) {
@@ -70,27 +71,14 @@ function PriceTable({ section }: { section: PriceTableSection }) {
 
 /**
  * Дизайн карточек всегда из LOCAL_PRICING_CARDS.
- * props.plans может только подменить name / price / unit / description.
+ * props.plans может только подменить name / price / unit / description —
+ * с защитой актуального прайса (см. applyPricingOverlay).
  * features, cta, ctaHref, note, featured — только local.
  */
 function resolvePlans(overlay?: PricingPlan[]): PricingPlan[] {
-  return LOCAL_PRICING_CARDS.map((base, index) => {
-    const o = overlay?.[index];
-    if (!o) {
-      return { ...base, features: [...base.features] };
-    }
-    return {
-      name: o.name?.trim() || base.name,
-      price: o.price?.trim() || base.price,
-      unit: o.unit?.trim() || base.unit,
-      description: o.description?.trim() || base.description,
-      features: [...base.features],
-      note: base.note,
-      cta: base.cta,
-      ctaHref: base.ctaHref,
-      featured: base.featured,
-    };
-  });
+  return LOCAL_PRICING_CARDS.map((base, index) =>
+    applyPricingOverlay(base, overlay?.[index], index)
+  );
 }
 
 export function Pricing({ plans }: { plans?: PricingPlan[] }) {

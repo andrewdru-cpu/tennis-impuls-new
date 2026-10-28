@@ -12,9 +12,10 @@ import { cn } from "@/lib/utils";
 const OFERTA_PDF_PATH = "/docs/oferta.pdf";
 
 export const metadata: Metadata = {
-  title: "Публичная оферта — ЦТТ Импульс",
+  title: { absolute: "Публичная оферта — ЦТТ Импульс" },
   description:
     "Публичная оферта на оказание спортивных и сопутствующих услуг ООО «Импульс», г. Мытищи. Дата: 11.08.2026.",
+  alternates: { canonical: "/oferta" },
 };
 
 export default function OfertaPage() {
